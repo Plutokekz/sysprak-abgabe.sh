@@ -64,7 +64,7 @@ size_t formatCommand(char buff[BUFF_SIZE], char *command, char *value)
     exit(EXIT_FAILURE);
 }
 
-void performConnection(int sock, char gameId[14])
+void performConnection(int sock, gameOpt *opt)
 {
     in_addr_t addr;
     struct sockaddr_in server;
@@ -103,7 +103,7 @@ void performConnection(int sock, char gameId[14])
     recvCommand(sock, recvBuff); // + Client version accepted - please send Game-ID to join
     printf("S: %s", recvBuff);
 
-    size = formatCommand(sendBuff, "ID", gameId);
+    size = formatCommand(sendBuff, "ID", opt->gameId);
     if (send(sock, sendBuff, size, 0) > 0)
     {
         printf("C: %s", sendBuff);
@@ -116,7 +116,7 @@ void performConnection(int sock, char gameId[14])
     recvCommand(sock, recvBuff); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
     printf("S: %s", recvBuff);
 
-    size = formatCommand(sendBuff, "PLAYER", "");
+    size = formatCommand(sendBuff, "PLAYER", opt->playerId);
     if (send(sock, sendBuff, size, 0) > 0)
     {
         printf("C: %s", sendBuff);

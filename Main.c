@@ -8,15 +8,12 @@
 
 #include "performConnection.h"
 
-#define GAME_ID_SIZE 13
-
 int main(int argc, char *argv[])
 {
 
     int sock;
     int c;
-    char gameId[GAME_ID_SIZE];
-    char playerId[1];
+    gameOpt opt;
 
     while ((c = getopt(argc, argv, "g:p:")) != -1)
     {
@@ -28,17 +25,18 @@ int main(int argc, char *argv[])
                 printf("wrong game id\n");
                 exit(EXIT_FAILURE);
             }
-            strcpy(gameId, optarg);
+            strcpy(opt.gameId, optarg);
             break;
         case 'p':
         {
-            int id;
-            if (sscanf(optarg, "%i", &id) < 1 || id < 0 || id > 1)
+            unsigned int id;
+            if (sscanf(optarg, "%ui", &id) < 1 || id > 1)
             {
                 printf("wrong player id\n");
                 exit(EXIT_FAILURE);
             }
-            strcpy(gameId, optarg);
+            strcpy(opt.playerId, optarg);
+            break;
         }
         case '?':
             printf("wrong argument\n");
@@ -51,7 +49,7 @@ int main(int argc, char *argv[])
     }
 
     // temporary add game id in Makefile
-    if (strlen(gameId) == 0)
+    if (strlen(opt.gameId) == 0)
     {
         printf("game id is missing\n");
         exit(EXIT_FAILURE);
@@ -63,7 +61,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    performConnection(sock, gameId);
+    performConnection(sock, &opt);
 
     close(sock);
 
