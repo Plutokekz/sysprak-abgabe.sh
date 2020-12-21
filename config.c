@@ -69,25 +69,24 @@ int parseLine(char *line, config_t *config) {
         attr = parseWord(attr, current, length_attr);
         length_attr++;
       } else {
-        value= parseWord(value, current, length_value);
+        value = parseWord(value, current, length_value);
         length_value++;
       }
     }
   }
   if (attr != NULL || value != NULL) {
-    //printf("length attr: %d, length value: %d\n", length_attr, length_value);
-    attr = (char *)realloc(attr, length_attr +1);
+    // printf("length attr: %d, length value: %d\n", length_attr, length_value);
+    attr = (char *)realloc(attr, length_attr + 1);
     attr[length_attr] = '\0';
 
     value = (char *)realloc(value, length_value + 1);
     value[length_value] = '\0';
 
-    //printf("Attribute: %s with the Value: %s\n", attr, value);
+    // printf("Attribute: %s with the Value: %s\n", attr, value);
     return parseAttr(attr, value, config);
   }
 
   return -1;
-
 }
 
 config_t *readConfigFile(char *filename) {
