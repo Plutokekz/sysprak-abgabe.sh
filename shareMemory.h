@@ -8,6 +8,8 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
+#define BUFF_SIZE 100
+
 typedef struct PlayerData {
     int PlayerNumber;
     char* PlayerName;
