@@ -4,9 +4,10 @@ int main(int argc, char *argv[]) {
     pid_t pid;
     int fd[2];
     int shmID;
-    size_t size = sizeof(struct Share)+
-    sizeof(size_t)+2*(sizeof(int))+2*(sizeof(pid_t))+(size_t)1000;
-    //große size deklarieren
+    int key = 1234;
+    //size_t size = sizeof(struct Share)+
+    //sizeof(size_t)+20*(sizeof(int))+2*(sizeof(pid_t));
+    //große size deklarieren zum testen
 
 	if (pipe(fd) < 0) {
 		perror("Fehler bei Pipe");
@@ -27,40 +28,52 @@ int main(int argc, char *argv[]) {
         read(fd[0], &shmID, sizeof(int));
         read(fd[0], &pSize, sizeof(size_t)); //size of struct
         
-        printf("Size of size (parent, after pipe): %zu\n", pSize);//TEMP
-        struct Share *shm = attachSHM(shmID);
-        struct Share gameStart2;
-        memcpy(&gameStart2, shm, (sizeof(size))); //copy struct from shm into gameStart2
+        printf("Size of pSize (parent, after pipe): %zu\n", pSize);//TEMP
+        
+        //Create Struct
+        struct Share *ptrGameStart, gameStart;
+        ptrGameStart = &gameStart;
+        printf("Size of ptrGS after creation: %zu\n", sizeof(*ptrGameStart));
+        //Read SHM
+        shmID = shmget(key,pSize, 0666);
+        printf("shmID Parent: %d\n", shmID);
+        ptrGameStart = attachSHM(shmID);
+        printf("Size of ptrGS after reading SHM: %zu\n", sizeof(*ptrGameStart));
+        
         
         //Testen
-        printf("Erfolg: %s\n", gameStart2.gameName);
-        printf("GameNumber: %d\n", gameStart2.gameNumber);
-        printf("NumberOfPlayers: %d\n", gameStart2.numberOfPlayer);
+        printf("Erfolg: %s\n", (*ptrGameStart).gameName);
+        printf("GameNumber: %d\n", (*ptrGameStart).gameNumber);
+        printf("NumberOfPlayers: %d\n", (*ptrGameStart).numberOfPlayer);
         deleteSHM(shmID);  
         exit(EXIT_SUCCESS); 
      
     } else { //Kindprozess
         close(fd[0]); //close read
-        struct Share *gameStartPtr, gameStart;
-        gameStartPtr = &gameStart;
-        printf("size of gameStart: %zu\n", sizeof(gameStart));
-        gameStart.gameName = "SHM Funktioniert!";
-        printf("size of gameName: %zu\n", sizeof(gameStart.gameName));
-        gameStart.gameNumber = 5;
-        gameStart.thinkerPID = getpid();
-        gameStart.connectorPID = pid;
-        gameStart.numberOfPlayer = 2;
-    
-        printf("size of gameStart after input: %zu\n", sizeof(gameStart));
+        struct Share *ptrGameStart, gameStart;
+        ptrGameStart = &gameStart;
+        printf("size of ptrGameStart: %zu\n", sizeof(*ptrGameStart));
         
-        printf("Size of gameStart_size: %zu\n", size);
-        shmID = createSHM(size);
-        gameStartPtr = attachSHM(shmID); 
-        memcpy(gameStartPtr, &gameStart, size);
+        //struct befüllen
 
+        printf("ptrGS befüllt, gameName: %s\n", (*ptrGameStart).gameName);
+        printf("size of ptrGameStart after input: %zu\n", sizeof(*ptrGameStart));
+        size_t sizeOfStruct = sizeof(*ptrGameStart)+(100*sizeof(int));
+
+        //Shared Memory
+        shmID = shmget(key,sizeOfStruct, IPC_CREAT | 0666);
+        printf("shmID Child: %d\n", shmID);
+        ptrGameStart = (struct Share*) (void*) attachSHM(shmID); 
+        //memcpy(gameStartPtr, &gameStart, size);
+        (*ptrGameStart).gameName = "SHM Funktioniert!";
+        (*ptrGameStart).gameNumber = 5;
+        (*ptrGameStart).thinkerPID = getpid();
+        (*ptrGameStart).connectorPID = pid;
+        (*ptrGameStart).numberOfPlayer = 2;
+        printf("size of size_t: %ld\n", sizeof(size_t));
         //mem ptr in pipe
         write(fd[1], &shmID, sizeof(int));
-        write(fd[1], &size, sizeof(size));
+        write(fd[1], &sizeOfStruct, sizeof(size_t));
         close(fd[1]);
     } 
 }
