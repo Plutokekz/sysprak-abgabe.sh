@@ -8,6 +8,12 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
+#include <stdbool.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+#include <limits.h>
+
 #define BUFF_SIZE 100
 
 typedef struct PlayerData {
@@ -19,6 +25,7 @@ typedef struct PlayerData {
 
 
 typedef struct Share {
+    
     char* gameName;
     int gameNumber;
     int numberOfPlayer;
@@ -28,6 +35,12 @@ typedef struct Share {
 
 } Share; //oder Share_t?
 
+int createSHM(size_t memorySize);
 
+void *attachSHM(int shmID);
+
+void detachSHM(void *shm);
+
+int deleteSHM(int shmID);
 
 #endif
