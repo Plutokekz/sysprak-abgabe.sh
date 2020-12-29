@@ -43,6 +43,9 @@ int main(int argc, char *argv[]) {
         printf("NumberOfPlayers: %d\n", (*ptrGameStart).numberOfPlayer);
         printf("Pid Parent(Thinker): %d, Pid Child: %d\n",
         (*ptrGameStart).thinkerPID, (*ptrGameStart).connectorPID);
+        printf("Parent!!: Nummer: %d, Name : %s\n", (*ptrGameStart).players[1].Number,
+             (*ptrGameStart).players[1].Name);
+
 
         close(fd[0]);
         deleteSHM(shmID);
@@ -56,8 +59,7 @@ int main(int argc, char *argv[]) {
         
         
 
-        printf("ptrGS befüllt, gameName: %s\n", (*ptrGameStart).gameName);
-        printf("size of ptrGameStart after input: %zu\n", sizeof(*ptrGameStart));
+        
         size_t sizeOfStruct = sizeof(char);
         //+sizeof(char[100])+(2*sizeof(int)); wie muss ich größe wählen?
 
@@ -73,8 +75,27 @@ int main(int argc, char *argv[]) {
         (*ptrGameStart).connectorPID = getppid();
         (*ptrGameStart).numberOfPlayer = 2;
 
-
-
+                //____________playerData struct_______________ 
+        //infos vom server 
+        int numP = 2; //Mitspierleranzahl
+        int p = 0;
+        int pNumber[numP];
+        char *pName[numP];
+        int pReadyFlag[numP]; 
+        
+        while (p < numP) {
+            //ptrPlayers[p] = &players[p];
+            (*ptrGameStart).players[p].Number = p;
+            (*ptrGameStart).players[p].Name = "Franz";
+            (*ptrGameStart).players[p].ReadyFlag = 1;
+            //lel das funtkionier...guess i m just THAT good :D
+            printf("Nummer: %d, Name : %s\n", (*ptrGameStart).players[p].Number,
+             (*ptrGameStart).players[p].Name);
+            
+            p++;
+        } 
+                //______________________________________________
+        
         printf("size of size_t: %ld\n", sizeof(size_t));
         write(fd[1], &shmID, sizeof(int));
         close(fd[1]);

@@ -16,12 +16,12 @@
 
 #define BUFF_SIZE 100
 
-typedef struct Player {
-    int Number;
-    char* Name;
-    int ReadyFlag;
+typedef struct PlayerData {
+    int PlayerNumber;
+    char* PlayerName;
+    int PlayerReadyFlag;
 
-} Player;
+} PlayerData;
 
 
 typedef struct Share {
@@ -31,6 +31,7 @@ typedef struct Share {
     int numberOfPlayer;
     pid_t thinkerPID; //nicht 100% sicher, evtl muss das int sein
     pid_t connectorPID;
+    //struct PlayerData PlayerData; //2. playerData nötig?
 
 } Share; //oder Share_t?
 

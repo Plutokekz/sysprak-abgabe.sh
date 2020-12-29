@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
         printf("Pid Parent(Thinker): %d, Pid Child: %d\n",
         (*ptrGameStart).thinkerPID, (*ptrGameStart).connectorPID);
 
-        close(fd[0]);
+
         deleteSHM(shmID);
         exit(EXIT_SUCCESS); 
      
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 
         printf("ptrGS befüllt, gameName: %s\n", (*ptrGameStart).gameName);
         printf("size of ptrGameStart after input: %zu\n", sizeof(*ptrGameStart));
-        size_t sizeOfStruct = sizeof(char);
+        size_t sizeOfStruct = sizeof(*ptrGameStart);
         //+sizeof(char[100])+(2*sizeof(int)); wie muss ich größe wählen?
 
         //Shared Memory
@@ -70,10 +70,8 @@ int main(int argc, char *argv[]) {
         (*ptrGameStart).gameName = "SHM Funktioniert!";
         (*ptrGameStart).gameNumber = 5;
         (*ptrGameStart).thinkerPID = getpid();
-        (*ptrGameStart).connectorPID = getppid();
+        (*ptrGameStart).connectorPID = pid;
         (*ptrGameStart).numberOfPlayer = 2;
-
-
 
         printf("size of size_t: %ld\n", sizeof(size_t));
         write(fd[1], &shmID, sizeof(int));

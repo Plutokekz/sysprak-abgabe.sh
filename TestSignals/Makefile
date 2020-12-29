@@ -1,8 +1,8 @@
-sys: testSHM.c shareMemory.o 
-	gcc -o sysprak-client testSHM.c shareMemory.o
+sys: testSignal.c shareMemory.o 
+	gcc -g -o sysprak-client testSignal.c shareMemory.o
 
 shareMemory.o: shareMemory.c shareMemory.h
-	gcc -c shareMemory.c
+	gcc -g -c shareMemory.c
 
 play:
 	./sysprak-client

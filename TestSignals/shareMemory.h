@@ -18,7 +18,7 @@
 
 typedef struct Player {
     int Number;
-    char* Name;
+    char *Name;
     int ReadyFlag;
 
 } Player;
@@ -31,6 +31,7 @@ typedef struct Share {
     int numberOfPlayer;
     pid_t thinkerPID; //nicht 100% sicher, evtl muss das int sein
     pid_t connectorPID;
+    struct Player players[]; //2. playerData nötig?
 
 } Share; //oder Share_t?
 
