@@ -15,15 +15,16 @@
 #define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
 #define GAMEKINDNAME "Bashni"
 #define CLIENT_VERSION "2.42"
-#define BUFF_SIZE 100
 
-void printServerResponse(char recvBuff[BUFF_SIZE], char *command) {
-  char outBuff[BUFF_SIZE];
+int SOCK;
+
+void printServerResponse(char *recvBuff, char *command) {
+  //char outBuff[BUFF_SIZE];
 
   if (command == NULL) {
     printf("S: %s", recvBuff);
-  } 
-  //else if (strcmp(command, "PLAYER") == 0) {
+  }
+  // else if (strcmp(command, "PLAYER") == 0) {
   //  int playerId;
   //  int total;
   //  char playerName[BUFF_SIZE];
@@ -37,25 +38,31 @@ void printServerResponse(char recvBuff[BUFF_SIZE], char *command) {
   //}
 }
 
-void recvCommand(int sock, char buff[BUFF_SIZE]) {
-
+char *recvCommand() {
   ssize_t bytes = 0;
+  const size_t BUFF_SIZE = 50;
+  int count = 2;
+  char *buff = malloc(count * BUFF_SIZE);
 
   do {
     ssize_t tmp;
-    switch ((tmp = recv(sock, buff + bytes, (BUFF_SIZE - bytes) - 1, 0))) {
+    switch ((tmp = recv(SOCK, buff + bytes, BUFF_SIZE - 1, 0))) {
     case -1:
       perror("receive error");
+      free(buff);
       exit(EXIT_FAILURE);
     case 0:
       printf("connection closed by server\n");
+      printf("already received: %s\n", buff);
+      free(buff);
       exit(EXIT_FAILURE);
-
     default:
       bytes += tmp; // increment returned bytes every loop (at least 1 byte)
-      break;
+      if ((count * BUFF_SIZE) - bytes < BUFF_SIZE) {
+        buff = realloc(buff, ++count * BUFF_SIZE); // no error handling
+      }
     }
-  } while (buff[bytes - 1] != '\n' && BUFF_SIZE > bytes);
+  } while (buff[bytes - 1] != '\n');
 
   buff[bytes] = '\0';
 
@@ -63,26 +70,49 @@ void recvCommand(int sock, char buff[BUFF_SIZE]) {
     printServerResponse(buff, NULL);
     exit(EXIT_FAILURE);
   }
+  return buff;
 }
 
-// return size for s
-size_t formatCommand(char buff[BUFF_SIZE], char *command, char *value) {
-  memset(buff, 0, BUFF_SIZE);
-  int rv;
+char *lookup(COMMAND c) {
+  char *command;
+  switch (c) {
+  case VERSION:
+    command = "VERSION";
+    break;
+  case ID:
+    command = "ID";
+    break;
+  case PLAYER:
+    command = "PLAYER";
+    break;
+  default:
+    printf("lookup COMMAND failed\n");
+    exit(EXIT_FAILURE);
+  }
+  return command;
+}
 
+// supports VERSION, ID, PLAYER
+void sendCommand(COMMAND c, char *value) {
+  char sendBuff[50] = "";
+  char *command = lookup(c);
+
+  size_t size;
   if (strlen(value) == 0) {
-    rv = sprintf(buff, "%s\n", command);
+    size = sprintf(sendBuff, "%s\n", command);
   } else {
-    rv = sprintf(buff, "%s %s\n", command, value);
+    size = sprintf(sendBuff, "%s %s\n", command, value);
   }
 
-  if (rv > 0)
-    return rv;
-  printf("command formatting error\n");
-  exit(EXIT_FAILURE);
+  if (send(SOCK, sendBuff, size, 0) > 0) {
+    printf("C: %s", sendBuff);
+  } else {
+    printf("sending failed\n");
+    exit(EXIT_FAILURE);
+  }
 }
 
-void performConnection(int sock, gameOpt *opt) {
+void setupConnection() {
   in_addr_t addr;
   struct sockaddr_in server;
   struct hostent *host;
@@ -99,48 +129,38 @@ void performConnection(int sock, gameOpt *opt) {
   server.sin_family = AF_INET; // upgrade to IPv6 later
   server.sin_port = htons(PORTNUMBER);
 
-  if (connect(sock, (struct sockaddr *)&server, sizeof(server)) < 0) {
+  if (connect(SOCK, (struct sockaddr *)&server, sizeof(server)) < 0) {
     perror("connection failed");
     exit(EXIT_FAILURE);
   }
+}
 
-  char recvBuff[BUFF_SIZE];
-  char sendBuff[BUFF_SIZE];
-  size_t size;
+void performConnection(int sock, opt_t *opt) {
+  SOCK = sock;
+  setupConnection(sock);
 
-  recvCommand(sock, recvBuff); // + MNM Gameserver <<Gameserver Version>>
-                               // accepting connections
+  char *recvBuff;
+
+  recvBuff = recvCommand(); // + MNM Gameserver <<Gameserver Version>>
+                            // accepting connections
   printServerResponse(recvBuff, NULL);
 
-  size = formatCommand(sendBuff, "VERSION", CLIENT_VERSION);
-  if (send(sock, sendBuff, size, 0) > 0) {
-    printf("C: %s", sendBuff);
-  } else {
-    exit(EXIT_FAILURE);
-  }
+  sendCommand(VERSION, CLIENT_VERSION);
 
-  recvCommand(
-      sock,
-      recvBuff); // + Client version accepted - please send Game-ID to join
+  recvBuff =
+      recvCommand(); // + Client version accepted - please send Game-ID to join
   printServerResponse(recvBuff, NULL);
 
-  size = formatCommand(sendBuff, "ID", opt->gameId);
-  if (send(sock, sendBuff, size, 0) > 0) {
-    printf("C: %s", sendBuff);
-  } else {
-    exit(EXIT_FAILURE);
-  }
+  sendCommand(ID, opt->gameId);
 
-  recvCommand(sock, recvBuff); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
+  recvBuff = recvCommand(); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
   printServerResponse(recvBuff, NULL);
 
-  size = formatCommand(sendBuff, "PLAYER", opt->playerId);
-  if (send(sock, sendBuff, size, 0) > 0) {
-    printf("C: %s", sendBuff);
-  } else {
-    exit(EXIT_FAILURE);
-  }
+  // retry without player id later
+  sendCommand(PLAYER, opt->playerId);
 
-  recvCommand(sock, recvBuff); //
+  recvBuff = recvCommand(); //
   printServerResponse(recvBuff, NULL);
+
+  free(recvBuff);
 }

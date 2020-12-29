@@ -3,13 +3,18 @@
 
 #define GAME_ID_SIZE 13
 
-typedef struct gameOpt
+typedef struct Opt
 {
     char gameId[14];
     char playerId[2];
-} gameOpt;
+} opt_t;
 
+typedef enum COMMAND { VERSION, ID, PLAYER } COMMAND;
 
-void performConnection(int sock, gameOpt *opt);
+void performConnection(int sock, opt_t *opt);
+
+void sendCommand(COMMAND c, char *value);
+
+char *recvCommand();
 
 #endif
