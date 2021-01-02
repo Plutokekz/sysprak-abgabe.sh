@@ -15,6 +15,6 @@ void performConnection(int sock, opt_t *opt);
 
 void sendCommand(COMMAND c, char *value);
 
-char *recvCommand();
+char *recvCommand(int lines);
 
 #endif

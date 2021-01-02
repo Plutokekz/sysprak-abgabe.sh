@@ -35,11 +35,11 @@ void setOptions(int argc, char *argv[], opt_t *opt) {
       break;
     case 'p': {
       unsigned int id;
-      if (sscanf(optarg, "%ui", &id) < 1 || !(id == 1 || id == 2)) {
+      if (sscanf(optarg, "%u", &id) < 1 || id < 1 || id > 2) {
         printf("wrong player id\n");
         exit(EXIT_FAILURE);
       }
-      strcpy(opt->playerId, optarg);
+      snprintf(opt->playerId, 2, "%u", id - 1);
       break;
     }
     case '?':

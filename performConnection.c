@@ -1,5 +1,6 @@
 #include <arpa/inet.h>
 #include <errno.h>
+#include <limits.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -15,11 +16,13 @@
 #define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
 #define GAMEKINDNAME "Bashni"
 #define CLIENT_VERSION "2.42"
+#define RECV_BUFF_SIZE 100
 
 int SOCK;
+char commandBuff[RECV_BUFF_SIZE];
 
 void printServerResponse(char *recvBuff, char *command) {
-  //char outBuff[BUFF_SIZE];
+  // char outBuff[BUFF_SIZE];
 
   if (command == NULL) {
     printf("S: %s", recvBuff);
@@ -38,15 +41,29 @@ void printServerResponse(char *recvBuff, char *command) {
   //}
 }
 
-char *recvCommand() {
-  ssize_t bytes = 0;
-  const size_t BUFF_SIZE = 50;
-  int count = 2;
-  char *buff = malloc(count * BUFF_SIZE);
+int charCount(char *s, int n) {
+  int count = 0;
+  for (int i = 0; i < n; i++) {
+    count += (s[i] == '\n');
+  }
+  return count;
+}
 
-  do {
+char *recvCommand(int lines) {
+  int lineCount = lines;
+  if (lines == 0) {
+    lineCount = INT_MAX;
+  }
+
+  ssize_t bytes = 0;
+  int count = 2;
+  char *buff = malloc(count * RECV_BUFF_SIZE);
+  strcpy(buff, commandBuff);
+  count += strlen(commandBuff);
+
+  while (lineCount > 0) {
     ssize_t tmp;
-    switch ((tmp = recv(SOCK, buff + bytes, BUFF_SIZE - 1, 0))) {
+    switch ((tmp = recv(SOCK, buff + bytes, RECV_BUFF_SIZE - 1, 0))) {
     case -1:
       perror("receive error");
       free(buff);
@@ -57,19 +74,30 @@ char *recvCommand() {
       free(buff);
       exit(EXIT_FAILURE);
     default:
-      bytes += tmp; // increment returned bytes every loop (at least 1 byte)
-      if ((count * BUFF_SIZE) - bytes < BUFF_SIZE) {
-        buff = realloc(buff, ++count * BUFF_SIZE); // no error handling
+      printf("bytes received: %li\n", tmp);
+      if (buff[0] == '-') {
+        printServerResponse(buff, NULL);
+        free(buff);
+        exit(EXIT_FAILURE);
       }
+      lineCount -= charCount(buff + bytes, tmp);
+      bytes += tmp; // increment returned bytes every loop (at least 1 byte)
+      char *end;
+      if (lineCount > lines &&
+          (end = strstr(buff, "END")) != NULL) {
+        end = strchr(end, '\n');
+        buff[bytes] = '\0';
+        memset(commandBuff, 0, RECV_BUFF_SIZE);
+        strcpy(commandBuff, end + 1);
+        end[1] = '\0';
+        lineCount = 0;
+      } else if ((count * RECV_BUFF_SIZE) - bytes < RECV_BUFF_SIZE) {
+        buff = realloc(buff, ++count * RECV_BUFF_SIZE); // no error handling
+      }
+      break;
     }
-  } while (buff[bytes - 1] != '\n');
-
-  buff[bytes] = '\0';
-
-  if (buff[0] == '-') {
-    printServerResponse(buff, NULL);
-    exit(EXIT_FAILURE);
   }
+  buff[bytes] = '\0';
   return buff;
 }
 
@@ -98,7 +126,7 @@ void sendCommand(COMMAND c, char *value) {
   char *command = lookup(c);
 
   size_t size;
-  if (strlen(value) == 0) {
+  if (value == NULL || strlen(value) == 0) {
     size = sprintf(sendBuff, "%s\n", command);
   } else {
     size = sprintf(sendBuff, "%s %s\n", command, value);
@@ -141,25 +169,25 @@ void performConnection(int sock, opt_t *opt) {
 
   char *recvBuff;
 
-  recvBuff = recvCommand(); // + MNM Gameserver <<Gameserver Version>>
-                            // accepting connections
+  recvBuff = recvCommand(1); // + MNM Gameserver <<Gameserver Version>>
+                             // accepting connections
   printServerResponse(recvBuff, NULL);
 
   sendCommand(VERSION, CLIENT_VERSION);
 
   recvBuff =
-      recvCommand(); // + Client version accepted - please send Game-ID to join
+      recvCommand(1); // + Client version accepted - please send Game-ID to join
   printServerResponse(recvBuff, NULL);
 
   sendCommand(ID, opt->gameId);
 
-  recvBuff = recvCommand(); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
+  recvBuff = recvCommand(2); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
   printServerResponse(recvBuff, NULL);
 
   // retry without player id later
   sendCommand(PLAYER, opt->playerId);
 
-  recvBuff = recvCommand(); //
+  recvBuff = recvCommand(0); //
   printServerResponse(recvBuff, NULL);
 
   free(recvBuff);
