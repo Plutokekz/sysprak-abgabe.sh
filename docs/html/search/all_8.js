@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['player_13',['Player',['../structPlayer.html',1,'']]],
-  ['port_14',['port',['../structConfig.html#a9b99e069f6e78fcb906d5effbb600e97',1,'Config']]]
+  ['opt_17',['Opt',['../structOpt.html',1,'']]],
+  ['opt_5ft_18',['opt_t',['../performConnection_8h.html#ae263205459038225639be8ab6f6bc760',1,'performConnection.h']]]
 ];

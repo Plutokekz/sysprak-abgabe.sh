@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['game_8',['game',['../structConfig.html#a33e02df7576d8c079ad6d58aae893727',1,'Config']]]
+  ['freegameinfo_9',['freeGameInfo',['../performConnection_8h.html#a6f72486ea2f588d520bfd79abf1c3e57',1,'performConnection.c']]]
 ];

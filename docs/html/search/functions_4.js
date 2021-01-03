@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['readconfigfile_33',['readConfigFile',['../config_8h.html#a0ce16bb38a3b691d96c8ec73fcd3d87f',1,'config.c']]]
+  ['getgameinfo_49',['getGameInfo',['../performConnection_8h.html#a3422bd40d37dcdb1b25b25ec3567d64f',1,'performConnection.c']]]
 ];

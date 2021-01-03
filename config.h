@@ -24,9 +24,11 @@
  * Contains all the information that which should be red from the Config file.
  */
 typedef struct Config {
-  int port; /**< the port number for the server as an integer#port. */
-  char *host; /**< the ip address for the server as an pointer to a string#host. */
-  char *game; /**< the name of the game for the server as an pointer to a string#game. */
+  int port;   /**< the port number for the server as an integer#port. */
+  char *host; /**< the ip address for the server as an pointer to a string#host.
+               */
+  char *game; /**< the name of the game for the server as an pointer to a
+                 string#game. */
 } config_t;
 
 /** @brief reads the config file with the given filename.
@@ -40,6 +42,8 @@ typedef struct Config {
 config_t *readConfigFile(char *filename);
 
 int parseLine(char *line, config_t *config);
+
+int parseLine_f(char *line, config_t *config, int line_index);
 
 int parseAttr(char *attr, char *value, config_t *config);
 

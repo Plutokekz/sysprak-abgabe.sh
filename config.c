@@ -94,7 +94,7 @@ int parseLine(char *line, config_t *config) {
   return -1;
 }
 
-int parseLineV2(char *line, config_t *config, int line_index) {
+int parseLine_f(char *line, config_t *config, int line_index) {
 
   char current, *attribute, *value;
   int is_value = 0, length_attr = 0, length_value = 0, index = 0,
@@ -125,9 +125,6 @@ int parseLineV2(char *line, config_t *config, int line_index) {
     }
     index++;
   }
-
-  // printf("Attr length %i, start index %i, Value length %i, start index %i\n",
-  // length_attr, start_index_attr, length_value, start_index_value);
 
   if (is_value == 0) {
     printf("Config File formatting error in line <%i>\n", line_index);
@@ -166,7 +163,7 @@ config_t *readConfigFile(char *filename) {
   }
 
   while (getline(&str, &line_size, fp) != -1) {
-    if (parseLineV2(str, config, index) != 0) {
+    if (parseLine_f(str, config, index) != 0) {
       freeConfig(config);
       free(str);
       fclose(fp);

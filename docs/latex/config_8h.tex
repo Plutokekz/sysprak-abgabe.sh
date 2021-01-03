@@ -33,6 +33,9 @@ typedef struct \mbox{\hyperlink{structConfig}{Config}} {\bfseries config\+\_\+t}
 \mbox{\Hypertarget{config_8h_ac52b4a54ac8297d586c79611b494d0af}\label{config_8h_ac52b4a54ac8297d586c79611b494d0af}} 
 int {\bfseries parse\+Line} (char $\ast$line, \mbox{\hyperlink{structConfig}{config\+\_\+t}} $\ast$config)
 \item 
+\mbox{\Hypertarget{config_8h_aadb66080e5170ff4fcd6b2d7b4389a0d}\label{config_8h_aadb66080e5170ff4fcd6b2d7b4389a0d}} 
+int {\bfseries parse\+Line\+\_\+f} (char $\ast$line, \mbox{\hyperlink{structConfig}{config\+\_\+t}} $\ast$config, int line\+\_\+index)
+\item 
 \mbox{\Hypertarget{config_8h_a0fef7a62f169d20671df7c6a478040e2}\label{config_8h_a0fef7a62f169d20671df7c6a478040e2}} 
 int {\bfseries parse\+Attr} (char $\ast$attr, char $\ast$value, \mbox{\hyperlink{structConfig}{config\+\_\+t}} $\ast$config)
 \item 
@@ -82,41 +85,41 @@ config\+\_\+t struct, NULL pointer if there was an Error.
 \end{DoxyReturn}
 
 
-Definition at line 150 of file config.\+c.
+Definition at line 147 of file config.\+c.
 
 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{150                                          \{}
-\DoxyCodeLine{151   FILE *fp;}
-\DoxyCodeLine{152   \mbox{\hyperlink{structConfig}{config\_t}} *config = malloc(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{structConfig}{config\_t}}));}
-\DoxyCodeLine{153   \textcolor{keywordtype}{char} *str = NULL;}
-\DoxyCodeLine{154   \textcolor{keywordtype}{size\_t} line\_size;}
-\DoxyCodeLine{155   \textcolor{keywordtype}{int} index = 0;}
-\DoxyCodeLine{156 }
-\DoxyCodeLine{157   fp = fopen(filename, \textcolor{stringliteral}{"{}r"{}});}
-\DoxyCodeLine{158   \textcolor{keywordflow}{if} (fp == NULL) \{}
-\DoxyCodeLine{159     printf(\textcolor{stringliteral}{"{}Could not find <\%s>\(\backslash\)n"{}}, filename);}
-\DoxyCodeLine{160     printf(\textcolor{stringliteral}{"{}Using Default Config File\(\backslash\)n"{}});}
-\DoxyCodeLine{161     fp = fopen(DEFAULT\_CONFIG\_FILENAME, \textcolor{stringliteral}{"{}r"{}});}
-\DoxyCodeLine{162     \textcolor{keywordflow}{if} (fp == NULL) \{}
-\DoxyCodeLine{163       printf(\textcolor{stringliteral}{"{}Default config file not available\(\backslash\)n"{}});}
-\DoxyCodeLine{164       \textcolor{keywordflow}{return} NULL;}
-\DoxyCodeLine{165     \}}
-\DoxyCodeLine{166   \}}
-\DoxyCodeLine{167 }
-\DoxyCodeLine{168   \textcolor{keywordflow}{while} (getline(\&str, \&line\_size, fp) != -\/1) \{}
-\DoxyCodeLine{169     \textcolor{keywordflow}{if} (parseLineV2(str, config, index) != 0) \{}
-\DoxyCodeLine{170       freeConfig(config);}
-\DoxyCodeLine{171       free(str);}
-\DoxyCodeLine{172       fclose(fp);}
-\DoxyCodeLine{173       \textcolor{keywordflow}{return} NULL;}
-\DoxyCodeLine{174     \}}
-\DoxyCodeLine{175     index++;}
-\DoxyCodeLine{176   \}}
-\DoxyCodeLine{177   free(str);}
-\DoxyCodeLine{178   fclose(fp);}
-\DoxyCodeLine{179 }
-\DoxyCodeLine{180   \textcolor{keywordflow}{return} config;}
-\DoxyCodeLine{181 \}}
+\DoxyCodeLine{147                                          \{}
+\DoxyCodeLine{148   FILE *fp;}
+\DoxyCodeLine{149   \mbox{\hyperlink{structConfig}{config\_t}} *config = malloc(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{structConfig}{config\_t}}));}
+\DoxyCodeLine{150   \textcolor{keywordtype}{char} *str = NULL;}
+\DoxyCodeLine{151   \textcolor{keywordtype}{size\_t} line\_size;}
+\DoxyCodeLine{152   \textcolor{keywordtype}{int} index = 0;}
+\DoxyCodeLine{153 }
+\DoxyCodeLine{154   fp = fopen(filename, \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{155   \textcolor{keywordflow}{if} (fp == NULL) \{}
+\DoxyCodeLine{156     printf(\textcolor{stringliteral}{"{}Could not find <\%s>\(\backslash\)n"{}}, filename);}
+\DoxyCodeLine{157     printf(\textcolor{stringliteral}{"{}Using Default Config File\(\backslash\)n"{}});}
+\DoxyCodeLine{158     fp = fopen(DEFAULT\_CONFIG\_FILENAME, \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{159     \textcolor{keywordflow}{if} (fp == NULL) \{}
+\DoxyCodeLine{160       printf(\textcolor{stringliteral}{"{}Default config file not available\(\backslash\)n"{}});}
+\DoxyCodeLine{161       \textcolor{keywordflow}{return} NULL;}
+\DoxyCodeLine{162     \}}
+\DoxyCodeLine{163   \}}
+\DoxyCodeLine{164 }
+\DoxyCodeLine{165   \textcolor{keywordflow}{while} (getline(\&str, \&line\_size, fp) != -\/1) \{}
+\DoxyCodeLine{166     \textcolor{keywordflow}{if} (parseLine\_f(str, config, index) != 0) \{}
+\DoxyCodeLine{167       freeConfig(config);}
+\DoxyCodeLine{168       free(str);}
+\DoxyCodeLine{169       fclose(fp);}
+\DoxyCodeLine{170       \textcolor{keywordflow}{return} NULL;}
+\DoxyCodeLine{171     \}}
+\DoxyCodeLine{172     index++;}
+\DoxyCodeLine{173   \}}
+\DoxyCodeLine{174   free(str);}
+\DoxyCodeLine{175   fclose(fp);}
+\DoxyCodeLine{176 }
+\DoxyCodeLine{177   \textcolor{keywordflow}{return} config;}
+\DoxyCodeLine{178 \}}
 
 \end{DoxyCode}

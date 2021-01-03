@@ -106,6 +106,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ac52b4a54ac8297d586c79611b494d0af"><td class="memItemLeft" align="right" valign="top"><a id="ac52b4a54ac8297d586c79611b494d0af"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>parseLine</b> (char *line, <a class="el" href="structConfig.html">config_t</a> *config)</td></tr>
 <tr class="separator:ac52b4a54ac8297d586c79611b494d0af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aadb66080e5170ff4fcd6b2d7b4389a0d"><td class="memItemLeft" align="right" valign="top"><a id="aadb66080e5170ff4fcd6b2d7b4389a0d"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>parseLine_f</b> (char *line, <a class="el" href="structConfig.html">config_t</a> *config, int line_index)</td></tr>
+<tr class="separator:aadb66080e5170ff4fcd6b2d7b4389a0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fef7a62f169d20671df7c6a478040e2"><td class="memItemLeft" align="right" valign="top"><a id="a0fef7a62f169d20671df7c6a478040e2"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>parseAttr</b> (char *attr, char *value, <a class="el" href="structConfig.html">config_t</a> *config)</td></tr>
 <tr class="separator:a0fef7a62f169d20671df7c6a478040e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -153,39 +156,39 @@ char *&#160;</td><td class="memItemRight" valign="bottom"><b>parseWord</b> (char
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>config_t struct, NULL pointer if there was an Error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="config_8c_source.html#l00150">150</a> of file <a class="el" href="config_8c_source.html">config.c</a>.</p>
-<div class="fragment"><div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                                         {</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  FILE *fp;</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;  <a class="code" href="structConfig.html">config_t</a> *config = malloc(<span class="keyword">sizeof</span>(<a class="code" href="structConfig.html">config_t</a>));</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  <span class="keywordtype">char</span> *str = NULL;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;  <span class="keywordtype">size_t</span> line_size;</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <span class="keywordtype">int</span> index = 0;</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  fp = fopen(filename, <span class="stringliteral">&quot;r&quot;</span>);</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;  <span class="keywordflow">if</span> (fp == NULL) {</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    printf(<span class="stringliteral">&quot;Could not find &lt;%s&gt;\n&quot;</span>, filename);</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    printf(<span class="stringliteral">&quot;Using Default Config File\n&quot;</span>);</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    fp = fopen(DEFAULT_CONFIG_FILENAME, <span class="stringliteral">&quot;r&quot;</span>);</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordflow">if</span> (fp == NULL) {</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;      printf(<span class="stringliteral">&quot;Default config file not available\n&quot;</span>);</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;      <span class="keywordflow">return</span> NULL;</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    }</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;  }</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; </div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;  <span class="keywordflow">while</span> (getline(&amp;str, &amp;line_size, fp) != -1) {</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keywordflow">if</span> (parseLineV2(str, config, index) != 0) {</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;      freeConfig(config);</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;      free(str);</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;      fclose(fp);</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;      <span class="keywordflow">return</span> NULL;</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    }</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    index++;</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;  }</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;  free(str);</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;  fclose(fp);</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;  <span class="keywordflow">return</span> config;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="config_8c_source.html#l00147">147</a> of file <a class="el" href="config_8c_source.html">config.c</a>.</p>
+<div class="fragment"><div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                                         {</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  FILE *fp;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  <a class="code" href="structConfig.html">config_t</a> *config = malloc(<span class="keyword">sizeof</span>(<a class="code" href="structConfig.html">config_t</a>));</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;  <span class="keywordtype">char</span> *str = NULL;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  <span class="keywordtype">size_t</span> line_size;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;  <span class="keywordtype">int</span> index = 0;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160; </div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;  fp = fopen(filename, <span class="stringliteral">&quot;r&quot;</span>);</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <span class="keywordflow">if</span> (fp == NULL) {</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    printf(<span class="stringliteral">&quot;Could not find &lt;%s&gt;\n&quot;</span>, filename);</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    printf(<span class="stringliteral">&quot;Using Default Config File\n&quot;</span>);</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    fp = fopen(DEFAULT_CONFIG_FILENAME, <span class="stringliteral">&quot;r&quot;</span>);</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keywordflow">if</span> (fp == NULL) {</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;      printf(<span class="stringliteral">&quot;Default config file not available\n&quot;</span>);</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;      <span class="keywordflow">return</span> NULL;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    }</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;  }</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;  <span class="keywordflow">while</span> (getline(&amp;str, &amp;line_size, fp) != -1) {</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordflow">if</span> (parseLine_f(str, config, index) != 0) {</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;      freeConfig(config);</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;      free(str);</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;      fclose(fp);</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;      <span class="keywordflow">return</span> NULL;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    }</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    index++;</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;  }</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;  free(str);</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;  fclose(fp);</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;  <span class="keywordflow">return</span> config;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;}</div>
 <div class="ttc" id="astructConfig_html"><div class="ttname"><a href="structConfig.html">Config</a></div><div class="ttdoc">Config struct.</div><div class="ttdef"><b>Definition:</b> <a href="config_8h_source.html#l00026">config.h:26</a></div></div>
 </div><!-- fragment -->
 </div>

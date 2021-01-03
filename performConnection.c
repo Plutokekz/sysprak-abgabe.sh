@@ -65,7 +65,7 @@ game_info *parseCommand(char *recvBuff, COMMAND c) {
     return &gameInfo;
   }
   rawAppend(&gameInfo, recvBuff);
-  int rv;
+  int rv = 0;
   switch (c) {
   case START: {
     char *serverVersionBuff = calloc(strlen(recvBuff), 1);

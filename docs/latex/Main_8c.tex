@@ -18,7 +18,7 @@ Main file of the program.
 \doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \mbox{\hyperlink{Main_8c_a259e5e2af35082b1169c6cb794725c08}{set\+Options}} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]}, \mbox{\hyperlink{structOpt}{opt\+\_\+t}} $\ast$opt, \mbox{\hyperlink{structConfig}{config\+\_\+t}} $\ast$$\ast$config)
+void \mbox{\hyperlink{Main_8c_a259e5e2af35082b1169c6cb794725c08}{set\+Options}} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]}, \mbox{\hyperlink{performConnection_8h_ae263205459038225639be8ab6f6bc760}{opt\+\_\+t}} $\ast$opt, \mbox{\hyperlink{structConfig}{config\+\_\+t}} $\ast$$\ast$config)
 \begin{DoxyCompactList}\small\item\em Parse arguments. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{Main_8c_a0ddf1224851353fc92bfbff6f499fa97}\label{Main_8c_a0ddf1224851353fc92bfbff6f499fa97}} 
 int \mbox{\hyperlink{Main_8c_a0ddf1224851353fc92bfbff6f499fa97}{main}} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
@@ -35,7 +35,7 @@ This file is executed first. It contains the whole logic for connecting the diff
 \index{Main.c@{Main.c}!setOptions@{setOptions}}
 \index{setOptions@{setOptions}!Main.c@{Main.c}}
 \doxysubsubsection{\texorpdfstring{setOptions()}{setOptions()}}
-{\footnotesize\ttfamily void set\+Options (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]},  }\item[{\mbox{\hyperlink{structOpt}{opt\+\_\+t}} $\ast$}]{opt,  }\item[{\mbox{\hyperlink{structConfig}{config\+\_\+t}} $\ast$$\ast$}]{config }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void set\+Options (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]},  }\item[{\mbox{\hyperlink{performConnection_8h_ae263205459038225639be8ab6f6bc760}{opt\+\_\+t}} $\ast$}]{opt,  }\item[{\mbox{\hyperlink{structConfig}{config\+\_\+t}} $\ast$$\ast$}]{config }\end{DoxyParamCaption})}
 
 
 
@@ -75,11 +75,11 @@ Definition at line 38 of file Main.\+c.
 \DoxyCodeLine{48       \textcolor{keywordflow}{break};}
 \DoxyCodeLine{49     \textcolor{keywordflow}{case} \textcolor{charliteral}{'p'}: \{}
 \DoxyCodeLine{50       \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} id;}
-\DoxyCodeLine{51       \textcolor{keywordflow}{if} (sscanf(optarg, \textcolor{stringliteral}{"{}\%ui"{}}, \&\textcolor{keywordtype}{id}) < 1 || !(\textcolor{keywordtype}{id} == 1 || \textcolor{keywordtype}{id} == 2)) \{}
+\DoxyCodeLine{51       \textcolor{keywordflow}{if} (sscanf(optarg, \textcolor{stringliteral}{"{}\%u"{}}, \&\textcolor{keywordtype}{id}) < 1 || id < 1 || id > 2) \{}
 \DoxyCodeLine{52         printf(\textcolor{stringliteral}{"{}wrong player id\(\backslash\)n"{}});}
 \DoxyCodeLine{53         exit(EXIT\_FAILURE);}
 \DoxyCodeLine{54       \}}
-\DoxyCodeLine{55       strcpy(opt-\/>playerId, optarg);}
+\DoxyCodeLine{55       snprintf(opt-\/>playerId, 2, \textcolor{stringliteral}{"{}\%u"{}}, \textcolor{keywordtype}{id} -\/ 1);}
 \DoxyCodeLine{56       \textcolor{keywordflow}{break};}
 \DoxyCodeLine{57     \}}
 \DoxyCodeLine{58     \textcolor{keywordflow}{case} \textcolor{charliteral}{'c'}:}
