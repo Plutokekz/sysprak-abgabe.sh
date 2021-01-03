@@ -1,26 +1,9 @@
-#include <arpa/inet.h>
-#include <errno.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
-
 #include "performConnection.h"
-#include "shareMemory.h"
-
-#define PORTNUMBER 1357
-#define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
-#define GAMEKINDNAME "Bashni"
-#define CLIENT_VERSION "2.42"
 
 int SOCK;
 
 void printServerResponse(char *recvBuff, char *command) {
-  //char outBuff[BUFF_SIZE];
+  // char outBuff[BUFF_SIZE];
 
   if (command == NULL) {
     printf("S: %s", recvBuff);
@@ -113,34 +96,61 @@ void sendCommand(COMMAND c, char *value) {
   }
 }
 
-void setupConnection() {
+int _connect(char *hostname, int port) {
+
   in_addr_t addr;
   struct sockaddr_in server;
   struct hostent *host;
 
-  if ((host = gethostbyname(HOSTNAME)) ==
-      NULL) // upgrade to better function later
-  {
+  // upgrade to better function later
+  if ((host = gethostbyname(hostname)) == NULL) {
     printf("can't resolve hostname\n");
-    exit(EXIT_FAILURE);
+    return -1;
   }
 
   memcpy(&server.sin_addr, host->h_addr_list[0], sizeof(addr));
 
   server.sin_family = AF_INET; // upgrade to IPv6 later
-  server.sin_port = htons(PORTNUMBER);
+  server.sin_port = htons(port);
 
   if (connect(SOCK, (struct sockaddr *)&server, sizeof(server)) < 0) {
     perror("connection failed");
-    exit(EXIT_FAILURE);
+    return -1;
   }
+  return 0;
 }
 
-void performConnection(int sock, opt_t *opt) {
-  
+int setupConnectionByStruct(config_t *config) {
+  if (_connect(config->host, config->port) != 0) {
+    return -1;
+  }
+  return 0;
+}
+
+int setupConnection() {
+  if (_connect(HOSTNAME, PORTNUMBER) != 0) {
+    return -1;
+  }
+  return 0;
+}
+
+void performConnection(int sock, opt_t *opt, config_t *config) {
 
   SOCK = sock;
-  setupConnection(sock);
+
+  if (config == NULL) {
+    printf("Using Default Settings\n");
+    if(setupConnection() != 0){
+      exit(EXIT_FAILURE);
+    }
+  } else {
+    printf("Using Config Settings\n");
+    printfConfig(config);
+    if (setupConnectionByStruct(config) != 0) {
+      exit(EXIT_FAILURE);
+    }
+    freeConfig(config);
+  }
 
   char *recvBuff;
 
@@ -150,8 +160,8 @@ void performConnection(int sock, opt_t *opt) {
 
   sendCommand(VERSION, CLIENT_VERSION);
 
-  recvBuff =
-      recvCommand(); // + Client version accepted - please send Game-ID to join
+  recvBuff = recvCommand();
+  // + Client version accepted - please send Game-ID to join
   printServerResponse(recvBuff, NULL);
 
   sendCommand(ID, opt->gameId);
@@ -165,9 +175,9 @@ void performConnection(int sock, opt_t *opt) {
   recvBuff = recvCommand(); //
   printServerResponse(recvBuff, NULL);
 
-  //SHM (TODO Tim: Einbinden, sobald Erik's struct erstellt wurde)
-  //int shmID = setupSHM_GameStart(struct x);
-  //shmID über Pipeline an Parent Prozess (Thinker) schicken
+  // SHM (TODO Tim: Einbinden, sobald Erik's struct erstellt wurde)
+  // int shmID = setupSHM_GameStart(struct x);
+  // shmID über Pipeline an Parent Prozess (Thinker) schicken
 
   free(recvBuff);
 }

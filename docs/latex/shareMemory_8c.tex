@@ -1,0 +1,83 @@
+\hypertarget{shareMemory_8c}{}\doxysection{share\+Memory.\+c File Reference}
+\label{shareMemory_8c}\index{shareMemory.c@{shareMemory.c}}
+
+
+SHM fuctions.  
+
+
+{\ttfamily \#include \char`\"{}share\+Memory.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{shareMemory_8c_ac89bbdd9883422a7c52b9af79acb9b4a}\label{shareMemory_8c_ac89bbdd9883422a7c52b9af79acb9b4a}} 
+int \mbox{\hyperlink{shareMemory_8c_ac89bbdd9883422a7c52b9af79acb9b4a}{create\+SHM}} (size\+\_\+t memory\+Size)
+\begin{DoxyCompactList}\small\item\em reserves the memory\+Size for SHM. The shm\+ID is essencial to identify the SHM. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{shareMemory_8c_a6ed51f59c7e57ee04ce7afa9cac55e30}\label{shareMemory_8c_a6ed51f59c7e57ee04ce7afa9cac55e30}} 
+void $\ast$ \mbox{\hyperlink{shareMemory_8c_a6ed51f59c7e57ee04ce7afa9cac55e30}{attach\+SHM}} (int shm\+ID)
+\begin{DoxyCompactList}\small\item\em attaches the reserved memory to the memory of our current process. afterwards, we can work with the returned shm. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{shareMemory_8c_a6a99edf44b62ddee00fe98d1abf3b008}\label{shareMemory_8c_a6a99edf44b62ddee00fe98d1abf3b008}} 
+void \mbox{\hyperlink{shareMemory_8c_a6a99edf44b62ddee00fe98d1abf3b008}{detach\+SHM}} (void $\ast$shm)
+\begin{DoxyCompactList}\small\item\em detaches the SHM from our current process memory. (Currently unused) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{shareMemory_8c_afb2e27ff9c4d7355309486fb75d85215}\label{shareMemory_8c_afb2e27ff9c4d7355309486fb75d85215}} 
+int \mbox{\hyperlink{shareMemory_8c_afb2e27ff9c4d7355309486fb75d85215}{delete\+SHM}} (int shm\+ID)
+\begin{DoxyCompactList}\small\item\em deletes the SHM identified by shm\+ID and frees the allocated memory. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{shareMemory_8c_a59c2ef054763f153adc89ba354b33200}{setup\+SHM\+\_\+\+Game\+Start}} (struct \mbox{\hyperlink{structShare}{Share}} $\ast$gs)
+\begin{DoxyCompactList}\small\item\em Takes a struct and inserts it into a SHM Segment. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{shareMemory_8c_a7d5a3c25ebdc4d7dbe46c570e3a2312d}\label{shareMemory_8c_a7d5a3c25ebdc4d7dbe46c570e3a2312d}} 
+int \mbox{\hyperlink{shareMemory_8c_a7d5a3c25ebdc4d7dbe46c570e3a2312d}{setup\+SHM\+\_\+\+String}} (char test\+String\mbox{[}100\mbox{]})
+\begin{DoxyCompactList}\small\item\em Puts test\+String into a SHM Segment. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+SHM fuctions. 
+
+Contains all functions for SHM. 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{shareMemory_8c_a59c2ef054763f153adc89ba354b33200}\label{shareMemory_8c_a59c2ef054763f153adc89ba354b33200}} 
+\index{shareMemory.c@{shareMemory.c}!setupSHM\_GameStart@{setupSHM\_GameStart}}
+\index{setupSHM\_GameStart@{setupSHM\_GameStart}!shareMemory.c@{shareMemory.c}}
+\doxysubsubsection{\texorpdfstring{setupSHM\_GameStart()}{setupSHM\_GameStart()}}
+{\footnotesize\ttfamily int setup\+SHM\+\_\+\+Game\+Start (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structShare}{Share}} $\ast$}]{gs }\end{DoxyParamCaption})}
+
+
+
+Takes a struct and inserts it into a SHM Segment. 
+
+This function is customized to fit the Game Start Data (see Milestone 0). It creates (create\+SHM) a SHM Segment. Attaches the Segment to the ptr\+Game\+Start adress and the fills it with the content of gs. the nested players struct is constructed with a while loop because it must be able to handel a variable amount of players (see Milestone 2). 
+
+Definition at line 63 of file share\+Memory.\+c.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{63                                          \{}
+\DoxyCodeLine{64 }
+\DoxyCodeLine{65     \textcolor{comment}{//Initialize SHM struct}}
+\DoxyCodeLine{66     \textcolor{keyword}{struct }\mbox{\hyperlink{structShare}{Share}} *ptrGameStart;}
+\DoxyCodeLine{67     \textcolor{keywordtype}{size\_t} sizeOfStruct = \textcolor{keyword}{sizeof}(\textcolor{keyword}{struct }\mbox{\hyperlink{structShare}{Share}}) +}
+\DoxyCodeLine{68     (*gs).numberOfPlayers*\textcolor{keyword}{sizeof}(\textcolor{keyword}{struct} \mbox{\hyperlink{structPlayer}{Player}});}
+\DoxyCodeLine{69     \textcolor{keywordtype}{int} shmID = \mbox{\hyperlink{shareMemory_8c_ac89bbdd9883422a7c52b9af79acb9b4a}{createSHM}}(sizeOfStruct);}
+\DoxyCodeLine{70     ptrGameStart = \mbox{\hyperlink{shareMemory_8c_a6ed51f59c7e57ee04ce7afa9cac55e30}{attachSHM}}(shmID);}
+\DoxyCodeLine{71 }
+\DoxyCodeLine{72     \textcolor{comment}{//Transfer Data to SHM struct}}
+\DoxyCodeLine{73     \textcolor{comment}{//TODO Tim: struct von Erik einbinden.}}
+\DoxyCodeLine{74     (*ptrGameStart).gameName = (*gs).gameName;}
+\DoxyCodeLine{75     (*ptrGameStart).gameNumber = (*gs).gameNumber;}
+\DoxyCodeLine{76     (*ptrGameStart).thinkerPID = getpid();}
+\DoxyCodeLine{77     (*ptrGameStart).connectorPID = getppid();}
+\DoxyCodeLine{78     (*ptrGameStart).numberOfPlayers = (*gs).numberOfPlayers;}
+\DoxyCodeLine{79 }
+\DoxyCodeLine{80     \textcolor{comment}{//Transfer Player Data into nested Player struct;}}
+\DoxyCodeLine{81     \textcolor{keywordtype}{int} numP = (*gs).numberOfPlayers; \textcolor{comment}{//Anzahl Spieler, Info aus Erik's struct holen}}
+\DoxyCodeLine{82     \textcolor{keywordtype}{int} p = 0; }
+\DoxyCodeLine{83         }
+\DoxyCodeLine{84     \textcolor{keywordflow}{while} (p < numP) \{}
+\DoxyCodeLine{85         (*ptrGameStart).players[p].number = p;}
+\DoxyCodeLine{86         (*ptrGameStart).players[p].name = (*gs).players[p].name;}
+\DoxyCodeLine{87         (*ptrGameStart).players[p].readyFlag = (*gs).players[p].readyFlag; }
+\DoxyCodeLine{88         p++;}
+\DoxyCodeLine{89     \}}
+\DoxyCodeLine{90     \textcolor{keywordflow}{return} shmID;}
+\DoxyCodeLine{91 \}}
+
+\end{DoxyCode}

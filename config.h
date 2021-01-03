@@ -15,10 +15,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_LINE_LENGTH 300
+#define DEFAULT_CONFIG_FILENAME "tests/config.conf"
 
 /**
  * @brief Config struct
+ * \struct Config
  *
  * Contains all the information that which should be red from the Config file.
  */
