@@ -10,6 +10,7 @@
 #include <unistd.h>
 
 #include "performConnection.h"
+#include "shareMemory.h"
 
 #define PORTNUMBER 1357
 #define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
@@ -136,6 +137,8 @@ void setupConnection() {
 }
 
 void performConnection(int sock, opt_t *opt) {
+  
+
   SOCK = sock;
   setupConnection(sock);
 
@@ -161,6 +164,10 @@ void performConnection(int sock, opt_t *opt) {
 
   recvBuff = recvCommand(); //
   printServerResponse(recvBuff, NULL);
+
+  //SHM (TODO Tim: Einbinden, sobald Erik's struct erstellt wurde)
+  //int shmID = setupSHM_GameStart(struct x);
+  //shmID über Pipeline an Parent Prozess (Thinker) schicken
 
   free(recvBuff);
 }

@@ -14,24 +14,23 @@
 #include <fcntl.h>
 #include <limits.h>
 
-#define BUFF_SIZE 100
 
-typedef struct PlayerData {
-    int PlayerNumber;
-    char* PlayerName;
-    int PlayerReadyFlag;
+typedef struct Player {
+    int number;
+    char *name;
+    int readyFlag;
 
-} PlayerData;
+} Player;
 
 
 typedef struct Share {
     
     char* gameName;
     int gameNumber;
-    int numberOfPlayer;
-    pid_t thinkerPID; //nicht 100% sicher, evtl muss das int sein
+    int numberOfPlayers;
+    pid_t thinkerPID;
     pid_t connectorPID;
-    //struct PlayerData PlayerData; //2. playerData nötig?
+    struct Player players[];
 
 } Share; //oder Share_t?
 
@@ -42,5 +41,9 @@ void *attachSHM(int shmID);
 void detachSHM(void *shm);
 
 int deleteSHM(int shmID);
+
+int setupSHM_String(char *ptrString);
+
+int setupSHM_GameStart(struct Share *gs);
 
 #endif

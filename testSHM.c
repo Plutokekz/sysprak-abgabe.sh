@@ -1,12 +1,10 @@
 #include "shareMemory.h"
 
-int main(int argc, char *argv[]) {
+int main() {
     pid_t pid;
     int fd[2];
     int shmID;
-    //size_t size = sizeof(struct Share)+
-    //sizeof(size_t)+20*(sizeof(int))+2*(sizeof(pid_t));
-    //große size deklarieren zum testen
+    int shmID2;
 
 	if (pipe(fd) < 0) {
 		perror("Fehler bei Pipe");
@@ -17,7 +15,6 @@ int main(int argc, char *argv[]) {
 		exit(EXIT_FAILURE);
 	} else if (pid > 0) { //Elternprozess
         close(fd[1]); //Schreib Pipe Schließen
-        size_t pSize;
 
         //Wait for Child
     	if ((waitpid (pid, NULL, 0)) < 0) {
@@ -25,59 +22,56 @@ int main(int argc, char *argv[]) {
 			exit (EXIT_FAILURE);
 		}
         read(fd[0], &shmID, sizeof(int));
-        
-        printf("Size of pSize (parent, after pipe): %zu\n", pSize);//TEMP
+        read(fd[0], &shmID2, sizeof(int));
         
         //Create Struct
         struct Share *ptrGameStart, gameStart;
         ptrGameStart = &gameStart;
-        printf("Size of ptrGS after creation: %zu\n", sizeof(*ptrGameStart));
-        printf("shmID Parent: %d\n", shmID);
         ptrGameStart = attachSHM(shmID);
-        printf("Size of ptrGS after reading SHM: %zu\n", sizeof(*ptrGameStart));
-        
         
         //Testen
         printf("Erfolg: %s\n", (*ptrGameStart).gameName);
         printf("GameNumber: %d\n", (*ptrGameStart).gameNumber);
-        printf("NumberOfPlayers: %d\n", (*ptrGameStart).numberOfPlayer);
+        printf("NumberOfPlayers: %d\n", (*ptrGameStart).numberOfPlayers);
         printf("Pid Parent(Thinker): %d, Pid Child: %d\n",
         (*ptrGameStart).thinkerPID, (*ptrGameStart).connectorPID);
+        printf("Player 0: %s\n", (*ptrGameStart).players[0].name);
+        printf("Player 1: %s\n", (*ptrGameStart).players[1].name);
 
+        //Test setupSHM_String
+        char *ptrString;
+        ptrString = attachSHM(shmID2);
+        printf("Your String: %s\n", ptrString);
 
+        close(fd[0]);
         deleteSHM(shmID);
+        deleteSHM(shmID2);
         exit(EXIT_SUCCESS); 
      
     } else { //Kindprozess
         close(fd[0]); //close read
-        struct Share *ptrGameStart, gameStart;
-        ptrGameStart = &gameStart;
-        printf("size of ptrGameStart: %zu\n", sizeof(*ptrGameStart));
-        
-        
 
-        printf("ptrGS befüllt, gameName: %s\n", (*ptrGameStart).gameName);
-        printf("size of ptrGameStart after input: %zu\n", sizeof(*ptrGameStart));
-        size_t sizeOfStruct = sizeof(*ptrGameStart);
-        //+sizeof(char[100])+(2*sizeof(int)); wie muss ich größe wählen?
+        struct Share *ptrTestGS, testGS;
+        ptrTestGS = &testGS;
+        (*ptrTestGS).gameName = "SHM Funktioniert!";
+        (*ptrTestGS).gameNumber = 42;
+        (*ptrTestGS).numberOfPlayers = 2;
+        (*ptrTestGS).players[0].number = 0;
+        (*ptrTestGS).players[0].name = "Anna";
+        (*ptrTestGS).players[0].readyFlag = 1;
+        (*ptrTestGS).players[1].number = 1;
+        (*ptrTestGS).players[1].name = "Ben";
+        (*ptrTestGS).players[1].readyFlag = 1;
+        shmID = setupSHM_GameStart(ptrTestGS);
 
-        //Shared Memory
-        shmID = createSHM(sizeOfStruct);
-        printf("shmID Child: %d\n", shmID);
-        ptrGameStart = attachSHM(shmID); 
+        //100 ist temporär, können wir uns noch überlegen wie groß das sein muss
+        char testString[100] = "setupSHM_String funktioniert :)";
+        shmID2 = setupSHM_String(testString);
 
-        //struct befüllen
-        (*ptrGameStart).gameName = "SHM Funktioniert!";
-        (*ptrGameStart).gameNumber = 5;
-        (*ptrGameStart).thinkerPID = getpid();
-        (*ptrGameStart).connectorPID = pid;
-        (*ptrGameStart).numberOfPlayer = 2;
-
-        printf("size of size_t: %ld\n", sizeof(size_t));
         write(fd[1], &shmID, sizeof(int));
+        write(fd[1], &shmID2, sizeof(int));
         close(fd[1]);
     } 
 }
 
 
-//struct person *personPtr, person1;
