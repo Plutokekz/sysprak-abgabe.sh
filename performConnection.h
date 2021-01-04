@@ -36,7 +36,8 @@
 #define CLIENT_VERSION "2.42"
 
 /**
- * @brief Config struct
+ * @brief Opt struct
+ * \struct Opt
  *
  * Contains all the information passed as command-line arguments.
  */
@@ -46,7 +47,8 @@ typedef struct Opt {
 } opt_t;
 
 /**
- * @brief Config struct
+ * @brief Player struct
+ * \struct Player
  *
  * Describes a player sent by the server.
  */
@@ -57,7 +59,8 @@ typedef struct Player {
 } player_t;
 
 /**
- * @brief Config struct
+ * @brief GameInfo struct
+ * \struct GameInfo
  *
  * Contains all relevant information of the prolog phase.
  * Don't forget to free memory after usage.
@@ -72,14 +75,16 @@ typedef struct GameInfo {
 } game_info;
 
 /**
- * @brief Config struct
+ * @brief COMMAND enum
+ * \enum COMMAND
  *
  * Contains all relevant commands for following functions.
  */
 typedef enum COMMAND { RETURN, START, VERSION, ID, PLAYER } COMMAND;
 
 /**
- * @brief Config struct
+ * @brief P_FLAG enum
+ * \enum P_FLAG
  *
  * Contains the flags for the function printProlog.
  */
