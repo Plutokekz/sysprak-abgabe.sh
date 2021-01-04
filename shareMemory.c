@@ -65,7 +65,7 @@ int setupSHM_GameStart(struct Share *gs) {
     //Initialize SHM struct
     struct Share *ptrGameStart;
     size_t sizeOfStruct = sizeof(struct Share) +
-    (*gs).numberOfPlayers*sizeof(struct Player);
+    (*gs).numberOfPlayers*sizeof(shmPlayer_t);
     int shmID = createSHM(sizeOfStruct);
     ptrGameStart = attachSHM(shmID);
 
