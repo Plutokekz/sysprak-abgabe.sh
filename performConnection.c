@@ -118,7 +118,8 @@ game_info *parseCommand(char *recvBuff, COMMAND c) {
           if (playerNameSize < maxPlayerNameSize) {
             // playerName = <<Player-Name>> <<Ready>>
             playerNameBuff[playerNameSize - 2] = '\0';
-            player.ready = playerNameBuff[playerNameSize - 1];
+            player.ready =
+                playerNameBuff[playerNameSize - 1] == '1' ? true : false;
             strcpy(player.playerName, playerNameBuff);
             memcpy(gameInfo.playerList[i], &player, sizeof(player_t));
           }
@@ -163,7 +164,8 @@ void printProlog(game_info *gameInfo, P_FLAG f) {
     printf("In %s %s:\n", gameInfo->gamekindName, gameInfo->gameName);
     for (unsigned int i = 0; i < gameInfo->total; i++) {
       if (gameInfo->playerList[i]->ready) {
-        printf("Player %u (%s) is ready\n", gameInfo->playerList[i]->playerId + 1,
+        printf("Player %u (%s) is ready\n",
+               gameInfo->playerList[i]->playerId + 1,
                gameInfo->playerList[i]->playerName);
       } else {
         printf("Player %u (%s) is not ready\n",
@@ -200,7 +202,7 @@ void *recvCommand(int lines) {
   int count = 2;
   char *buff = malloc(count * RECV_BUFF_SIZE);
   strcpy(buff, commandBuff);
-  count += strlen(commandBuff);
+  bytes += strlen(commandBuff);
 
   while (lineCount > 0) {
     ssize_t tmp;
@@ -223,12 +225,13 @@ void *recvCommand(int lines) {
       }
       lineCount -= charCount(buff + bytes, tmp);
       bytes += tmp; // increment returned bytes every loop (at least 1 byte)
+      buff[bytes] = '\0';
       char *end;
       if (lineCount > lines && (end = strstr(buff, "END")) != NULL) {
         end = strchr(end, '\n');
-        buff[bytes] = '\0';
         memset(commandBuff, 0, RECV_BUFF_SIZE);
-        strcpy(commandBuff, end + 1);
+        strcpy(commandBuff,
+               end + 1); // splitted string size is less than RECV_BUFF_SIZe
         end[1] = '\0';
         lineCount = 0;
       } else if ((count * RECV_BUFF_SIZE) - bytes < RECV_BUFF_SIZE) {
@@ -237,7 +240,6 @@ void *recvCommand(int lines) {
       break;
     }
   }
-  buff[bytes] = '\0';
   return (void *)buff;
 }
 
@@ -301,7 +303,7 @@ void performConnection(int sock, opt_t *opt, config_t *config) {
 
   if (config == NULL) {
     printf("Using Default Settings\n");
-    if(setupConnection() != 0){
+    if (setupConnection() != 0) {
       exit(EXIT_FAILURE);
     }
   } else {
