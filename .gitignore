@@ -1,2 +1,4 @@
 /docs/*
 sysprak-client
+.vscode/
+*.o
