@@ -15,7 +15,7 @@ else
 fi
 
 rm -f $VALGRIND_LOG
-valgrind --log-file=$VALGRIND_LOG -q --leak-check=full --trace-children=yes ./$EXECNAME -g $ID -p $PLAYER1 -c $CONFIG
+valgrind --log-file=$VALGRIND_LOG -q --leak-check=full --show-leak-kinds=all --trace-children=yes ./$EXECNAME -g $ID -p $PLAYER1 -c $CONFIG
 
 if [[ $(cat $VALGRIND_LOG) == "" ]]; then
   echo "Valgrind: OK"
@@ -23,3 +23,6 @@ else
   echo "Valgrind did find errors:"
   cat $VALGRIND_LOG
 fi
+
+make clean -s
+rm log

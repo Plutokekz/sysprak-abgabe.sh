@@ -1,4 +1,4 @@
-#include "shareMemory.h"
+#include "../shareMemory.h"
 
 int main() {
     pid_t pid;

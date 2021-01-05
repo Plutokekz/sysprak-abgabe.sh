@@ -7,6 +7,26 @@
  * project.
  */
 
+/*! \mainpage My Personal Index Page
+ *
+ * \section intro_sec Introduction
+ *
+ * This is the introduction.
+ *
+ * \section install_sec Installation
+ *
+ * \subsection step1 Step 1: Opening the box
+ *
+ * \htmlonly
+ * <iframe width="560" height="315"
+ * src="https://www.youtube.com/embed/KXl7xGMg9qQ?controls=0" frameborder="0"
+ * allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope;
+ * picture-in-picture" allowfullscreen></iframe> \endhtmlonly
+ *
+ *
+ * etc...
+ */
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,6 +35,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <limits.h>
 
 #include "config.h"
 #include "performConnection.h"
@@ -57,7 +79,7 @@ void setOptions(int argc, char *argv[], opt_t *opt, config_t **config) {
     }
     case 'c':
       *config = readConfigFile(optarg);
-    break;
+      break;
     case '?':
       printf("wrong argument\n");
       freeConfig(*config);
@@ -83,9 +105,14 @@ int main(int argc, char *argv[]) {
   pid_t pid;
   opt_t opt = {"", ""};
   config_t *config = NULL;
+  int fd[2];
 
   setOptions(argc, argv, &opt, &config);
 
+  if (pipe(fd) < 0) {
+    perror("Error creating pipe.");
+    exit(EXIT_FAILURE);
+  }
 
   // splitting up in thinker and connector
   if ((pid = fork()) < 0) {
@@ -101,6 +128,9 @@ int main(int argc, char *argv[]) {
       return EXIT_FAILURE;
     }
     performConnection(sock, &opt, config);
+
+
+
     close(sock);
   } else {
     // parent process thinker

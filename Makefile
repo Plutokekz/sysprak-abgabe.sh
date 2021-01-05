@@ -1,4 +1,8 @@
 EFLAGS = -Wall -Wextra -Werror -g
+G=0000000000000
+C=tests/config.conf
+export C
+export G
 
 sysprak-client: Main.c performConnection.o config.o shareMemory.o
 	gcc $(EFLAGS) -o sysprak-client Main.c performConnection.o config.o shareMemory.o
@@ -16,7 +20,7 @@ play:
 	./sysprak-client
 
 vg:
-	valgrind --leak-check=full --trace-children=yes ./sysprak-client
+	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./sysprak-client -g $(G) -c $(C)
 
 clean:
 	rm performConnection.o config.o shareMemory.o

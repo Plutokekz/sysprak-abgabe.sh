@@ -310,6 +310,7 @@ void performConnection(int sock, opt_t *opt, config_t *config) {
     printf("Using Config Settings\n");
     printfConfig(config);
     if (setupConnectionByStruct(config) != 0) {
+      freeConfig(config);
       exit(EXIT_FAILURE);
     }
     freeConfig(config);

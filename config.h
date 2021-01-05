@@ -41,8 +41,16 @@ typedef struct Config {
  */
 config_t *readConfigFile(char *filename);
 
+/**
+ * @brief frees a config_t struct
+ * @param config pointer
+ */
 void freeConfig(config_t *config);
 
+/**
+ * @brief print a config_t struct
+ * @param config pointer
+ */
 void printfConfig(config_t *config);
 
 #endif // BASCHNI_CONFIG_H

@@ -6,11 +6,14 @@
 
 #include "performConnection.h"
 #include "shareMemory.h"
+#include "cmdPipe.h"
 
-void gamePhase() {
+void gamePhase(int *fd[2]) {
   char *buffer;
   int shmID;
   void *shmPtr;
+
+  close(fd[1]);
 
   shmID = createSHM(1024);
   shmPtr = attachSHM(shmID);
@@ -36,6 +39,11 @@ void gamePhase() {
         // TODO Lukas: add communicating move from thinker to connector and writing it into move
 
         char *move;
+
+        if(receiveCMD(*fd[0], move)<0){
+          printf("Error receiving cmd\n");
+          //Error handling exiting / recalculating the move ?
+        }
 
         sendCommand (PLAY, move);
     }
