@@ -1,4 +1,4 @@
-EFLAGS = -Wall -Wextra -Werror -g
+EFLAGS = -Werror -g
 
 sysprak-client: testSHM.c performConnection.o config.o shareMemory.o
 	gcc $(EFLAGS) -o sysprak-client testSHM.c performConnection.o config.o shareMemory.o

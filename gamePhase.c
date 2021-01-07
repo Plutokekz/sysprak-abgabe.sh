@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "performConnection.h"
+#include "signal.h"
 
 void gamePhase() {
   char *buffer;
@@ -22,7 +23,7 @@ void gamePhase() {
         // TODO Heinrich: add writing of current gameboard state into SHM
 
         // TODO Tim : Add sending signal to thinker and print current gameboard
-
+        kill(getppid(), SIGUSR1);
         // TODO Lukas: add communicating move from thinker to connector and writing it into move
 
         char *move;

@@ -1,10 +1,17 @@
 #include "shareMemory.h"
+#include "mySignal.h"
+
+void my_handler(int signum) {
+    if (signum == SIGUSR1) { 
+        printf("Received SIGUSR1!\n");
+    }
+}
 
 int main() {
     pid_t pid;
     int fd[2];
-    int shmID;
-    int shmID2;
+    //int shmID;
+    //int shmID2;
 
 	if (pipe(fd) < 0) {
 		perror("Fehler bei Pipe");
@@ -14,7 +21,7 @@ int main() {
 		perror("Fehler bei Fork");
 		exit(EXIT_FAILURE);
 	} else if (pid > 0) { //Elternprozess
-        close(fd[1]); //Schreib Pipe Schließen
+        /*close(fd[1]); //Schreib Pipe Schließen
 
         //Wait for Child
     	if ((waitpid (pid, NULL, 0)) < 0) {
@@ -38,18 +45,46 @@ int main() {
         printf("Player 0: %s\n", (*ptrGameStart).players[0].name);
         printf("Player 1: %s\n", (*ptrGameStart).players[1].name);
 
+        
+        //Test Signal
+        
+
+
+        signal(SIGUSR1, my_handler);
+        
+        
+        
+        void handleSig1 (int sig) {
+            //think();
+            printf("Signal received");
+        }
+
+        struct sigaciton sa = { 0 };
+        sa.sa_flags = SA_RESTART;
+        sa.sa_handler = &handleSig1;
+        sigaciton(SIGUSR1, &sa, NULL);
+
+
         //Test setupSHM_String
-        char *ptrString;
+        /*char *ptrString;
         ptrString = attachSHM(shmID2);
         printf("Your String: %s\n", ptrString);
 
         close(fd[0]);
         deleteSHM(shmID);
         deleteSHM(shmID2);
-        exit(EXIT_SUCCESS); 
+        exit(EXIT_SUCCESS);*/
+        sleep(10);
+        signal(SIGUSR1, my_handler);
+
      
     } else { //Kindprozess
-        close(fd[0]); //close read
+        /*close(fd[0]); //close read
+
+
+        //Test Signal**
+
+       
 
         struct Share *ptrTestGS, testGS;
         ptrTestGS = &testGS;
@@ -70,7 +105,10 @@ int main() {
 
         write(fd[1], &shmID, sizeof(int));
         write(fd[1], &shmID2, sizeof(int));
-        close(fd[1]);
+        close(fd[1]);*/
+        sleep(3);
+        kill(getppid(), SIGUSR1);
+        printf("sending signal to Parent\n");
     } 
 }
 
