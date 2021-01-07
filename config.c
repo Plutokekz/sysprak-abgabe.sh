@@ -4,8 +4,12 @@
 #include "config.h"
 
 void printfConfig(config_t *config) {
-  printf("<Config{\n   game: %s\n   host: %s\n   port: %d\n}>\n", config->game,
-         config->host, config->port);
+  if (config != NULL) {
+    printf("<Config{game: %s, host: %s, port: %d}>\n", config->game,
+           config->host, config->port);
+  } else {
+    printf("Given Config is NULL\n");
+  }
 }
 
 void freeConfig(config_t *config) {
@@ -18,6 +22,7 @@ void freeConfig(config_t *config) {
     }
     free(config);
   }
+  config = NULL;
 }
 
 int parseAttr(char *attr, char *value, config_t *config) {
@@ -75,38 +80,96 @@ int parseLine(char *line, config_t *config) {
     }
   }
   if (attr != NULL || value != NULL) {
-    // printf("length attr: %d, length value: %d\n", length_attr, length_value);
+    printf("length attr: %d, length value: %d\n", length_attr, length_value);
     attr = (char *)realloc(attr, length_attr + 1);
     attr[length_attr] = '\0';
 
     value = (char *)realloc(value, length_value + 1);
     value[length_value] = '\0';
 
-    // printf("Attribute: %s with the Value: %s\n", attr, value);
+    printf("Attribute: %s with the Value: %s\n", attr, value);
     return parseAttr(attr, value, config);
   }
 
   return -1;
 }
 
+int parseLine_f(char *line, config_t *config, int line_index) {
+
+  char current, *attribute, *value;
+  int is_value = 0, length_attr = 0, length_value = 0, index = 0,
+      start_index_value = 0, start_index_attr = 0, a = 0, v = 0;
+
+  while ((current = line[index]) != '\0') {
+
+    if (current == '=') {
+      is_value = 1;
+    }
+
+    else if ((current >= 'A' && current <= 'Z') ||
+             (current >= 'a' && current <= 'z') || current == '.' ||
+             (current >= '0' && current <= '9')) {
+      if (is_value != 1) {
+        length_attr++;
+        if (a == 0) {
+          start_index_attr = index;
+          a = 1;
+        }
+      } else {
+        length_value++;
+        if (v == 0) {
+          start_index_value = index;
+          v = 1;
+        }
+      }
+    }
+    index++;
+  }
+
+  if (is_value == 0) {
+    printf("Config File formatting error in line <%i>\n", line_index);
+    return -1;
+  }
+
+  attribute = (char *)malloc(sizeof(char) * length_attr + 1);
+  attribute = memcpy(attribute, line + start_index_attr, length_attr);
+  attribute[length_attr] = '\0';
+
+  value = (char *)malloc(sizeof(char) * length_value + 1);
+  value = memcpy(value, line + start_index_value, length_value);
+  value[length_value] = '\0';
+
+  // printf("Attribute %s, Value %s\n", attribute, value);
+
+  return parseAttr(attribute, value, config);
+}
+
 config_t *readConfigFile(char *filename) {
   FILE *fp;
   config_t *config = malloc(sizeof(config_t));
-  char *str = malloc(sizeof(char) * MAX_LINE_LENGTH);
+  char *str = NULL;
+  size_t line_size;
+  int index = 0;
 
   fp = fopen(filename, "r");
   if (fp == NULL) {
-    printf("Could not open file %s", filename);
-    return NULL;
+    printf("Could not find <%s>\n", filename);
+    printf("Using Default Config File\n");
+    fp = fopen(DEFAULT_CONFIG_FILENAME, "r");
+    if (fp == NULL) {
+      printf("Default config file not available\n");
+      return NULL;
+    }
   }
 
-  while (fgets(str, MAX_LINE_LENGTH, fp) != NULL) {
-    if (parseLine(str, config) != 0) {
+  while (getline(&str, &line_size, fp) != -1) {
+    if (parseLine_f(str, config, index) != 0) {
       freeConfig(config);
       free(str);
       fclose(fp);
       return NULL;
     }
+    index++;
   }
   free(str);
   fclose(fp);

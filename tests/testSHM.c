@@ -1,11 +1,12 @@
-#include "shareMemory.h"
-#include "mySignal.h"
+#include "../shareMemory.h"
+#include "../mySignal.h"
 
 void my_handler(int signum) {
     if (signum == SIGUSR1) { 
         printf("Received SIGUSR1!\n");
     }
 }
+
 
 int main() {
     pid_t pid;

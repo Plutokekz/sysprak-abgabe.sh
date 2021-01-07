@@ -1,0 +1,6 @@
+/docs/*
+sysprak-client
+/tests/sysprak-client-tests
+.vscode/
+*.o
+d

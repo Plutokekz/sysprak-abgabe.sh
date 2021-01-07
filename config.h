@@ -15,17 +15,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_LINE_LENGTH 300
+#define DEFAULT_CONFIG_FILENAME "tests/config.conf"
 
 /**
  * @brief Config struct
+ * \struct Config
  *
  * Contains all the information that which should be red from the Config file.
  */
 typedef struct Config {
-  int port; /**< the port number for the server as an integer#port. */
-  char *host; /**< the ip address for the server as an pointer to a string#host. */
-  char *game; /**< the name of the game for the server as an pointer to a string#game. */
+  int port;   /**< the port number for the server as an integer#port. */
+  char *host; /**< the ip address for the server as an pointer to a string#host.
+               */
+  char *game; /**< the name of the game for the server as an pointer to a
+                 string#game. */
 } config_t;
 
 /** @brief reads the config file with the given filename.
@@ -38,14 +41,16 @@ typedef struct Config {
  */
 config_t *readConfigFile(char *filename);
 
-int parseLine(char *line, config_t *config);
-
-int parseAttr(char *attr, char *value, config_t *config);
-
+/**
+ * @brief frees a config_t struct
+ * @param config pointer
+ */
 void freeConfig(config_t *config);
 
+/**
+ * @brief print a config_t struct
+ * @param config pointer
+ */
 void printfConfig(config_t *config);
-
-char *parseWord(char *ptr, char c, int len);
 
 #endif // BASCHNI_CONFIG_H

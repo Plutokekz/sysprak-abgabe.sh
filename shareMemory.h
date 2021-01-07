@@ -15,12 +15,12 @@
 #include <limits.h>
 
 
-typedef struct Player {
+typedef struct shmPlayer {
     int number;
     char *name;
     int readyFlag;
 
-} Player;
+} shmPlayer_t;
 
 
 typedef struct Share {
@@ -30,7 +30,7 @@ typedef struct Share {
     int numberOfPlayers;
     pid_t thinkerPID;
     pid_t connectorPID;
-    struct Player players[];
+    shmPlayer_t players[];
 
 } Share; //oder Share_t?
 
