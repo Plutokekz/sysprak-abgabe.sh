@@ -297,7 +297,7 @@ int setupConnection() {
   return 0;
 }
 
-void performConnection(int sock, opt_t *opt, config_t *config) {
+void performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f) {
 
   SOCK = sock;
 
@@ -347,6 +347,6 @@ void performConnection(int sock, opt_t *opt, config_t *config) {
   // shmID über Pipeline an Parent Prozess (Thinker) schicken
 
   game_info *gameInfo = getGameInfo();
-  printProlog(gameInfo, PRETTY);
+  printProlog(gameInfo, f);
   freeGameInfo(gameInfo);
 }
