@@ -2,6 +2,12 @@
 #include "mySignal.h"
 
 
+void thinker() {
+
+    
+}
+
+
 
 
 
