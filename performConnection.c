@@ -11,6 +11,7 @@
 #include <unistd.h>
 
 #include "performConnection.h"
+#include "shareMemory.h"
 
 #define PORTNUMBER 1357
 #define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
@@ -347,6 +348,16 @@ void performConnection(int sock, opt_t *opt, config_t *config) {
   // shmID über Pipeline an Parent Prozess (Thinker) schicken
 
   game_info *gameInfo = getGameInfo();
-  printProlog(gameInfo, PRETTY);
+
+  //Setup SHM for gameInfo
+  int shmID = setupSHM_GameStart(gameInfo);
+  deleteSHM(shmID);
+  //Pipe für shmID
+  /*close(fd[0]); entweder var in perfC oder shmID ausgeben aus perfC
+  if (write(fd[1], &shmID, sizeof(int)) < 0) {
+    perror("Error writing to pipe");
+  }*/
+
+  printProlog(gameInfo, DEBUG);
   freeGameInfo(gameInfo);
 }

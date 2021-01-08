@@ -4,8 +4,9 @@
  * 
  *  Contains all functions for SHM.
  */
-
+#include "performConnection.h"
 #include "shareMemory.h"
+
 
 /** @brief reserves the memorySize for SHM.
  * The shmID is essencial to identify the SHM.
@@ -60,33 +61,33 @@ int deleteSHM(int shmID) {
  * the nested players struct is constructed with a while loop because it must
  * be able to handel a variable amount of players (see Milestone 2).
  */
-int setupSHM_GameStart(struct Share *gs) {
+int setupSHM_GameStart(game_info *gs) {
 
     //Initialize SHM struct
     struct Share *ptrGameStart;
     size_t sizeOfStruct = sizeof(struct Share) +
-    (*gs).numberOfPlayers*sizeof(shmPlayer_t);
+    (*gs).total*sizeof(shmPlayer_t);
     int shmID = createSHM(sizeOfStruct);
     ptrGameStart = attachSHM(shmID);
 
     //Transfer Data to SHM struct
     //TODO Tim: struct von Erik einbinden.
     (*ptrGameStart).gameName = (*gs).gameName;
-    (*ptrGameStart).gameNumber = (*gs).gameNumber;
+    //(*ptrGameStart).ownPlayerNumber = (*gs).playerList[0].playerId;
     (*ptrGameStart).thinkerPID = getpid();
     (*ptrGameStart).connectorPID = getppid();
-    (*ptrGameStart).numberOfPlayers = (*gs).numberOfPlayers;
+    (*ptrGameStart).numberOfPlayers = (*gs).total;
 
     //Transfer Player Data into nested Player struct;
-    int numP = (*gs).numberOfPlayers; //Anzahl Spieler, Info aus Erik's struct holen
+    /*int numP = (*gs).total; //Anzahl Spieler, Info aus Erik's struct holen
     int p = 0; 
         
     while (p < numP) {
         (*ptrGameStart).players[p].number = p;
-        (*ptrGameStart).players[p].name = (*gs).players[p].name;
-        (*ptrGameStart).players[p].readyFlag = (*gs).players[p].readyFlag; 
+        (*ptrGameStart).players[p].name = (*gs).playerList[p].playerName;
+        (*ptrGameStart).players[p].readyFlag = (*gs).playerList[p].readyFlag; 
         p++;
-    }
+    }*/
     return shmID;
 }
 

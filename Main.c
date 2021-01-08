@@ -40,7 +40,6 @@
 
 #include "config.h"
 #include "performConnection.h"
-#include "shareMemory.h" //evtl. unnötig
 
 /** @brief Parse arguments
  *
@@ -138,7 +137,7 @@ int main(int argc, char *argv[]) {
     freeConfig(config);
 
     //Thinker
-    
+    //thinker();
 
     // last part of thinker; executed after game over
     if (waitpid(pid, NULL, 0) == -1) {

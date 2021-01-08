@@ -11,8 +11,8 @@ void my_handler(int signum) {
 int main() {
     pid_t pid;
     int fd[2];
-    //int shmID;
-    //int shmID2;
+    int shmID;
+    int shmID2;
 
 	if (pipe(fd) < 0) {
 		perror("Fehler bei Pipe");
@@ -22,7 +22,7 @@ int main() {
 		perror("Fehler bei Fork");
 		exit(EXIT_FAILURE);
 	} else if (pid > 0) { //Elternprozess
-        /*close(fd[1]); //Schreib Pipe Schließen
+        close(fd[1]); //Schreib Pipe Schließen
 
         //Wait for Child
     	if ((waitpid (pid, NULL, 0)) < 0) {
@@ -39,7 +39,7 @@ int main() {
         
         //Testen
         printf("Erfolg: %s\n", (*ptrGameStart).gameName);
-        printf("GameNumber: %d\n", (*ptrGameStart).gameNumber);
+        printf("GameNumber: %d\n", (*ptrGameStart).ownPlayerNumber);
         printf("NumberOfPlayers: %d\n", (*ptrGameStart).numberOfPlayers);
         printf("Pid Parent(Thinker): %d, Pid Child: %d\n",
         (*ptrGameStart).thinkerPID, (*ptrGameStart).connectorPID);
@@ -67,20 +67,20 @@ int main() {
 
 
         //Test setupSHM_String
-        /*char *ptrString;
+        char *ptrString;
         ptrString = attachSHM(shmID2);
         printf("Your String: %s\n", ptrString);
 
         close(fd[0]);
         deleteSHM(shmID);
         deleteSHM(shmID2);
-        exit(EXIT_SUCCESS);*/
+        exit(EXIT_SUCCESS);
         sleep(10);
         signal(SIGUSR1, my_handler);
 
      
     } else { //Kindprozess
-        /*close(fd[0]); //close read
+        close(fd[0]); //close read
 
 
         //Test Signal**
@@ -90,7 +90,7 @@ int main() {
         struct Share *ptrTestGS, testGS;
         ptrTestGS = &testGS;
         (*ptrTestGS).gameName = "SHM Funktioniert!";
-        (*ptrTestGS).gameNumber = 42;
+        (*ptrTestGS).ownPlayerNumber = 42;
         (*ptrTestGS).numberOfPlayers = 2;
         (*ptrTestGS).players[0].number = 0;
         (*ptrTestGS).players[0].name = "Anna";
@@ -106,7 +106,7 @@ int main() {
 
         write(fd[1], &shmID, sizeof(int));
         write(fd[1], &shmID2, sizeof(int));
-        close(fd[1]);*/
+        close(fd[1]);
         sleep(3);
         kill(getppid(), SIGUSR1);
         printf("sending signal to Parent\n");

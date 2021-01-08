@@ -14,11 +14,12 @@
 #include <fcntl.h>
 #include <limits.h>
 
+#include "performConnection.h"
 
 typedef struct shmPlayer {
     int number;
     char *name;
-    int readyFlag;
+    bool readyFlag;
 
 } shmPlayer_t;
 
@@ -26,13 +27,13 @@ typedef struct shmPlayer {
 typedef struct Share {
     
     char* gameName;
-    int gameNumber;
+    int ownPlayerNumber;
     int numberOfPlayers;
     pid_t thinkerPID;
     pid_t connectorPID;
     shmPlayer_t players[];
 
-} Share; //oder Share_t?
+} Share; 
 
 int createSHM(size_t memorySize);
 
@@ -44,6 +45,6 @@ int deleteSHM(int shmID);
 
 int setupSHM_String(char *ptrString);
 
-int setupSHM_GameStart(struct Share *gs);
+int setupSHM_GameStart(game_info *gs);
 
 #endif
