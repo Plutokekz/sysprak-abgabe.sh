@@ -57,9 +57,9 @@
  *  @param **config pointer to a pointer of a config_t struct
  *
  */
-void setOptions(int argc, char *argv[], opt_t *opt, config_t **config) {
+void setOptions(int argc, char *argv[], opt_t *opt, config_t **config, P_FLAG *f) {
   int c;
-  while ((c = getopt(argc, argv, "g:p:c:")) != -1) {
+  while ((c = getopt(argc, argv, "g:p:c:d")) != -1) {
     switch (c) {
     case 'g':
       if (strlen(optarg) != GAME_ID_SIZE) {
@@ -79,6 +79,9 @@ void setOptions(int argc, char *argv[], opt_t *opt, config_t **config) {
     }
     case 'c':
       *config = readConfigFile(optarg);
+      break;
+    case 'd':
+      *f = DEBUG;
       break;
     case '?':
       printf("wrong argument\n");
@@ -105,9 +108,10 @@ int main(int argc, char *argv[]) {
   pid_t pid;
   opt_t opt = {"", ""};
   config_t *config = NULL;
+  P_FLAG f = PRETTY;
   int fd[2];
 
-  setOptions(argc, argv, &opt, &config);
+  setOptions(argc, argv, &opt, &config, &f);
 
   if (pipe(fd) < 0) {
     perror("Error creating pipe.");
@@ -127,7 +131,7 @@ int main(int argc, char *argv[]) {
       perror("creating socket failed");
       return EXIT_FAILURE;
     }
-    performConnection(sock, &opt, config);
+    performConnection(sock, &opt, config, f);
 
 
 
