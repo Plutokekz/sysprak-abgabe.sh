@@ -89,7 +89,7 @@ typedef enum P_FLAG { PRETTY, DEBUG } P_FLAG;
  *  @param sock socket to connect with
  *  @param opt options used for the connection
  */
-void performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f);
+int performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f);
 
 /** @brief Sends command to server.
  *

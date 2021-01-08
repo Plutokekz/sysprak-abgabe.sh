@@ -73,6 +73,7 @@ int setupSHM_GameStart(game_info *gs) {
     //Transfer Data to SHM struct
     //TODO Tim: struct von Erik einbinden.
     (*ptrGameStart).gameName = (*gs).gameName;
+    printf("in SHM.c, gameName: %s\n", (*ptrGameStart).gameName);
     //(*ptrGameStart).ownPlayerNumber = (*gs).playerList[0].playerId;
     (*ptrGameStart).thinkerPID = getpid();
     (*ptrGameStart).connectorPID = getppid();

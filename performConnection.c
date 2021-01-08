@@ -298,7 +298,7 @@ int setupConnection() {
   return 0;
 }
 
-void performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f) {
+int performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f) {
 
   SOCK = sock;
 
@@ -351,13 +351,11 @@ void performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f) {
 
   //Setup SHM for gameInfo
   int shmID = setupSHM_GameStart(gameInfo);
-  deleteSHM(shmID);
-  //Pipe für shmID
-  /*close(fd[0]); entweder var in perfC oder shmID ausgeben aus perfC
-  if (write(fd[1], &shmID, sizeof(int)) < 0) {
-    perror("Error writing to pipe");
-  }*/
+  printf("shmID performC: %d\n", shmID);
+
 
   printProlog(gameInfo, f);
   freeGameInfo(gameInfo);
+
+  return shmID;
 }

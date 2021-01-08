@@ -37,9 +37,13 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <signal.h>
 
+#include "shareMemory.h"
 #include "config.h"
 #include "performConnection.h"
+#include "thinker.h"
+
 
 /** @brief Parse arguments
  *
@@ -101,6 +105,11 @@ void setOptions(int argc, char *argv[], opt_t *opt, config_t **config, P_FLAG *f
   }
 }
 
+void handleSigusr1 (int sig) {
+  write(0, "Ahhh! sig works!\n", 17);
+  thinker();
+}
+
 /** @brief set Options and splits up program in Thinker and Connector
  *
  */
@@ -131,7 +140,23 @@ int main(int argc, char *argv[]) {
       perror("creating socket failed");
       return EXIT_FAILURE;
     }
-    performConnection(sock, &opt, config, f);
+    int shmID = performConnection(sock, &opt, config, f);
+
+
+
+      //Pipe für shmID
+    close(fd[0]); //entweder var in perfC oder shmID ausgeben aus perfC
+    if (write(fd[1], &shmID, sizeof(int)) < 0) {
+      perror("Error writing to pipe");
+    }
+
+    //Signal--------------
+
+    kill(getppid(), SIGUSR1);
+
+
+    //---------------------
+
 
 
 
@@ -140,8 +165,13 @@ int main(int argc, char *argv[]) {
     // parent process thinker
     freeConfig(config);
 
-    //Thinker
-    //thinker();
+    struct sigaction sa;
+    sa.sa_handler = handleSigusr1;
+    sa.sa_flags = 0;
+    sigemptyset(&sa.sa_mask);
+    sigaction(SIGUSR1, &sa, NULL);
+
+
 
     // last part of thinker; executed after game over
     if (waitpid(pid, NULL, 0) == -1) {
@@ -149,6 +179,14 @@ int main(int argc, char *argv[]) {
       perror("error waiting for connector");
       return EXIT_FAILURE;
     }
+
+
+    
+    /*struct Share *ptrGameStart, gameStart;
+    ptrGameStart = &gameStart;
+    ptrGameStart = attachSHM(shmID);
+    printf("shmID thi: %d.\nErfolg: %s\n", shmID, (*ptrGameStart).gameName);*/
+
   }
 
   return EXIT_SUCCESS;

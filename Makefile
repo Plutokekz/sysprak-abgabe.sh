@@ -4,8 +4,8 @@ C=tests/config.conf
 export C
 export G
 
-sysprak-client: Main.c performConnection.o config.o shareMemory.o
-	gcc $(EFLAGS) -o sysprak-client Main.c performConnection.o config.o shareMemory.o
+sysprak-client: Main.c performConnection.o config.o shareMemory.o thinker.o
+	gcc $(EFLAGS) -o sysprak-client Main.c performConnection.o config.o shareMemory.o thinker.o
 
 performConnection.o: performConnection.c performConnection.h
 	gcc $(EFLAGS) -c performConnection.c
@@ -13,8 +13,11 @@ performConnection.o: performConnection.c performConnection.h
 config.o: config.c
 	gcc $(EFLAGS) -c config.c
 
-shareMemory.o: shareMemory.c
+shareMemory.o: shareMemory.c shareMemory.h
 	gcc $(EFLAGS) -c shareMemory.c
+
+thinker.o: thinker.c thinker.h
+	gcc $(EFLAGS) -c thinker.c
 
 play:
 	./sysprak-client
@@ -23,4 +26,4 @@ vg:
 	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./sysprak-client -g $(G) -c $(C)
 
 clean:
-	rm performConnection.o config.o shareMemory.o
+	rm performConnection.o config.o shareMemory.o thinker.o
