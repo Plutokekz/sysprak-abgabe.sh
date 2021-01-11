@@ -16,7 +16,7 @@ config.o: config.c
 shareMemory.o: shareMemory.c
 	gcc $(EFLAGS) -c shareMemory.c
 
-play:
+play: sysprak-client
 	./sysprak-client -g $(GAME_ID) -p $(PLAYER)
 
 vg:
