@@ -2,11 +2,11 @@
 #include "thinker.h"
 
 
-void thinker() {
+void thinker(int *fd) {
 
     //Thinker*************
     int shmID;
-    close(fd[1]); //entweder var in perfC oder shmID ausgeben aus perfC
+    close(fd[1]);
     if (read(fd[0], &shmID, sizeof(int)) < 0) {
       perror("Error writing to pipe");
     }
@@ -14,7 +14,25 @@ void thinker() {
     struct Share *ptrGameStart, gameStart;
     ptrGameStart = &gameStart;
     ptrGameStart = attachSHM(shmID);
-    printf("in thinker(), Erfolg: %s\n",(*ptrGameStart).gameName);
+
+    //thinker Guard auswerten
+    if (ptrGameStart->thinkerGuard == 1) {
+      ptrGameStart->thinkerGuard = 0;
+
+      //insert print spielfeld
+
+
+    } else {
+      perror("thinkerGuard not equal 1");
+      exit(EXIT_FAILURE);
+    }
+
+    write(0, ptrGameStart->gameName, sizeof(ptrGameStart->gameName));
+    /*printf("shmID in thinker.c: %d\n", shmID);
+    printf("in thinker(), Erfolg: %s\n", (*ptrGameStart).gameName);
+    printf("numofPlayers: %d\n", (*ptrGameStart).numberOfPlayers);
+    printf("thinkerPID, in thinker.c: %d\n", (*ptrGameStart).thinkerPID);
+    printf("player 0: %d\n", ptrGameStart->players[0].number);*/
     deleteSHM(shmID);
 
 }

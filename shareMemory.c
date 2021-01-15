@@ -66,29 +66,33 @@ int setupSHM_GameStart(game_info *gs) {
     //Initialize SHM struct
     struct Share *ptrGameStart;
     size_t sizeOfStruct = sizeof(struct Share) +
-    (*gs).total*sizeof(shmPlayer_t);
+    (*gs).total*sizeof(shmPlayer_t)+(500*sizeof(char));
     int shmID = createSHM(sizeOfStruct);
     ptrGameStart = attachSHM(shmID);
 
+    printf("shmID in ShareMem.c: %d\n", shmID);
+
     //Transfer Data to SHM struct
     //TODO Tim: struct von Erik einbinden.
-    (*ptrGameStart).gameName = (*gs).gameName;
-    printf("in SHM.c, gameName: %s\n", (*ptrGameStart).gameName);
-    //(*ptrGameStart).ownPlayerNumber = (*gs).playerList[0].playerId;
-    (*ptrGameStart).thinkerPID = getpid();
-    (*ptrGameStart).connectorPID = getppid();
-    (*ptrGameStart).numberOfPlayers = (*gs).total;
+    ptrGameStart->gameName = gs->gameName;
+    printf("in SHM.c, gameName: %s\n", ptrGameStart->gameName);
+    ptrGameStart->ownPlayerNumber = gs->playerList[0]->playerId;
+    ptrGameStart->thinkerPID = getpid();
+    ptrGameStart->connectorPID = getppid();
+    ptrGameStart->numberOfPlayers = gs->total;
+    ptrGameStart->thinkerGuard = 1; //TODO auf 0 setzen und entscheiden,
+    //wo wir Guard = 1 setzen wollen.
 
     //Transfer Player Data into nested Player struct;
-    /*int numP = (*gs).total; //Anzahl Spieler, Info aus Erik's struct holen
+    int numP = (*gs).total; //Anzahl Spieler, Info aus Erik's struct holen
     int p = 0; 
         
     while (p < numP) {
-        (*ptrGameStart).players[p].number = p;
-        (*ptrGameStart).players[p].name = (*gs).playerList[p].playerName;
-        (*ptrGameStart).players[p].readyFlag = (*gs).playerList[p].readyFlag; 
+        ptrGameStart->players[p].number = p;
+        ptrGameStart->players[p].name = gs->playerList[p]->playerName;
+        ptrGameStart->players[p].readyFlag = gs->playerList[p]->ready;
         p++;
-    }*/
+    }
     return shmID;
 }
 

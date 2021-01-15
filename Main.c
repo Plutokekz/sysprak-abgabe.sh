@@ -38,11 +38,15 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <signal.h>
+#include <pthread.h>
 
 #include "shareMemory.h"
 #include "config.h"
 #include "performConnection.h"
 #include "thinker.h"
+
+int fd[2];
+
 
 
 /** @brief Parse arguments
@@ -105,9 +109,9 @@ void setOptions(int argc, char *argv[], opt_t *opt, config_t **config, P_FLAG *f
   }
 }
 
-void handleSigusr1 (int sig) {
+void handleSigusr1 () {
   write(0, "Ahhh! sig works!\n", 17);
-  thinker();
+  thinker(fd);
 }
 
 /** @brief set Options and splits up program in Thinker and Connector
@@ -118,7 +122,7 @@ int main(int argc, char *argv[]) {
   opt_t opt = {"", ""};
   config_t *config = NULL;
   P_FLAG f = PRETTY;
-  int fd[2];
+  //int fd[2];
 
   setOptions(argc, argv, &opt, &config, &f);
 
@@ -135,14 +139,14 @@ int main(int argc, char *argv[]) {
   } else if (pid == 0) {
     // child process connector
     int sock;
+    printf("child pid: %d\n", getpid());
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
       freeConfig(config);
       perror("creating socket failed");
       return EXIT_FAILURE;
     }
     int shmID = performConnection(sock, &opt, config, f);
-
-
+    printf("shmID in Child proc: %d\n", shmID);
 
       //Pipe für shmID
     close(fd[0]); //entweder var in perfC oder shmID ausgeben aus perfC
@@ -151,41 +155,28 @@ int main(int argc, char *argv[]) {
     }
 
     //Signal--------------
-
     kill(getppid(), SIGUSR1);
-
-
     //---------------------
-
-
-
-
     close(sock);
   } else {
     // parent process thinker
     freeConfig(config);
 
     struct sigaction sa;
-    sa.sa_handler = handleSigusr1;
+    sa.sa_handler = &handleSigusr1;
     sa.sa_flags = 0;
     sigemptyset(&sa.sa_mask);
     sigaction(SIGUSR1, &sa, NULL);
 
 
-
+    printf("Pid in main.c before waitpid: %d\n", pid);
     // last part of thinker; executed after game over
-    if (waitpid(pid, NULL, 0) == -1) {
+    if (wait(NULL) == -1) {
       freeConfig(config);
       perror("error waiting for connector");
       return EXIT_FAILURE;
     }
-
-
     
-    /*struct Share *ptrGameStart, gameStart;
-    ptrGameStart = &gameStart;
-    ptrGameStart = attachSHM(shmID);
-    printf("shmID thi: %d.\nErfolg: %s\n", shmID, (*ptrGameStart).gameName);*/
 
   }
 
