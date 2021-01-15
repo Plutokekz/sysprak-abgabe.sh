@@ -1,16 +1,9 @@
-/** @file shareMemory.c
- * 
- *  @brief SHM fuctions.
- * 
- *  Contains all functions for SHM.
- */
+
 #include "performConnection.h"
 #include "shareMemory.h"
 
 
-/** @brief reserves the memorySize for SHM.
- * The shmID is essencial to identify the SHM.
- */
+
 int createSHM(size_t memorySize) {
     int shmID = shmget(IPC_PRIVATE, memorySize, 0666); //ist 0666 richtig?
     if (shmID < 0) {
@@ -19,9 +12,7 @@ int createSHM(size_t memorySize) {
     }
     return shmID;
 }   
-/** @brief attaches the reserved memory to the memory of our current process.
- * afterwards, we can work with the returned shm.
- */
+
 void *attachSHM(int shmID) {
     char *shm = shmat(shmID,NULL,0); //Pointer to SHM Adress
     if (shm == (char*) -1) {
@@ -31,10 +22,6 @@ void *attachSHM(int shmID) {
     return shm;
 }
 
-/** @brief detaches the SHM from our current process memory.
- * (Currently unused)
- */
-
 void detachSHM(void *shm) {
     if (shmdt(shm) == -1) {
         perror("shmdt");
@@ -42,8 +29,7 @@ void detachSHM(void *shm) {
     }
 }
 
-/** @brief deletes the SHM identified by shmID and frees the allocated memory.
- */
+
 int deleteSHM(int shmID) {
    int del = shmctl(shmID, IPC_RMID, 0);
    if ( del == -1) {
@@ -52,15 +38,7 @@ int deleteSHM(int shmID) {
    }
    return del;
 }
-/** @brief Takes a struct and inserts it into a SHM Segment.
- * 
- * This function is customized to fit the Game Start Data (see Milestone 0).
- * It creates (createSHM) a SHM Segment.
- * Attaches the Segment to the ptrGameStart adress and the fills it with the
- * content of gs.
- * the nested players struct is constructed with a while loop because it must
- * be able to handel a variable amount of players (see Milestone 2).
- */
+
 int setupSHM_GameStart(game_info *gs) {
 
     //Initialize SHM struct
@@ -96,8 +74,7 @@ int setupSHM_GameStart(game_info *gs) {
     return shmID;
 }
 
-/** @brief Puts testString into a SHM Segment.
- */
+
 int setupSHM_String(char testString[100]) {
     char *ptrString;
     int shmID = createSHM(100*sizeof(char));

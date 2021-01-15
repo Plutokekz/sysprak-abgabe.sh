@@ -40,9 +40,7 @@ char StringToStructArray (char *plString) {
                 xPos = 8;
                 break;
         }
-
-
-
+        
         yPos = pos[5] - '0'; //{1-8}
         if (field )
 
