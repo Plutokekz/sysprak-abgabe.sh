@@ -164,8 +164,7 @@ int main(int argc, char *argv[]) {
 
     struct sigaction sa;
     sa.sa_handler = &handleSigusr1;
-    sa.sa_flags = 0;
-    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART;
     sigaction(SIGUSR1, &sa, NULL);
 
 

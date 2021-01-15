@@ -25,7 +25,7 @@
 
 typedef struct shmPlayer {
     int number;
-    char *name;
+    char name[30];
     bool readyFlag;
 
 } shmPlayer_t;
@@ -33,7 +33,7 @@ typedef struct shmPlayer {
 
 typedef struct Share {
     
-    char* gameName;
+    char gameName[30];
     int ownPlayerNumber;
     int numberOfPlayers;
     pid_t thinkerPID;

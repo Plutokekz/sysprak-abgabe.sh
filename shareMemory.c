@@ -52,8 +52,7 @@ int setupSHM_GameStart(game_info *gs) {
 
     //Transfer Data to SHM struct
     //TODO Tim: struct von Erik einbinden.
-    ptrGameStart->gameName = gs->gameName;
-    printf("in SHM.c, gameName: %s\n", ptrGameStart->gameName);
+    strcpy(ptrGameStart->gameName, gs->gameName);
     ptrGameStart->ownPlayerNumber = gs->playerList[0]->playerId;
     ptrGameStart->thinkerPID = getpid();
     ptrGameStart->connectorPID = getppid();
@@ -67,7 +66,7 @@ int setupSHM_GameStart(game_info *gs) {
         
     while (p < numP) {
         ptrGameStart->players[p].number = p;
-        ptrGameStart->players[p].name = gs->playerList[p]->playerName;
+        strcpy(ptrGameStart->players[p].name, gs->playerList[p]->playerName);
         ptrGameStart->players[p].readyFlag = gs->playerList[p]->ready;
         p++;
     }

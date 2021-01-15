@@ -27,12 +27,11 @@ void thinker(int *fd) {
       exit(EXIT_FAILURE);
     }
 
-    write(0, ptrGameStart->gameName, sizeof(ptrGameStart->gameName));
-    /*printf("shmID in thinker.c: %d\n", shmID);
+    printf("shmID in thinker.c: %d\n", shmID);
     printf("in thinker(), Erfolg: %s\n", (*ptrGameStart).gameName);
     printf("numofPlayers: %d\n", (*ptrGameStart).numberOfPlayers);
     printf("thinkerPID, in thinker.c: %d\n", (*ptrGameStart).thinkerPID);
-    printf("player 0: %d\n", ptrGameStart->players[0].number);*/
+    printf("player 0: %d\n", ptrGameStart->players[0].number);
     deleteSHM(shmID);
 
 }
