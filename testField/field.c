@@ -3,6 +3,56 @@
 #define MAX_TOWERSIZE 12
 #define MAX_TOWERS 12
 
+//QUEUE
+
+void initQueue(queue *q) {
+    q->head = NULL;
+    q->tail = NULL;
+}
+
+void enqueue(queue *q, char piece) {
+    //create new node
+    node *newnode = malloc(sizeof(node));
+    if (newnode == NULL) {
+        perror("Error in enqueue, creating new node");
+        exit(EXIT_FAILURE);
+    }
+    newnode->piece = piece;
+    newnode->next = NULL;
+    //if tail exists, connect to new node
+    if (q->tail != NULL) {
+        q->tail->next = newnode;
+    }
+    q->tail = newnode;
+    //if head not exist, connect to new node
+    if (q->head == NULL) {
+        q->head = newnode;
+    }
+    
+}
+
+char dequeue(queue *q) {
+    //check if queue is empty
+    if(q->head == NULL) {
+        perror("Error in dequeue, queue is empty");
+        exit(EXIT_FAILURE);
+    }
+    //save head
+    node *temp = q->head;
+
+    //save result
+    char result = temp->piece;
+    //pop off head
+    q->head = q->head->next;
+    if(q->head == NULL) {
+        q->tail = NULL;
+    }
+    free(temp);
+    return result;
+}
+
+
+
 char StringToStructArray (char *plString) {
     pieceStruct field[32];
     char *pos;

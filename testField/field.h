@@ -5,14 +5,17 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdbool.h>
 
-typedef struct Pieces {
-    char *allPieces;
-    int numOfPieces;
+typedef struct node {
+    char piece;
+    struct node *next;
+} node;
 
-
-} pieceStruct;
-
+typedef struct queue {
+    node *head;
+    node *tail;
+} queue;
 
 int main ();
 
