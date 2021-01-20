@@ -40,8 +40,9 @@
 #include <signal.h>
 #include <pthread.h>
 
-#include "shareMemory.h"
-#include "config.h"
+#include "gamePhase.h"
+#include "modules/config.h"
+#include "modules/shareMemory.h"
 #include "performConnection.h"
 #include "thinker.h"
 
@@ -149,10 +150,11 @@ int main(int argc, char *argv[]) {
     printf("shmID in Child proc: %d\n", shmID);
 
       //Pipe für shmID
-    close(fd[0]); //entweder var in perfC oder shmID ausgeben aus perfC
+    //close(fd[0]); //entweder var in perfC oder shmID ausgeben aus perfC
     if (write(fd[1], &shmID, sizeof(int)) < 0) {
       perror("Error writing to pipe");
     }
+    gamePhase(fd);
 
     //Signal--------------
     kill(getppid(), SIGUSR1);
@@ -162,7 +164,7 @@ int main(int argc, char *argv[]) {
     // parent process thinker
     freeConfig(config);
 
-    struct sigaction sa;
+    struct sigaction sa = { 0 };
     sa.sa_handler = &handleSigusr1;
     sa.sa_flags = SA_RESTART;
     sigaction(SIGUSR1, &sa, NULL);

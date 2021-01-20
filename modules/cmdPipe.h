@@ -52,4 +52,8 @@ int sendCMD(int fdw, char *cmd);
  */
 int receiveCMD(int fdr, char **cmd, int *size);
 
+int receiveInt(int fdr, int *value);
+
+int sendInt(int fdw, int *value);
+
 #endif // BASCHNI_CMDPIPE_H

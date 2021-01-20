@@ -9,9 +9,10 @@
  *  @bug recvCommand throws error when server sends 48 bytes after PLAYER
  * COMMAND.
  */
-
 #ifndef connectionUtil
 #define connectionUtil
+#include <stdbool.h>
+#include <limits.h>
 #include <arpa/inet.h>
 #include <errno.h>
 #include <netdb.h>
@@ -23,52 +24,17 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "config.h"
-#include "performConnection.h"
-
-#include <stdbool.h>
+#include "modules/shareMemory.h"
+#include "modules/config.h"
+#include "infoStructs.h"
 
 #define GAME_ID_SIZE 13
 #define PORTNUMBER 1357
 #define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
 #define GAMEKINDNAME "Bashni"
 #define CLIENT_VERSION "2.42"
+#define RECV_BUFF_SIZE 100
 
-/**
- * @brief Config struct
- *
- * Contains all the information passed as command-line arguments.
- */
-typedef struct Opt {
-  char gameId[14];
-  char playerId[2];
-} opt_t;
-
-/**
- * @brief Config struct
- *
- * Describes a player sent by the server.
- */
-typedef struct Player {
-  char playerName[30];
-  unsigned int playerId;
-  bool ready;
-} player_t;
-
-/**
- * @brief Config struct
- *
- * Contains all relevant information of the prolog phase.
- * Don't forget to free memory after usage.
- */
-typedef struct GameInfo {
-  char serverVersion[10];
-  char gamekindName[20];
-  char gameName[30];
-  unsigned int total;
-  player_t **playerList;
-  char *raw;
-} game_info;
 
 /**
  * @brief Config struct
@@ -111,7 +77,7 @@ void sendCommand(COMMAND c, char *value);
  *  @param lines expected lines the server will send
  *  @return pointer to received data
  */
-void *recvCommand(int lines);
+void *recvCommand(int lines, int *size);
 
 /** @brief getter for game_info struct.
  *

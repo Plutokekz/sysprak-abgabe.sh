@@ -21,7 +21,7 @@
 #include <fcntl.h>
 #include <limits.h>
 
-#include "performConnection.h"
+#include "../infoStructs.h"
 
 typedef struct shmPlayer {
     int number;

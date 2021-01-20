@@ -1,23 +1,5 @@
-#include <arpa/inet.h>
-#include <errno.h>
-#include <limits.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
 
 #include "performConnection.h"
-#include "shareMemory.h"
-
-#define PORTNUMBER 1357
-#define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
-#define GAMEKINDNAME "Bashni"
-#define CLIENT_VERSION "2.42"
-#define RECV_BUFF_SIZE 100
 
 int SOCK;
 char commandBuff[RECV_BUFF_SIZE];
@@ -34,8 +16,11 @@ char *lookup(COMMAND c) {
   case PLAYER:
     command = "PLAYER";
     break;
+  case THINKING:
+    command = "THINKING";
+    break;
   default:
-    printf("lookup COMMAND failed\n");
+    printf("lookup COMMAND failed <%d>\n", c);
     exit(EXIT_FAILURE);
   }
   return command;
@@ -193,7 +178,7 @@ int charCount(char *s, int n) {
   return count;
 }
 
-void *recvCommand(int lines) {
+void *recvCommand(int lines, int *size) {
   int lineCount = lines;
   if (lines == 0) {
     lineCount = INT_MAX;
@@ -202,6 +187,7 @@ void *recvCommand(int lines) {
   ssize_t bytes = 0;
   int count = 2;
   char *buff = malloc(count * RECV_BUFF_SIZE);
+  *size = count * RECV_BUFF_SIZE;
   strcpy(buff, commandBuff);
   bytes += strlen(commandBuff);
 
@@ -237,6 +223,7 @@ void *recvCommand(int lines) {
         lineCount = 0;
       } else if ((count * RECV_BUFF_SIZE) - bytes < RECV_BUFF_SIZE) {
         buff = realloc(buff, ++count * RECV_BUFF_SIZE); // no error handling
+        *size = count * RECV_BUFF_SIZE;
       }
       break;
     }
@@ -318,7 +305,8 @@ int performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f) {
   }
 
   void *recvBuff;
-  recvBuff = recvCommand(1); // + MNM Gameserver <<Gameserver Version>>
+  int size = 0;
+  recvBuff = recvCommand(1, &size); // + MNM Gameserver <<Gameserver Version>>
                              // accepting connections
   parseCommand(recvBuff, START);
   free(recvBuff);
@@ -326,20 +314,20 @@ int performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f) {
   sendCommand(VERSION, CLIENT_VERSION);
 
   recvBuff =
-      recvCommand(1); // + Client version accepted - please send Game-ID to join
+      recvCommand(1, &size); // + Client version accepted - please send Game-ID to join
   parseCommand(recvBuff, VERSION);
   free(recvBuff);
 
   sendCommand(ID, opt->gameId);
 
-  recvBuff = recvCommand(2); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
+  recvBuff = recvCommand(2, &size); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
   parseCommand(recvBuff, ID);
   free(recvBuff);
 
   // retry without player id later
   sendCommand(PLAYER, opt->playerId);
 
-  recvBuff = recvCommand(0); //
+  recvBuff = recvCommand(0, &size); //
   parseCommand(recvBuff, PLAYER);
   free(recvBuff);
 
@@ -356,6 +344,12 @@ int performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f) {
 
   printProlog(gameInfo, f);
   freeGameInfo(gameInfo);
+
+
+  //char *board;// = malloc(sizeof(char) * 7 *24);
+  //board = recvCommand(0);
+  //printf("%s", board);
+  //free(board);
 
   return shmID;
 }

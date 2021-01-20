@@ -2,7 +2,7 @@
 // Created by Lukas on 16.12.2020.
 //
 
-#include "../config.h"
+#include "../module/config.h"
 #include <stdlib.h>
 int main() {
   char *validFile = "config.conf";

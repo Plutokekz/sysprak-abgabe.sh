@@ -4,6 +4,22 @@
 
 #include "cmdPipe.h"
 
+int sendInt(int fdw, int *value){
+  if (write(fdw, value, sizeof(int)) < 0) {
+    perror("Error writing int to pipe");
+    return -1;
+  }
+  return 0;
+}
+
+int receiveInt(int fdr, int *value){
+  if (read(fdr, value, sizeof(int)) < 0) {
+    perror("Error reading int from pipe");
+    return -1;
+  }
+  return 0;
+}
+
 int sendCMD(int fdw, char *cmd) {
 
   int n = strnlen(cmd, MAXCOMMANDLENGTH) + 1;

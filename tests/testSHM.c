@@ -1,5 +1,5 @@
-#include "../shareMemory.h"
-#include "../mySignal.h"
+#include "../module/mySignal.h"
+#include "../module/shareMemory.h"
 
 void my_handler(int signum) {
     if (signum == SIGUSR1) { 

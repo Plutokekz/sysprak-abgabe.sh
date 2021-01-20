@@ -2,7 +2,7 @@
 // Created by Lukas on 05.01.2021.
 //
 
-#include "../cmdPipe.h"
+#include "../module/cmdPipe.h"
 
 int main() {
   pid_t pid;
