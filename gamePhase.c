@@ -30,8 +30,6 @@ void gamePhase(int *fd[2]) {
 
     if (strncmp(buffer, "+ MOVE", 6) == 0){
         sendCommand(THINKING, "");
-        
-
         strcpy(shmPtr, buffer);
 
         // TODO Tim : Add sending signal to thinker and print current gameboard
