@@ -185,7 +185,7 @@ void printProlog(game_info *gameInfo, P_FLAG f) {
   }
 }
 
-int charCount(char *s, int n) {
+int newLineCount(char *s, int n) {
   int count = 0;
   for (int i = 0; i < n; i++) {
     count += (s[i] == '\n');
@@ -199,10 +199,10 @@ void *recvCommand(int lines) {
     lineCount = INT_MAX;
   }
 
-  ssize_t bytes = 0;
+  ssize_t bytes = 0; // number of bytes in buff
   int count = 2;
-  char *buff = malloc(count * RECV_BUFF_SIZE);
-  strcpy(buff, commandBuff);
+  char *buff = malloc(count * RECV_BUFF_SIZE); // initializing 2 memory blocks, so if one fills up the next one can just be used
+  strcpy(buff, commandBuff); // commandBuff is a global variable for commands that were being sent, but are not needed yet
   bytes += strlen(commandBuff);
 
   while (lineCount > 0) {
@@ -224,7 +224,7 @@ void *recvCommand(int lines) {
         free(buff);
         exit(EXIT_FAILURE);
       }
-      lineCount -= charCount(buff + bytes, tmp);
+      lineCount -= newLineCount(buff + bytes, tmp);
       bytes += tmp; // increment returned bytes every loop (at least 1 byte)
       buff[bytes] = '\0';
       char *end;

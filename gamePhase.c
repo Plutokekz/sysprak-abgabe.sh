@@ -21,7 +21,7 @@ void gamePhase(int *fd[2]) {
 
     // Comparing, if the first 10 characters (thereby excluding the newline and nullbyte char respectively) are equal
   while (strncmp(buffer, "+ GAMEOVER", 10) != 0) {
-    buffer = recvCommand(1);
+    buffer = recvCommand(0);
 
     if (strncmp(buffer, "+ WAIT", 6) == 0){
       free (buffer);
@@ -30,8 +30,7 @@ void gamePhase(int *fd[2]) {
 
     if (strncmp(buffer, "+ MOVE", 6) == 0){
         sendCommand(THINKING, "");
-        free(buffer);
-        buffer = recvCommand(0);
+        
 
         strcpy(shmPtr, buffer);
 
@@ -47,6 +46,7 @@ void gamePhase(int *fd[2]) {
         }
 
         sendCommand (PLAY, move);
+        free(buffer);
     }
 
     if (strncmp(buffer, "+ QUIT", 6) == 0){
