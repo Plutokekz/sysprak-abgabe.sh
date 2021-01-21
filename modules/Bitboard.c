@@ -96,87 +96,31 @@ bitboard_t *initBitboard() {
   return board;
 }
 
-/*
-+ PIECESLIST 24
-+ b@H8
-+ b@F8
-+ b@D8
-+ b@B8
-+ b@G7
-+ b@E7
-+ b@C7
-+ b@A7
-+ b@H6
-+ b@F6
-+ b@D6
-+ b@B6
-+ w@G3
-+ w@E3
-+ w@C3
-+ w@A3
-+ w@H2
-+ w@F2
-+ w@D2
-+ w@B2
-+ w@G1
-+ w@E1
-+ w@C1
-+ w@A1
-+ ENDPIECESLIST
- */
-
 int parsCoordinateToSquare(char *coord) {
-  int row = *(coord) - 'A'; // char coord to int index
-  int column = *(coord+1) - '1'; // char number to int
-  printf("Current Piece: %s, calc coords: row: %d, column: %d\n", coord, row, column);
+  //int row = *(coord) - 'A'; // char coord to int index
+  //int column = *(coord+1) - '1'; // char number to int
+  //printf("Current Piece: %s, calc coords: row: %d, column: %d\n", coord, row, column);
   return (*(coord) - 'A') + 8 * (*(coord + 1) - '1');
 }
-int addWhiteToBitboard(bitboard_t *board, int *square, char *type) {
-  if (board == NULL) {
-    printf("Error bitboard strut is null\n");
-    return -1;
-  }
-  int i;
-  for (i = 0; i < BITBOARDS; i++) {
-    //printf("exists: %ld\n", get(board->b[i].board, *square));
-    if (!get(board->w[i].board, *square)) {
-      //printf("same type: %c == %c ? %d\n", board->w[i].type, *type, board->w[i].type == *type);
-      if (board->w[i].type == *type) {
-        board->w[i].board = set(board->w[i].board, *square);
-        board->w[i].depth = i;
-        return 0;
 
-      }
-      else if (board->w[i].type == 0) {
-        //printf("null type: %c == %c ? %d\n", board->w[i].type, 0, board->w[i].type == 0);
-        board->w[i].board = set(board->w[i].board, *square);
-        board->w[i].depth = i;
-        board->w[i].type = *type;
-        return 0;
-      }
-    }
-  }
-  printf("Error Out of Bitboards\n");
-  return -1;
+int addToBitboardPart(struct bitboardPart *board, int *square, char *type, int *i){
+    board->board = set(board->board, *square);
+    board->depth = *i;
+    board->type = *type;
+  return 0;
+
 }
 
-int addBlackToBitboard(bitboard_t *board, int *square, char *type) {
-  if (board == NULL) {
+int addToBitboard(bitboardPart_t bitboards[24], int *square, char *type) {
+  if (bitboards == NULL) {
     printf("Error bitboard strut is null\n");
     return -1;
   }
   int i;
   for (i = 0; i < BITBOARDS; i++) {
-    printf("%ld\n", get(board->b[i].board, *square));
-    if (!get(board->b[i].board, *square)) {
-      if (board->b[i].type == *type) {
-        board->b[i].board = set(board->b[i].board, *square);
-        board->b[i].depth = i;
-        return 0;
-      } else if (board->b[i].type == 0) {
-        board->b[i].board = set(board->b[i].board, *square);
-        board->b[i].depth = i;
-        board->b[i].type = *type;
+    if (!get(bitboards[i].board, *square)) {
+      if (bitboards[i].type == *type || bitboards[i].type == 0) {
+        addToBitboardPart(&bitboards[i], square, type, &i);
         return 0;
       }
     }
@@ -190,85 +134,35 @@ bitboard_t *parsFromString(char *piece_list) {
   piece_list += 16; // skipp + PIECESLIST 24\n
   int i;
   char normal_piece = 'n', king_piece = 'k';
+  char *piece = malloc(sizeof(char) * SIZE_OF_PIECE - 3);
   for (i = 0; i < NUMBER_OF_PIECES; i++) {
-    char *piece = malloc(sizeof(char) * SIZE_OF_PIECE - 3);
     memcpy(piece, piece_list + 2, sizeof(char) * SIZE_OF_PIECE - 3);
-
-    //printf("square: %d\n", parsCoordinateToSquare(piece + 2));
     int square = parsCoordinateToSquare(piece + 2);
-
-    if (*piece == 'b') {
-      //normal black piece
-      //printf("|%s|\n", piece);
-      addBlackToBitboard(board, &square, &normal_piece);
-      printBitboard(board);
-    } else if (*piece == 'B') {
-      // black king piece
-      //printf("|%s|\n", piece);
-      addBlackToBitboard(board, &square, &king_piece);
-      printBitboard(board);
-    } else if (*piece == 'w') {
-      // normal white piece
-      //printf("|%s|\n", piece);
-      addWhiteToBitboard(board, &square, &normal_piece);
-      printBitboard(board);
-    } else if (*piece == 'W') {
-      // white king
-      //printf("|%s|\n", piece);
-      addWhiteToBitboard(board, &square, &king_piece);
-      printBitboard(board);
-    } else {
-      printf("Error piece <%c> does not exist\n", *piece);
-      return NULL;
-      // all other pieces make no sense error
+    switch (*piece) {
+    case 'b':
+      addToBitboard(board->b, &square, &normal_piece);
+      break;
+    case 'B':
+      addToBitboard(board->b, &square, &king_piece);
+      break;
+    case 'w':
+      addToBitboard(board->w, &square, &normal_piece);
+      break;
+    case 'W':
+      addToBitboard(board->w, &square, &king_piece);
+      break;
+    default:
+      printf("Error color and type <%c> does not exist\n", *piece);
     }
-
     piece_list += SIZE_OF_PIECE;
   }
 
-  // TODO Parse Piece list
+  free(piece);
 
   return board;
 }
 
 int main() {
-  // int row, column;
-  // row = 7, column = 7;
-  // long b = 0ULL;
-  // b = set(b, (row * 8 + column));
-  /*b = set(b, (7 * 8 + 1));
-  b = set(b, (7 * 8 + 3));
-  b = set(b, (7 * 8 + 5));
-  b = set(b, (7 * 8 + 7));
-  b = set(b, (6 * 8 + 0));
-  b = set(b, (6 * 8 + 2));
-  b = set(b, (6 * 8 + 4));
-  b = set(b, (6 * 8 + 6));
-  b = set(b, (5 * 8 + 1));
-  b = set(b, (5 * 8 + 3));
-  b = set(b, (5 * 8 + 5));
-  b = set(b, (5 * 8 + 7));*/
-
-  /*b = set(b, (2 * 8 + 0));
-  b = set(b, (2 * 8 + 2));
-  b = set(b, (2 * 8 + 4));
-  b = set(b, (2 * 8 + 6));
-  b = set(b, (1 * 8 + 1));
-  b = set(b, (1 * 8 + 3));
-  b = set(b, (1 * 8 + 5));
-  b = set(b, (1 * 8 + 7));
-  b = set(b, (0 * 8 + 0));
-  b = set(b, (0 * 8 + 2));
-  b = set(b, (0 * 8 + 4));
-  b = set(b, (0 * 8 + 6));*/
-  long b = BLACK_STARTING_BOARD;
-  long w = WHITE_STARTING_BOARD;
-  print_board(b);
-  print_board(w);
-  print_board(b | w);
-  printf("%ld\n", b);
-
-
   char pieceList[] = "+ PIECESLIST 24\n"
                      "+ b@H8\n"
                      "+ b@F8\n"
@@ -295,8 +189,8 @@ int main() {
                      "+ w@C1\n"
                      "+ w@A1\n"
                      "+ ENDPIECESLIST";
-  bitboard_t *board = initBitboard();
-  printBitboard(board);
+  bitboard_t *board;// = initBitboard();
+  //printBitboard(board);
   board = parsFromString(pieceList);
   printBitboard(board);
 }
