@@ -4,17 +4,17 @@ C=tests/config.conf
 export C
 export G
 
-sysprak-client: Main.c performConnection.o config.o shareMemory.o thinker.o gamePhase.o cmdPipe.o
-	gcc $(EFLAGS) -o sysprak-client Main.c performConnection.o config.o shareMemory.o thinker.o gamePhase.o cmdPipe.o
+sysprak-client: Main.c performConnection.o config.o shareMemory.o thinker.o
+	gcc $(EFLAGS) -o sysprak-client Main.c performConnection.o config.o shareMemory.o thinker.o
 
 performConnection.o: performConnection.c performConnection.h
 	gcc $(EFLAGS) -c performConnection.c
 
-config.o: modules/config.c
-	gcc $(EFLAGS) -c modules/config.c
+config.o: config.c
+	gcc $(EFLAGS) -c config.c
 
-shareMemory.o: modules/shareMemory.c modules/shareMemory.h
-	gcc $(EFLAGS) -c modules/shareMemory.c
+shareMemory.o: shareMemory.c shareMemory.h
+	gcc $(EFLAGS) -c shareMemory.c
 
 thinker.o: thinker.c thinker.h
 	gcc $(EFLAGS) -c thinker.c
@@ -27,9 +27,11 @@ gamePhase.o: gamePhase.c gamePhase.h
 
 play:
 	./sysprak-client
+play: sysprak-client
+	./sysprak-client -g $(GAME_ID) -p $(PLAYER)
 
 vg:
 	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./sysprak-client -g $(G) -c $(C)
 
 clean:
-	rm performConnection.o config.o shareMemory.o thinker.o cmdPipe.o gamePhase.o
+	rm performConnection.o config.o shareMemory.o thinker.o

@@ -184,8 +184,10 @@ void *recvCommand(int lines, int *size) {
     lineCount = INT_MAX;
   }
 
-  ssize_t bytes = 0;
+  ssize_t bytes = 0; // number of bytes in buff
   int count = 2;
+  char *buff = malloc(count * RECV_BUFF_SIZE); // initializing 2 memory blocks, so if one fills up the next one can just be used
+  strcpy(buff, commandBuff); // commandBuff is a global variable for commands that were being sent, but are not needed yet
   char *buff = malloc(count * RECV_BUFF_SIZE);
   *size = count * RECV_BUFF_SIZE;
   strcpy(buff, commandBuff);
@@ -210,7 +212,7 @@ void *recvCommand(int lines, int *size) {
         free(buff);
         exit(EXIT_FAILURE);
       }
-      lineCount -= charCount(buff + bytes, tmp);
+      lineCount -= newLineCount(buff + bytes, tmp);
       bytes += tmp; // increment returned bytes every loop (at least 1 byte)
       buff[bytes] = '\0';
       char *end;
@@ -344,12 +346,6 @@ int performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f) {
 
   printProlog(gameInfo, f);
   freeGameInfo(gameInfo);
-
-
-  //char *board;// = malloc(sizeof(char) * 7 *24);
-  //board = recvCommand(0);
-  //printf("%s", board);
-  //free(board);
 
   return shmID;
 }

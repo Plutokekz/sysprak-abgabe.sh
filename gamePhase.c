@@ -4,10 +4,10 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "modules/cmdPipe.h"
-#include "modules/shareMemory.h"
 #include "performConnection.h"
 #include "signal.h"
+#include "shareMemory.h"
+#include "cmdPipe.h"
 
 void gamePhase(int fd[2]) {
   char *buffer;
@@ -25,8 +25,7 @@ void gamePhase(int fd[2]) {
   shmPtr = attachSHM(shmID);
   int size = 0;
 
-  // Comparing, if the first 10 characters (thereby excluding the newline and
-  // nullbyte char respectively) are equal
+    // Comparing, if the first 10 characters (thereby excluding the newline and nullbyte char respectively) are equal
   while (strncmp(buffer, "+ GAMEOVER", 10) != 0) {
     buffer = recvCommand(1, &size);
 
@@ -48,20 +47,19 @@ void gamePhase(int fd[2]) {
       memcpy(shmPtr, buffer, size);
       //printf("%d\n", size);
 
-      // TODO Tim : Add sending signal to thinker and print current gameboard
-      kill(getppid(), SIGUSR1);
-      // TODO Lukas: add communicating move from thinker to connector and
-      // writing it into move
+        // TODO Tim : Add sending signal to thinker and print current gameboard
+        kill(getppid(), SIGUSR1);
+        // TODO Lukas: add communicating move from thinker to connector and writing it into move
 
-      //char *move;
+        char *move;
 
-      /*if(receiveCMD(fd[0], &move, 0)<0){
-        printf("Error receiving cmd\n");
-        //Error handling exiting / recalculating the move ?
-      }
+        if(receiveCMD(*fd[0], move)<0){
+          printf("Error receiving cmd\n");
+          //Error handling exiting / recalculating the move ?
+        }
 
-      sendCommand (PLAY, move);
-  */
+        sendCommand (PLAY, move);
+        free(buffer);
     }
 
     if (strncmp(buffer, "+ QUIT", 6) == 0) {
@@ -71,9 +69,10 @@ void gamePhase(int fd[2]) {
       exit(EXIT_FAILURE);
     }
   }
-  free(buffer);
-
+  free (buffer);
+  
   strcpy(shmPtr, buffer);
 
-  // TODO Tim: Printing out last gamestate and who won
+  //TODO Tim: Printing out last gamestate and who won
+
 }
