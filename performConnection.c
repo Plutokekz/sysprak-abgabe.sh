@@ -20,7 +20,6 @@
 #define RECV_BUFF_SIZE 100
 
 int SOCK;
-char commandBuff[RECV_BUFF_SIZE];
 
 char *lookup(COMMAND c) {
   char *command;
@@ -185,63 +184,80 @@ void printProlog(game_info *gameInfo, P_FLAG f) {
   }
 }
 
-int newLineCount(char *s, int n) {
+int linenCount(char *s, int n) {
   int count = 0;
   for (int i = 0; i < n; i++) {
-    count += (s[i] == '\n');
+    if (s[i] == '\n')
+      count++;
   }
   return count;
 }
 
 void *recvCommand(int lines) {
-  int lineCount = lines;
-  if (lines == 0) {
-    lineCount = INT_MAX;
-  }
+  static char buffer[RECV_BUFF_SIZE];
+  ssize_t totalBytes = 0; // number of bytes in buff
+  int blockCount = 2;
+  char *recvBuff = malloc(
+      blockCount * RECV_BUFF_SIZE); // initializing 2 memory blocks, so if one
+                                    // fills up the next one can just be used
+  // fills up recvBuff with oddments from last call
+  strcpy(recvBuff, buffer);
+  totalBytes += strlen(buffer);
 
-  ssize_t bytes = 0; // number of bytes in buff
-  int count = 2;
-  char *buff = malloc(count * RECV_BUFF_SIZE); // initializing 2 memory blocks, so if one fills up the next one can just be used
-  strcpy(buff, commandBuff); // commandBuff is a global variable for commands that were being sent, but are not needed yet
-  bytes += strlen(commandBuff);
-
+  int lineCount = lines == 0 ? INT_MAX : lines;
   while (lineCount > 0) {
-    ssize_t tmp;
-    switch ((tmp = recv(SOCK, buff + bytes, RECV_BUFF_SIZE - 1, 0))) {
+    ssize_t receivedBytes;
+    switch ((receivedBytes =
+                 recv(SOCK, recvBuff + totalBytes, RECV_BUFF_SIZE - 1, 0))) {
     case -1:
       perror("receive error");
-      free(buff);
+      free(recvBuff);
       exit(EXIT_FAILURE);
     case 0:
       printf("connection closed by server\n");
-      printf("already received: %s\n", buff);
-      free(buff);
+      printf("already received: %s\n", recvBuff);
+      free(recvBuff);
       exit(EXIT_FAILURE);
     default:
-      if (buff[0] == '-') {
-        buff[bytes] = '\0';
-        printf("%s", buff);
-        free(buff);
+      if (recvBuff[0] == '-') {
+        recvBuff[totalBytes] = '\0';
+        printf("%s", recvBuff);
+        free(recvBuff);
         exit(EXIT_FAILURE);
       }
-      lineCount -= newLineCount(buff + bytes, tmp);
-      bytes += tmp; // increment returned bytes every loop (at least 1 byte)
-      buff[bytes] = '\0';
+      // lineCount -= linenCount(recvBuff + totalBytes, receivedBytes);
+      int bytes = 0;
+      while (bytes < receivedBytes) {
+        if (recvBuff[totalBytes + bytes] == '\n') {
+          lineCount--;
+        }
+        if (lineCount <= 0)
+          break;
+        bytes++;
+      }
+      if (bytes < receivedBytes) {
+        recvBuff[totalBytes + receivedBytes] = '\0';
+        strcpy(buffer, recvBuff + totalBytes + bytes);
+      }
+      totalBytes +=
+          bytes; // increment returned bytes every loop (at least 1 byte)
+      recvBuff[totalBytes] = '\0';
       char *end;
-      if (lineCount > lines && (end = strstr(buff, "END")) != NULL) {
+      if (lineCount > lines && (end = strstr(recvBuff, "END")) != NULL) {
         end = strchr(end, '\n');
-        memset(commandBuff, 0, RECV_BUFF_SIZE);
-        strcpy(commandBuff,
+        memset(buffer, 0, RECV_BUFF_SIZE);
+        strcpy(buffer,
                end + 1); // splitted string size is less than RECV_BUFF_SIZe
         end[1] = '\0';
         lineCount = 0;
-      } else if ((count * RECV_BUFF_SIZE) - bytes < RECV_BUFF_SIZE) {
-        buff = realloc(buff, ++count * RECV_BUFF_SIZE); // no error handling
+      } else if ((blockCount * RECV_BUFF_SIZE) - totalBytes < RECV_BUFF_SIZE) {
+        recvBuff = realloc(recvBuff,
+                           ++blockCount * RECV_BUFF_SIZE); // no error handling
       }
       break;
     }
   }
-  return (void *)buff;
+  return (void *)recvBuff;
 }
 
 // supports VERSION, ID, PLAYER
