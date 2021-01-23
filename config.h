@@ -41,16 +41,16 @@ typedef struct Config {
  */
 config_t *readConfigFile(char *filename);
 
-int parseLine(char *line, config_t *config);
-
-int parseLine_f(char *line, config_t *config, int line_index);
-
-int parseAttr(char *attr, char *value, config_t *config);
-
+/**
+ * @brief frees a config_t struct
+ * @param config pointer
+ */
 void freeConfig(config_t *config);
 
+/**
+ * @brief print a config_t struct
+ * @param config pointer
+ */
 void printfConfig(config_t *config);
-
-char *parseWord(char *ptr, char c, int len);
 
 #endif // BASCHNI_CONFIG_H

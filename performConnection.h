@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "performConnection.h"
-#include "shareMemory.h"
 
 #include <stdbool.h>
 
@@ -80,7 +79,7 @@ typedef struct GameInfo {
  *
  * Contains all relevant commands for following functions.
  */
-typedef enum COMMAND { RETURN, START, VERSION, ID, PLAYER } COMMAND;
+typedef enum COMMAND { RETURN, START, VERSION, ID, PLAYER, THINKING, OKWAIT, PLAY } COMMAND;
 
 /**
  * @brief P_FLAG enum
@@ -95,7 +94,7 @@ typedef enum P_FLAG { PRETTY, DEBUG } P_FLAG;
  *  @param sock socket to connect with
  *  @param opt options used for the connection
  */
-void performConnection(int sock, opt_t *opt, config_t *config);
+int performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f);
 
 /** @brief Sends command to server.
  *

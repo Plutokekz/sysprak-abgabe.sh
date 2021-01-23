@@ -7,6 +7,26 @@
  * project.
  */
 
+/*! \mainpage My Personal Index Page
+ *
+ * \section intro_sec Introduction
+ *
+ * This is the introduction.
+ *
+ * \section install_sec Installation
+ *
+ * \subsection step1 Step 1: Opening the box
+ *
+ * \htmlonly
+ * <iframe width="560" height="315"
+ * src="https://www.youtube.com/embed/KXl7xGMg9qQ?controls=0" frameborder="0"
+ * allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope;
+ * picture-in-picture" allowfullscreen></iframe> \endhtmlonly
+ *
+ *
+ * etc...
+ */
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,9 +35,19 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <signal.h>
+#include <pthread.h>
 
+#include "shareMemory.h"
 #include "config.h"
 #include "performConnection.h"
+#include "thinker.h"
+
+int fd[2];
+
+
 
 /** @brief Parse arguments
  *
@@ -35,9 +65,9 @@
  *  @param **config pointer to a pointer of a config_t struct
  *
  */
-void setOptions(int argc, char *argv[], opt_t *opt, config_t **config) {
+void setOptions(int argc, char *argv[], opt_t *opt, config_t **config, P_FLAG *f) {
   int c;
-  while ((c = getopt(argc, argv, "g:p:c:")) != -1) {
+  while ((c = getopt(argc, argv, "g:p:c:d")) != -1) {
     switch (c) {
     case 'g':
       if (strlen(optarg) != GAME_ID_SIZE) {
@@ -57,7 +87,10 @@ void setOptions(int argc, char *argv[], opt_t *opt, config_t **config) {
     }
     case 'c':
       *config = readConfigFile(optarg);
-    break;
+      break;
+    case 'd':
+      *f = DEBUG;
+      break;
     case '?':
       printf("wrong argument\n");
       freeConfig(*config);
@@ -76,6 +109,11 @@ void setOptions(int argc, char *argv[], opt_t *opt, config_t **config) {
   }
 }
 
+void handleSigusr1 () {
+  write(0, "Ahhh! sig works!\n", 17);
+  thinker(fd);
+}
+
 /** @brief set Options and splits up program in Thinker and Connector
  *
  */
@@ -83,9 +121,15 @@ int main(int argc, char *argv[]) {
   pid_t pid;
   opt_t opt = {"", ""};
   config_t *config = NULL;
+  P_FLAG f = PRETTY;
+  //int fd[2];
 
-  setOptions(argc, argv, &opt, &config);
+  setOptions(argc, argv, &opt, &config, &f);
 
+  if (pipe(fd) < 0) {
+    perror("Error creating pipe.");
+    exit(EXIT_FAILURE);
+  }
 
   // splitting up in thinker and connector
   if ((pid = fork()) < 0) {
@@ -95,23 +139,44 @@ int main(int argc, char *argv[]) {
   } else if (pid == 0) {
     // child process connector
     int sock;
+    printf("child pid: %d\n", getpid());
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
       freeConfig(config);
       perror("creating socket failed");
       return EXIT_FAILURE;
     }
-    performConnection(sock, &opt, config);
+    int shmID = performConnection(sock, &opt, config, f);
+    printf("shmID in Child proc: %d\n", shmID);
+
+      //Pipe für shmID
+    close(fd[0]); //entweder var in perfC oder shmID ausgeben aus perfC
+    if (write(fd[1], &shmID, sizeof(int)) < 0) {
+      perror("Error writing to pipe");
+    }
+
+    //Signal--------------
+    kill(getppid(), SIGUSR1);
+    //---------------------
     close(sock);
   } else {
     // parent process thinker
     freeConfig(config);
 
+    struct sigaction sa;
+    sa.sa_handler = &handleSigusr1;
+    sa.sa_flags = SA_RESTART;
+    sigaction(SIGUSR1, &sa, NULL);
+
+
+    printf("Pid in main.c before waitpid: %d\n", pid);
     // last part of thinker; executed after game over
-    if (waitpid(pid, NULL, 0) == -1) {
+    if (wait(NULL) == -1) {
       freeConfig(config);
       perror("error waiting for connector");
       return EXIT_FAILURE;
     }
+    
+
   }
 
   return EXIT_SUCCESS;
