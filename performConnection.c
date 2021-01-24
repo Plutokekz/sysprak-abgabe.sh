@@ -1,8 +1,25 @@
+#include <arpa/inet.h>
+#include <errno.h>
+#include <limits.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "performConnection.h"
+#include "shareMemory.h"
+
+#define PORTNUMBER 1357
+#define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
+#define GAMEKINDNAME "Bashni"
+#define CLIENT_VERSION "2.42"
+#define RECV_BUFF_SIZE 100
 
 int SOCK;
-//char commandBuff[RECV_BUFF_SIZE];
 
 char *lookup(COMMAND c) {
   char *command;
@@ -16,14 +33,8 @@ char *lookup(COMMAND c) {
   case PLAYER:
     command = "PLAYER";
     break;
-  case PLAY:
-    command = "PLAY";
-    break;
-  case THINKING:
-    command = "THINKING";
-    break;
   default:
-    printf("lookup COMMAND failed <%d>\n", c);
+    printf("lookup COMMAND failed\n");
     exit(EXIT_FAILURE);
   }
   return command;
@@ -182,14 +193,13 @@ int linenCount(char *s, int n) {
   return count;
 }
 
-void *recvCommand(int lines, int *size) {
+void *recvCommand(int lines) {
   static char buffer[RECV_BUFF_SIZE];
   ssize_t totalBytes = 0; // number of bytes in buff
   int blockCount = 2;
-  char *recvBuff = malloc(blockCount * RECV_BUFF_SIZE);
-  *size = blockCount * RECV_BUFF_SIZE;
-  // initializing 2 memory blocks, so if one
-  // fills up the next one can just be used
+  char *recvBuff = malloc(
+      blockCount * RECV_BUFF_SIZE); // initializing 2 memory blocks, so if one
+                                    // fills up the next one can just be used
   // fills up recvBuff with oddments from last call
   strcpy(recvBuff, buffer);
   totalBytes += strlen(buffer);
@@ -221,9 +231,9 @@ void *recvCommand(int lines, int *size) {
         if (recvBuff[totalBytes + bytes] == '\n') {
           lineCount--;
         }
+        bytes++;
         if (lineCount <= 0)
           break;
-        bytes++;
       }
       if (bytes < receivedBytes) {
         recvBuff[totalBytes + receivedBytes] = '\0';
@@ -241,9 +251,8 @@ void *recvCommand(int lines, int *size) {
         end[1] = '\0';
         lineCount = 0;
       } else if ((blockCount * RECV_BUFF_SIZE) - totalBytes < RECV_BUFF_SIZE) {
-        recvBuff = realloc(recvBuff, ++blockCount * RECV_BUFF_SIZE);
-        // no error handling
-        *size = blockCount * RECV_BUFF_SIZE;
+        recvBuff = realloc(recvBuff,
+                           ++blockCount * RECV_BUFF_SIZE); // no error handling
       }
       break;
     }
@@ -325,30 +334,28 @@ int performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f) {
   }
 
   void *recvBuff;
-  int size = 0;
-  recvBuff = recvCommand(1, &size); // + MNM Gameserver <<Gameserver Version>>
-                                    // accepting connections
+  recvBuff = recvCommand(1); // + MNM Gameserver <<Gameserver Version>>
+                             // accepting connections
   parseCommand(recvBuff, START);
   free(recvBuff);
 
   sendCommand(VERSION, CLIENT_VERSION);
 
-  recvBuff = recvCommand(
-      1, &size); // + Client version accepted - please send Game-ID to join
+  recvBuff =
+      recvCommand(1); // + Client version accepted - please send Game-ID to join
   parseCommand(recvBuff, VERSION);
   free(recvBuff);
 
   sendCommand(ID, opt->gameId);
 
-  recvBuff =
-      recvCommand(2, &size); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
+  recvBuff = recvCommand(2); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
   parseCommand(recvBuff, ID);
   free(recvBuff);
 
   // retry without player id later
   sendCommand(PLAYER, opt->playerId);
 
-  recvBuff = recvCommand(0, &size); //
+  recvBuff = recvCommand(0); //
   parseCommand(recvBuff, PLAYER);
   free(recvBuff);
 
@@ -358,9 +365,10 @@ int performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f) {
 
   game_info *gameInfo = getGameInfo();
 
-  // Setup SHM for gameInfo
+  //Setup SHM for gameInfo
   int shmID = setupSHM_GameStart(gameInfo);
-  // printf("shmID performC: %d\n", shmID);
+  printf("shmID performC: %d\n", shmID);
+
 
   printProlog(gameInfo, f);
   freeGameInfo(gameInfo);
