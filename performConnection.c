@@ -231,9 +231,9 @@ void *recvCommand(int lines) {
         if (recvBuff[totalBytes + bytes] == '\n') {
           lineCount--;
         }
+        bytes++;
         if (lineCount <= 0)
           break;
-        bytes++;
       }
       if (bytes < receivedBytes) {
         recvBuff[totalBytes + receivedBytes] = '\0';
