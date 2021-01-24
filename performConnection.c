@@ -32,6 +32,18 @@ char *lookup(COMMAND c) {
   case PLAYER:
     command = "PLAYER";
     break;
+  case THINKING:
+    command = "THINKING";
+    break;
+  case PLAY:
+    command = "PLAY";
+    break;
+  case OKWAIT:
+    command = "OKWAIT";
+    break;
+  case START:
+    command = "START";
+    break;
   default:
     printf("lookup COMMAND <%d> not found\n", c);
     exit(EXIT_FAILURE);
@@ -205,6 +217,7 @@ void *recvCommand(int lines, int *size) {
   totalBytes += strlen(buffer);
 
   int lineCount = lines == 0 ? INT_MAX : lines;
+  lineCount -= linenCount(buffer, strnlen(buffer, RECV_BUFF_SIZE));
   while (lineCount > 0) {
     ssize_t receivedBytes;
     switch ((receivedBytes =

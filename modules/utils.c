@@ -5,8 +5,10 @@
 
 void printfConfig(config_t *config) {
   if (config != NULL) {
-    printf("<Config{game: %s, host: %s, port: %d}>\n", config->game,
-           config->host, config->port);
+    printf("<Config{game: %s, host: %s, port: %d, playerId: %s, gameId: %s, "
+           "printFlag: %s}>\n",
+           config->game, config->host, config->port, config->playerId,
+           config->gameId, config->f == PRETTY ? "PRETTY" : "DEBUG");
   } else {
     printf("Given Config is NULL\n");
   }
@@ -22,7 +24,6 @@ void freeConfig(config_t *config) {
     }
     free(config);
   }
-  config = NULL;
 }
 
 int parseAttr(char *attr, char *value, config_t *config) {
@@ -146,7 +147,7 @@ int parseLine_f(char *line, config_t *config, int line_index) {
 
 int readConfigFile(char *filename, config_t *config) {
   FILE *fp;
-  //config_t *config = malloc(sizeof(config_t));
+  // config_t *config = malloc(sizeof(config_t));
   char *str = NULL;
   size_t line_size;
   int index = 0;

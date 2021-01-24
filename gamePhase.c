@@ -22,21 +22,27 @@ void gamePhase(int fd[2], int shmId) {
 
   shmPtr = attachSHM(shmId);
   int size = 0;
-  while (strncmp(buffer, "+ GAMEOVER", 10) != 0) {
-    // printf("kommen wir hier her = \n");
-    buffer = recvCommand(0, &size);
 
-    // printf("Current Top Buffer: %s", buffer);
+  while (strncmp(buffer, "+ GAMEOVER", 10) != 0) {
+    buffer = recvCommand(1, &size);
+    printf("Current command: %s", buffer);
 
     if (strncmp(buffer, "+ WAIT", 6) == 0) {
       free(buffer);
       sendCommand(OKWAIT, "");
     }
 
-    if (strncmp(buffer, "+ MOVE", 6) == 0) {
-      sendCommand(THINKING, "");
+    printf("1\n");
 
-      memcpy(shmPtr + sizeof(Share), buffer + 12, size - 12);
+    if (strncmp(buffer, "+ MOVE", 6) == 0) {
+      printf("2\n");
+      sendCommand(THINKING, "");
+      printf("3\n");
+      buffer = recvCommand(26, &size);
+      printf("4\n");
+      printf("Piece List:\n%s", buffer+16);
+
+      memcpy(shmPtr + sizeof(Share), buffer, size - 12);
 
       kill(getppid(), SIGUSR1);
 
@@ -54,14 +60,16 @@ void gamePhase(int fd[2], int shmId) {
       printf("send move\n");
 
       sendCommand(PLAY, move);
-      free(move);
-      free(events);
+      //free(move);
+      //free(events);
       printf("move send\n");
       buffer = recvCommand(1, &size); // OKTHINK
       printf("buffer after send move: %s\n", buffer);
 
       // free(buffer);
+      exit(-100);
     }
+    printf("end of move \n");
 
     if (strncmp(buffer, "+ QUIT", 6) == 0) {
       free(buffer);

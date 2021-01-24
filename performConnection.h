@@ -12,6 +12,7 @@
 
 #ifndef connectionUtil
 #define connectionUtil
+
 #include <arpa/inet.h>
 #include <errno.h>
 #include <netdb.h>
@@ -22,12 +23,11 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #include "infoStructs.h"
 #include "modules/shareMemory.h"
 #include "modules/utils.h"
-
-#include <stdbool.h>
 
 #define PORTNUMBER 1357
 #define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
