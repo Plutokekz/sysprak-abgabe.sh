@@ -1,49 +1,38 @@
 #include "thinker.h"
-#include "modules/cmdPipe.h"
-#include "modules/shareMemory.h"
 
-void thinker(int *fd) {
+void *shm;
+int shmId, fdr, fdw, childInit = 0;
+char *pieceList;
+struct Share *ptrGameStart;
 
-  // Thinker*************
-  int shmID;
-  close(fd[1]);
-  if (read(fd[0], &shmID, sizeof(int)) < 0) {
-    perror("Error writing to pipe");
-  }
 
-  struct Share *ptrGameStart, gameStart;
-  ptrGameStart = &gameStart;
-  ptrGameStart = attachSHM(shmID);
+void init(int fd[2]) {
+  fdw = fd[1];
+  fdr = fd[0];
+}
 
-  // thinker Guard auswerten
+void initChild(){
+  pieceList = malloc(300);
+  receiveInt(fdr, &shmId);
+  shm = attachSHM(shmId);
+  ptrGameStart = (struct Share*) shm;
+  //thinker Guard auswerten
   if (ptrGameStart->thinkerGuard == 1) {
     ptrGameStart->thinkerGuard = 0;
-
-    // insert print spielfeld
-
   } else {
     perror("thinkerGuard not equal 1");
     exit(EXIT_FAILURE);
   }
-  int raw_shmId;
-  receiveInt(fd[0], &raw_shmId);
+}
 
-  printf("SHM id in thinker %d\n", shmID);
-
-  char *pieceList = malloc(7 * 24);
-
-  void *shm = attachSHM(raw_shmId);
-
-  memcpy(pieceList, shm, 7 * 24);
-
-  printf("%s", pieceList);
-
-
-  /*printf("shmID in thinker.c: %d\n", shmID);
-  printf("in thinker(), Erfolg: %s\n", (*ptrGameStart).gameName);
-  printf("numofPlayers: %d\n", (*ptrGameStart).numberOfPlayers);
-  printf("thinkerPID, in thinker.c: %d\n", (*ptrGameStart).thinkerPID);
-  printf("player 0: %d\n", ptrGameStart->players[0].number);*/
-  deleteSHM(shmID);
-  deleteSHM(raw_shmId);
+void thinker() {
+  if(childInit==0){
+    initChild();
+    childInit = 1;
+  }
+  memcpy(pieceList, shm + sizeof(struct Share), 300);
+  bitboard_t *currentBoard = parsFromString(pieceList);
+  printBitboard(currentBoard);
+  //TODO get player black or white ??
+  sendCMD(fdw, "D4:F6"); //A3:B4 B6:A5
 }

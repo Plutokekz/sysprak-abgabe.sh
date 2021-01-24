@@ -1,33 +1,32 @@
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#include "gamePhase.h"
+#include <sys/epoll.h>
 
-#include "performConnection.h"
-#include "signal.h"
-#include "shareMemory.h"
-#include "cmdPipe.h"
+int epfd;
+struct epoll_event *events;
 
-void gamePhase(int fd[2]) {
-  char *buffer;
-  int shmID;
+void setupEpoll(int fd[2]){
+  events = malloc(sizeof(struct epoll_event));
+  epfd = epoll_create(1);
+  events[0].events = EPOLLIN; // Cann append "|EPOLLOUT" for write events as well
+  events[0].data.fd = fd[0];
+  epoll_ctl(epfd, EPOLL_CTL_ADD, fd[0], &events[0]);
+
+}
+
+void gamePhase(int fd[2], int shmId) {
+  char *buffer = "";
   void *shmPtr;
+  //int num_ready;
+  setupEpoll(fd);
 
 
-
-  shmID = createSHM(1024);
-
-  sendInt(fd[1], &shmID);
-
-  close(fd[1]);
-
-  shmPtr = attachSHM(shmID);
+  shmPtr = attachSHM(shmId);
   int size = 0;
-
-    // Comparing, if the first 10 characters (thereby excluding the newline and nullbyte char respectively) are equal
   while (strncmp(buffer, "+ GAMEOVER", 10) != 0) {
-    buffer = recvCommand(1, &size);
+    // printf("kommen wir hier her = \n");
+    buffer = recvCommand(0, &size);
+
+    // printf("Current Top Buffer: %s", buffer);
 
     if (strncmp(buffer, "+ WAIT", 6) == 0) {
       free(buffer);
@@ -36,30 +35,32 @@ void gamePhase(int fd[2]) {
 
     if (strncmp(buffer, "+ MOVE", 6) == 0) {
       sendCommand(THINKING, "");
-      printf("move command buffer\n%s", buffer);
-      free(buffer);
-      buffer = recvCommand(0, &size);
 
-      printf("start piece list\n%s", buffer);
+      memcpy(shmPtr + sizeof(Share), buffer + 12, size - 12);
 
-      printf("SHM id in gamePhase %d\n", shmID);
+      kill(getppid(), SIGUSR1);
 
-      memcpy(shmPtr, buffer, size);
-      //printf("%d\n", size);
+      buffer = recvCommand(1, &size); // OKTHINK
+      char *move = NULL;
+      int move_size = 0;
 
-        // TODO Tim : Add sending signal to thinker and print current gameboard
-        kill(getppid(), SIGUSR1);
-        // TODO Lukas: add communicating move from thinker to connector and writing it into move
+      epoll_wait(epfd, events, 1, 1000 /*timeout*/);
+      if (events[0].events & EPOLLIN) {
+        printf("Socket %d got some data\n", events[0].data.fd);
+        receiveCMD(fd[0], &move, &move_size);
+        printf("Received: %s\n", move);
+      }
 
-        char *move;
+      printf("send move\n");
 
-        if(receiveCMD(*fd[0], move)<0){
-          printf("Error receiving cmd\n");
-          //Error handling exiting / recalculating the move ?
-        }
+      sendCommand(PLAY, move);
+      free(move);
+      free(events);
+      printf("move send\n");
+      buffer = recvCommand(1, &size); // OKTHINK
+      printf("buffer after send move: %s\n", buffer);
 
-        sendCommand (PLAY, move);
-        free(buffer);
+      // free(buffer);
     }
 
     if (strncmp(buffer, "+ QUIT", 6) == 0) {
@@ -69,10 +70,9 @@ void gamePhase(int fd[2]) {
       exit(EXIT_FAILURE);
     }
   }
-  free (buffer);
-  
-  strcpy(shmPtr, buffer);
+  free(buffer);
 
-  //TODO Tim: Printing out last gamestate and who won
+  // strcpy(shmPtr, buffer);
 
+  // TODO Tim: Printing out last gamestate and who won
 }

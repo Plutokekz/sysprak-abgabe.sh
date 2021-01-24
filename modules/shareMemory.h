@@ -39,7 +39,7 @@ typedef struct Share {
     pid_t thinkerPID;
     pid_t connectorPID;
     int thinkerGuard;
-    shmPlayer_t players[];
+    shmPlayer_t players[2];
 
 } Share; 
 

@@ -110,9 +110,9 @@ void setOptions(int argc, char *argv[], opt_t *opt, config_t **config, P_FLAG *f
   }
 }
 
-void handleSigusr1 () {
-  write(0, "Ahhh! sig works!\n", 17);
-  thinker(fd);
+void thinking() {
+  //write(0, "Ahhh! sig works!\n", 17);
+  thinker();
 }
 
 /** @brief set Options and splits up program in Thinker and Connector
@@ -131,46 +131,50 @@ int main(int argc, char *argv[]) {
     perror("Error creating pipe.");
     exit(EXIT_FAILURE);
   }
-
+  init(fd);
   // splitting up in thinker and connector
   if ((pid = fork()) < 0) {
     freeConfig(config);
     perror("fork failed");
     return EXIT_FAILURE;
   } else if (pid == 0) {
+    //#########################################################################
     // child process connector
+    //#########################################################################
     int sock;
-    printf("child pid: %d\n", getpid());
+    //printf("child pid: %d\n", getpid());
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
       freeConfig(config);
       perror("creating socket failed");
       return EXIT_FAILURE;
     }
     int shmID = performConnection(sock, &opt, config, f);
-    printf("shmID in Child proc: %d\n", shmID);
-
       //Pipe für shmID
     //close(fd[0]); //entweder var in perfC oder shmID ausgeben aus perfC
     if (write(fd[1], &shmID, sizeof(int)) < 0) {
       perror("Error writing to pipe");
     }
-    gamePhase(fd);
+    gamePhase(fd, shmID);
+
+    printf("Wie kommen wir hier her ??? game loop\n");
 
     //Signal--------------
     kill(getppid(), SIGUSR1);
     //---------------------
     close(sock);
   } else {
+    //#########################################################################
     // parent process thinker
+    //#########################################################################
     freeConfig(config);
 
     struct sigaction sa = { 0 };
-    sa.sa_handler = &handleSigusr1;
+    sa.sa_handler = &thinking;
     sa.sa_flags = SA_RESTART;
     sigaction(SIGUSR1, &sa, NULL);
 
 
-    printf("Pid in main.c before waitpid: %d\n", pid);
+    //printf("Pid in main.c before waitpid: %d\n", pid);
     // last part of thinker; executed after game over
     if (wait(NULL) == -1) {
       freeConfig(config);

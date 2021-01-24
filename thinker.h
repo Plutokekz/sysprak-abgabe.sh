@@ -8,7 +8,12 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
+#include "modules/bitboard.h"
+#include "modules/cmdPipe.h"
+#include "modules/shareMemory.h"
 
-void thinker(int *fd);
+void init(int fd[2]);
+
+void thinker();
 
 #endif
