@@ -11,7 +11,6 @@
 #include <unistd.h>
 
 #include "performConnection.h"
-#include "shareMemory.h"
 
 #define PORTNUMBER 1357
 #define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
@@ -34,7 +33,7 @@ char *lookup(COMMAND c) {
     command = "PLAYER";
     break;
   default:
-    printf("lookup COMMAND failed\n");
+    printf("lookup COMMAND <%d> not found\n", c);
     exit(EXIT_FAILURE);
   }
   return command;
@@ -193,7 +192,7 @@ int linenCount(char *s, int n) {
   return count;
 }
 
-void *recvCommand(int lines) {
+void *recvCommand(int lines, int *size) {
   static char buffer[RECV_BUFF_SIZE];
   ssize_t totalBytes = 0; // number of bytes in buff
   int blockCount = 2;
@@ -201,6 +200,7 @@ void *recvCommand(int lines) {
       blockCount * RECV_BUFF_SIZE); // initializing 2 memory blocks, so if one
                                     // fills up the next one can just be used
   // fills up recvBuff with oddments from last call
+  *size = blockCount * RECV_BUFF_SIZE;
   strcpy(recvBuff, buffer);
   totalBytes += strlen(buffer);
 
@@ -253,6 +253,7 @@ void *recvCommand(int lines) {
       } else if ((blockCount * RECV_BUFF_SIZE) - totalBytes < RECV_BUFF_SIZE) {
         recvBuff = realloc(recvBuff,
                            ++blockCount * RECV_BUFF_SIZE); // no error handling
+        *size = blockCount * RECV_BUFF_SIZE;
       }
       break;
     }
@@ -317,6 +318,7 @@ int setupConnection() {
 int performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f) {
 
   SOCK = sock;
+  int size = 0;
 
   if (config == NULL) {
     printf("Using Default Settings\n");
@@ -334,7 +336,7 @@ int performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f) {
   }
 
   void *recvBuff;
-  recvBuff = recvCommand(1); // + MNM Gameserver <<Gameserver Version>>
+  recvBuff = recvCommand(1, &size); // + MNM Gameserver <<Gameserver Version>>
                              // accepting connections
   parseCommand(recvBuff, START);
   free(recvBuff);
@@ -342,20 +344,20 @@ int performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f) {
   sendCommand(VERSION, CLIENT_VERSION);
 
   recvBuff =
-      recvCommand(1); // + Client version accepted - please send Game-ID to join
+      recvCommand(1, &size); // + Client version accepted - please send Game-ID to join
   parseCommand(recvBuff, VERSION);
   free(recvBuff);
 
   sendCommand(ID, opt->gameId);
 
-  recvBuff = recvCommand(2); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
+  recvBuff = recvCommand(2, &size); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
   parseCommand(recvBuff, ID);
   free(recvBuff);
 
   // retry without player id later
   sendCommand(PLAYER, opt->playerId);
 
-  recvBuff = recvCommand(0); //
+  recvBuff = recvCommand(0, &size); //
   parseCommand(recvBuff, PLAYER);
   free(recvBuff);
 
