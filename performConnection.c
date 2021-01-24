@@ -315,7 +315,7 @@ int setupConnection() {
   return 0;
 }
 
-int performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f) {
+int performConnection(int sock, config_t *config) {
 
   SOCK = sock;
   int size = 0;
@@ -348,14 +348,14 @@ int performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f) {
   parseCommand(recvBuff, VERSION);
   free(recvBuff);
 
-  sendCommand(ID, opt->gameId);
+  sendCommand(ID, config->gameId);
 
   recvBuff = recvCommand(2, &size); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
   parseCommand(recvBuff, ID);
   free(recvBuff);
 
   // retry without player id later
-  sendCommand(PLAYER, opt->playerId);
+  sendCommand(PLAYER, config->playerId);
 
   recvBuff = recvCommand(0, &size); //
   parseCommand(recvBuff, PLAYER);
@@ -372,7 +372,7 @@ int performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f) {
   printf("shmID performC: %d\n", shmID);
 
 
-  printProlog(gameInfo, f);
+  printProlog(gameInfo, config->f);
   freeGameInfo(gameInfo);
 
   return shmID;

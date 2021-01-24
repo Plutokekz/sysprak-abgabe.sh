@@ -4,15 +4,9 @@
 
 #ifndef BASCHNI_INFOSTRUCTS_H
 #define BASCHNI_INFOSTRUCTS_H
-/**
- * @brief Config struct
- *
- * Contains all the information passed as command-line arguments.
- */
-typedef struct Opt {
-  char gameId[14];
-  char playerId[2];
-} opt_t;
+
+#include <stdbool.h>
+
 
 /**
  * @brief Config struct

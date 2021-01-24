@@ -23,13 +23,12 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "modules/config.h"
-#include "modules/shareMemory.h"
 #include "infoStructs.h"
+#include "modules/shareMemory.h"
+#include "modules/utils.h"
 
 #include <stdbool.h>
 
-#define GAME_ID_SIZE 13
 #define PORTNUMBER 1357
 #define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
 #define GAMEKINDNAME "Bashni"
@@ -43,20 +42,12 @@
  */
 typedef enum COMMAND { RETURN, START, VERSION, ID, PLAYER, THINKING, OKWAIT, PLAY } COMMAND;
 
-/**
- * @brief P_FLAG enum
- * \enum P_FLAG
- *
- * Contains the flags for the function printProlog.
- */
-typedef enum P_FLAG { PRETTY, DEBUG } P_FLAG;
-
 /** @brief implements prolog phase using passed Opt.
  *
  *  @param sock socket to connect with
  *  @param opt options used for the connection
  */
-int performConnection(int sock, opt_t *opt, config_t *config, P_FLAG f);
+int performConnection(int sock, config_t *config);
 
 /** @brief Sends command to server.
  *

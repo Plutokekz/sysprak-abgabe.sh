@@ -41,8 +41,8 @@
 #include <pthread.h>
 
 #include "gamePhase.h"
-#include "modules/config.h"
 #include "modules/shareMemory.h"
+#include "modules/utils.h"
 #include "performConnection.h"
 #include "thinker.h"
 
@@ -66,49 +66,7 @@ int fd[2];
  *  @param **config pointer to a pointer of a config_t struct
  *
  */
-void setOptions(int argc, char *argv[], opt_t *opt, config_t **config, P_FLAG *f) {
-  int c;
-  while ((c = getopt(argc, argv, "g:p:c:d")) != -1) {
-    switch (c) {
-    case 'g':
-      if (strlen(optarg) != GAME_ID_SIZE) {
-        printf("wrong game id\n");
-        exit(EXIT_FAILURE);
-      }
-      strcpy(opt->gameId, optarg);
-      break;
-    case 'p': {
-      unsigned int id;
-      if (sscanf(optarg, "%u", &id) < 1 || id < 1 || id > 2) {
-        printf("wrong player id\n");
-        exit(EXIT_FAILURE);
-      }
-      snprintf(opt->playerId, 2, "%u", id - 1);
-      break;
-    }
-    case 'c':
-      *config = readConfigFile(optarg);
-      break;
-    case 'd':
-      *f = DEBUG;
-      break;
-    case '?':
-      printf("wrong argument\n");
-      freeConfig(*config);
-      exit(EXIT_FAILURE);
-      break;
 
-    default:
-      break;
-    }
-  }
-
-  // temporary add game id in Makefile
-  if (strlen(opt->gameId) == 0) {
-    printf("game id is missing\n");
-    exit(EXIT_FAILURE);
-  }
-}
 
 void thinking() {
   //write(0, "Ahhh! sig works!\n", 17);
@@ -120,12 +78,10 @@ void thinking() {
  */
 int main(int argc, char *argv[]) {
   pid_t pid;
-  opt_t opt = {"", ""};
   config_t *config = NULL;
-  P_FLAG f = PRETTY;
   //int fd[2];
 
-  setOptions(argc, argv, &opt, &config, &f);
+  config = setOptions(argc, argv);
 
   if (pipe(fd) < 0) {
     perror("Error creating pipe.");
@@ -148,7 +104,7 @@ int main(int argc, char *argv[]) {
       perror("creating socket failed");
       return EXIT_FAILURE;
     }
-    int shmID = performConnection(sock, &opt, config, f);
+    int shmID = performConnection(sock, config);
       //Pipe für shmID
     //close(fd[0]); //entweder var in perfC oder shmID ausgeben aus perfC
     if (write(fd[1], &shmID, sizeof(int)) < 0) {

@@ -1,7 +1,7 @@
 //
 // Created by Lukas on 15.12.2020.
 //
-#include "config.h"
+#include "utils.h"
 
 void printfConfig(config_t *config) {
   if (config != NULL) {
@@ -144,9 +144,9 @@ int parseLine_f(char *line, config_t *config, int line_index) {
   return parseAttr(attribute, value, config);
 }
 
-config_t *readConfigFile(char *filename) {
+int readConfigFile(char *filename, config_t *config) {
   FILE *fp;
-  config_t *config = malloc(sizeof(config_t));
+  //config_t *config = malloc(sizeof(config_t));
   char *str = NULL;
   size_t line_size;
   int index = 0;
@@ -158,7 +158,7 @@ config_t *readConfigFile(char *filename) {
     fp = fopen(DEFAULT_CONFIG_FILENAME, "r");
     if (fp == NULL) {
       printf("Default config file not available\n");
-      return NULL;
+      return -1;
     }
   }
 
@@ -167,12 +167,58 @@ config_t *readConfigFile(char *filename) {
       freeConfig(config);
       free(str);
       fclose(fp);
-      return NULL;
+      return -1;
     }
     index++;
   }
   free(str);
   fclose(fp);
 
+  return 0;
+}
+
+config_t *setOptions(int argc, char *argv[]) {
+  config_t *config = malloc(sizeof(config_t));
+  int c;
+  config->f = PRETTY;
+  while ((c = getopt(argc, argv, "g:p:c:d")) != -1) {
+    switch (c) {
+    case 'g':
+      if (strlen(optarg) != GAME_ID_SIZE) {
+        printf("wrong game id\n");
+        exit(EXIT_FAILURE);
+      }
+      strcpy(config->gameId, optarg);
+      break;
+    case 'p': {
+      unsigned int id;
+      if (sscanf(optarg, "%u", &id) < 1 || id < 1 || id > 2) {
+        printf("wrong player id\n");
+        exit(EXIT_FAILURE);
+      }
+      snprintf(config->playerId, 2, "%u", id - 1);
+      break;
+    }
+    case 'c':
+      readConfigFile(optarg, config);
+      break;
+    case 'd':
+      config->f = DEBUG;
+      break;
+    case '?':
+      printf("wrong argument\n");
+      freeConfig(config);
+      exit(EXIT_FAILURE);
+      break;
+
+    default:
+      break;
+    }
+  }
+  // temporary add game id in Makefile
+  if (strlen(config->gameId) == 0) {
+    printf("game id is missing\n");
+    exit(EXIT_FAILURE);
+  }
   return config;
 }

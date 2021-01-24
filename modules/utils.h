@@ -14,8 +14,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #define DEFAULT_CONFIG_FILENAME "tests/config.conf"
+#define GAME_ID_SIZE 13
+
+/**
+ * @brief P_FLAG enum
+ * \enum P_FLAG
+ *
+ * Contains the flags for the function printProlog.
+ */
+typedef enum P_FLAG { PRETTY, DEBUG } P_FLAG;
 
 /**
  * @brief Config struct
@@ -29,6 +39,10 @@ typedef struct Config {
                */
   char *game; /**< the name of the game for the server as an pointer to a
                  string#game. */
+  char gameId[14]; /**< the game id from c args as an pointer to a string#game. */
+  char playerId[2]; /**< the player id from c args as an pointer to a string#game.
+                   */
+  P_FLAG f;
 } config_t;
 
 /** @brief reads the config file with the given filename.
@@ -39,7 +53,7 @@ typedef struct Config {
  *  @param *filename the name of the config file
  *  @return config_t struct, NULL pointer if there was an Error.
  */
-config_t *readConfigFile(char *filename);
+int readConfigFile(char *filename, config_t *config);
 
 /**
  * @brief frees a config_t struct
@@ -52,5 +66,23 @@ void freeConfig(config_t *config);
  * @param config pointer
  */
 void printfConfig(config_t *config);
+
+/** @brief Parse arguments
+ *
+ * Parse arguments, copy them to Opt struct and if possible sets the config
+ * struct pointer to the created config struct.
+ *
+ * -g gameId
+ * -p playerId
+ * -c configFilename
+ *
+ *
+ *  @param argc length of argv
+ *  @param argv char array with the args
+ *  @param *opt opt_t struct
+ *  @param *config pointer
+ *
+ */
+config_t *setOptions(int argc, char *argv[]);
 
 #endif // BASCHNI_CONFIG_H
