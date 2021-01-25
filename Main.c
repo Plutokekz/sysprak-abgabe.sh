@@ -65,7 +65,6 @@
 
 // TODO to mySignal
 void thinking() {
-  // write(0, "Ahhh! sig works!\n", 17);
   thinker();
 }
 
@@ -85,11 +84,6 @@ void child(config_t *config, int fd[2]) {
   }
   gamePhase(fd, shmID);
 
-  printf("Wie kommen wir hier her ??? game loop\n");
-
-  // Signal--------------
-  kill(getppid(), SIGUSR1);
-  //---------------------
   close(sock);
 }
 
