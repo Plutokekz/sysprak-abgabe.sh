@@ -41,6 +41,7 @@
 #include <unistd.h>
 
 #include "gamePhase.h"
+#include "modules/cmdPipe.h"
 #include "modules/shareMemory.h"
 #include "modules/utils.h"
 #include "performConnection.h"
@@ -80,11 +81,9 @@ void child(config_t *config, int fd[2]) {
   game_info *gameInfo = getGameInfo();
   int shmID = setupSHM_GameStart(gameInfo);
   freeGameInfo(gameInfo);
-  // Pipe für shmID
-  // close(fd[0]); //entweder var in perfC oder shmID ausgeben aus perfC
-  if (write(fd[1], &shmID, sizeof(int)) < 0) {
-    perror("Error writing to pipe");
-  }
+
+  sendInt(fd[1], &shmID);
+  kill(getppid(), SIGUSR1); // init thinker
   gamePhase(sock, fd, shmID);
 
   close(sock);
@@ -92,6 +91,8 @@ void child(config_t *config, int fd[2]) {
 
 void parent(config_t *config) {
   freeConfig(config);
+
+  // TODO to mySignal
   struct sigaction sa = {0};
   sa.sa_handler = &thinking;
   sa.sa_flags = SA_RESTART;
@@ -120,7 +121,9 @@ int main(int argc, char *argv[]) {
     perror("Error creating pipe.");
     exit(EXIT_FAILURE);
   }
-  init(fd);
+  printf("WIESO KOMKMT HIERNICHTS AN ???????????\n");
+  printf("Main pipe fd[0]: %d, fd[1]: %d\n", fd[0], fd[1]);
+  initThinker(fd);
   // splitting up in thinker and connector
   if ((pid = fork()) < 0) {
     freeConfig(config);

@@ -12,7 +12,7 @@
 #include "modules/cmdPipe.h"
 #include "modules/shareMemory.h"
 
-void init(int fd[2]);
+void initThinker(int *fd);
 
 void thinker();
 

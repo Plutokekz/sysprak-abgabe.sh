@@ -38,4 +38,4 @@ vg:
 	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./sysprak-client -g $(G) -c $(C)
 
 clean:
-	rm performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o bitboard.o
+	rm performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o bitboard.o protocolUtil.o

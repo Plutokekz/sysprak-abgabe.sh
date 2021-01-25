@@ -5,6 +5,7 @@ int epfd;
 struct epoll_event *events;
 
 void setupEpoll(int fd[2]){
+  printf("gamePhase pipe fd[0]: %d, fd[1]: %d\n", fd[0], fd[1]);
   events = malloc(sizeof(struct epoll_event));
   epfd = epoll_create(1);
   events[0].events = EPOLLIN; // Cann append "|EPOLLOUT" for write events as well
@@ -40,21 +41,25 @@ void gamePhase(int sock, int fd[2], int shmId) {
       printf("3\n");
       buffer = recvCommand(sock, 26, &size);
       printf("4\n");
-      printf("Piece List:\n%s", buffer+16);
+      //printf("Piece List:\n%s", buffer+16);
 
-      memcpy(shmPtr + sizeof(Share), buffer, size - 12);
+      memcpy((void *)shmPtr + sizeof(Share), buffer, size - 12);
+
+      printf("5\n");
 
       shmPtr->thinkerGuard = 1;
+      printf("6\n");
       kill(getppid(), SIGUSR1);
-
+      printf("7\n");
       buffer = recvCommand(sock, 1, &size); // OKTHINK
+      printf("8\n");
       char *move = NULL;
       int move_size = 0;
-
+      printf("9\n");
       epoll_wait(epfd, events, 1, 1000 /*timeout*/);
       if (events[0].events & EPOLLIN) {
         printf("Socket %d got some data\n", events[0].data.fd);
-        receiveCMD(fd[0], &move, &move_size);
+        receiveCMD(events[0].data.fd, &move, &move_size);
         printf("Received: %s\n", move);
       }
 
