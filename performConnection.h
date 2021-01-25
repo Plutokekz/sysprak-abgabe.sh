@@ -26,14 +26,6 @@
 #define GAMEKINDNAME "Bashni"
 #define CLIENT_VERSION "2.42"
 
-/**
- * @brief COMMAND enum
- * \enum COMMAND
- *
- * Contains all relevant commands for following functions.
- */
-typedef enum COMMAND { RETURN, START, VERSION, ID, PLAYER, THINKING, OKWAIT, PLAY } COMMAND;
-
 /** @brief implements prolog phase using passed Opt.
  *
  *  @param sock socket to connect with

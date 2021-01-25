@@ -1,5 +1,6 @@
 #include <arpa/inet.h>
 #include <errno.h>
+#include <limits.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -10,6 +11,14 @@
 #include <unistd.h>
 
 #include "performConnection.h"
+
+#define PORTNUMBER 1357
+#define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
+#define GAMEKINDNAME "Bashni"
+#define CLIENT_VERSION "2.42"
+#define RECV_BUFF_SIZE 100
+
+int SOCK;
 
 // prefix nullable
 void rawAppend(game_info *gameInfo, char *recvBuff) {

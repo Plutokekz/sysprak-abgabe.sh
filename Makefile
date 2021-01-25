@@ -4,8 +4,8 @@ C=tests/config.conf
 export C
 export G
 
-sysprak-client: Main.c performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o bitboard.o
-	gcc $(EFLAGS) -o sysprak-client Main.c performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o bitboard.o
+sysprak-client: Main.c performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o bitboard.o protocolUtil.o
+	gcc $(EFLAGS) -o sysprak-client Main.c performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o bitboard.o protocolUtil.o
 
 performConnection.o: performConnection.c performConnection.h
 	gcc $(EFLAGS) -c performConnection.c
@@ -24,6 +24,9 @@ gamePhase.o: gamePhase.c gamePhase.h
 
 thinker.o: thinker.c thinker.h
 	gcc $(EFLAGS) -c thinker.c
+
+protocolUtil.o: protocolUtil.c protocolUtil.h
+	gcc $(EFLAGS) -c protocolUtil.c
 
 bitboard.o: modules/bitboard.c
 	gcc $(EFLAGS) -c modules/bitboard.c

@@ -4,6 +4,7 @@
 #include <limits.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <stdio.h>
 
 #include "protocolUtil.h"
 
