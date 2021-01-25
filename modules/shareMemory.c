@@ -49,8 +49,7 @@ int setupSHM_GameStart(game_info *gs) {
   ptrGameStart->thinkerPID = getpid();
   ptrGameStart->connectorPID = getppid();
   ptrGameStart->numberOfPlayers = gs->total;
-  ptrGameStart->thinkerGuard = 1; // TODO auf 0 setzen und entscheiden,
-  // wo wir Guard = 1 setzen wollen.
+  ptrGameStart->thinkerGuard = 0;
 
   // Transfer Player Data into nested Player struct;
   int numP = gs->total; // Anzahl Spieler, Info aus Erik's struct holen
