@@ -15,7 +15,7 @@ void setupEpoll(int fd[2]){
 
 void gamePhase(int sock, int fd[2], int shmId) {
   char *buffer = "";
-  void *shmPtr;
+  struct Share *shmPtr;
   //int num_ready;
   setupEpoll(fd);
 
@@ -44,6 +44,7 @@ void gamePhase(int sock, int fd[2], int shmId) {
 
       memcpy(shmPtr + sizeof(Share), buffer, size - 12);
 
+      shmPtr->thinkerGuard = 1;
       kill(getppid(), SIGUSR1);
 
       buffer = recvCommand(sock, 1, &size); // OKTHINK
