@@ -12,4 +12,4 @@
 #include "modules/cmdPipe.h"
 #include "modules/shareMemory.h"
 
-void gamePhase(int fd[2], int shmId);
+void gamePhase(int sock, int fd[2], int shmId);

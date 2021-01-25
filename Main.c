@@ -77,13 +77,17 @@ void child(config_t *config, int fd[2]) {
     perror("creating socket failed");
     exit(EXIT_FAILURE);
   }
-  int shmID = performConnection(sock, config);
+  performConnection(sock, config);
+  // Setup SHM for gameInfo
+  game_info *gameInfo = getGameInfo();
+  int shmID = setupSHM_GameStart(gameInfo);
+  freeGameInfo(gameInfo);
   // Pipe für shmID
   // close(fd[0]); //entweder var in perfC oder shmID ausgeben aus perfC
   if (write(fd[1], &shmID, sizeof(int)) < 0) {
     perror("Error writing to pipe");
   }
-  gamePhase(fd, shmID);
+  gamePhase(sock, fd, shmID);
 
   printf("Wie kommen wir hier her ??? game loop\n");
 
@@ -106,7 +110,7 @@ void parent(config_t *config) {
   // last part of thinker; executed after game over
   if (wait(NULL) == -1) {
     perror("error waiting for connector");
-   exit(EXIT_FAILURE);
+    exit(EXIT_FAILURE);
   }
 }
 
