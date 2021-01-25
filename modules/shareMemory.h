@@ -23,6 +23,9 @@
 
 #include "../infoStructs.h"
 
+/** @brief Struct for all Players
+ * 
+ */
 typedef struct shmPlayer {
     int number;
     char name[30];
@@ -30,7 +33,15 @@ typedef struct shmPlayer {
 
 } shmPlayer_t;
 
-
+/** @brief SHM Struct, which contains all necessary infos for thinker().
+ * 
+ * @param gameName custom name of the created Game (e.g. GameTim)
+ * @param ownPlayerNumber The Players own number (1 or 2)
+ * @param numberOfPlayers Total number of players (usually 2)
+ * @param thinkerGuard See MS3: "Flag...das nur gesetzt ist,
+ * wenn der Thinker auch wirklich einen neuen Zug liefern soll", is set to 1 by gamePhase.c
+ * @param players contains information for each player
+ */
 typedef struct Share {
     
     char gameName[30];
