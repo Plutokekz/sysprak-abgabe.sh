@@ -204,7 +204,7 @@ int setupConnection(int sock) {
 
 void performConnection(int sock, config_t *config) {
   int size = 0;
-  if (config == NULL) {
+  if (config->game == NULL || config->host || config->port == 0) {
     printf("Using Default Settings\n");
     if (setupConnection(sock) != 0) {
       exit(EXIT_FAILURE);
