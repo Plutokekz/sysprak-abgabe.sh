@@ -13,7 +13,7 @@ void setupEpoll(int fd[2]){
 
 }
 
-void gamePhase(int fd[2], int shmId) {
+void gamePhase(int sock, int fd[2], int shmId) {
   char *buffer = "";
   void *shmPtr;
   //int num_ready;
@@ -24,21 +24,21 @@ void gamePhase(int fd[2], int shmId) {
   int size = 0;
 
   while (strncmp(buffer, "+ GAMEOVER", 10) != 0) {
-    buffer = recvCommand(1, &size);
+    buffer = recvCommand(sock, 1, &size);
     printf("Current command: %s", buffer);
 
     if (strncmp(buffer, "+ WAIT", 6) == 0) {
       free(buffer);
-      sendCommand(OKWAIT, "");
+      sendCommand(sock, OKWAIT, "");
     }
 
     printf("1\n");
 
     if (strncmp(buffer, "+ MOVE", 6) == 0) {
       printf("2\n");
-      sendCommand(THINKING, "");
+      sendCommand(sock, THINKING, "");
       printf("3\n");
-      buffer = recvCommand(26, &size);
+      buffer = recvCommand(sock, 26, &size);
       printf("4\n");
       printf("Piece List:\n%s", buffer+16);
 
@@ -46,7 +46,7 @@ void gamePhase(int fd[2], int shmId) {
 
       kill(getppid(), SIGUSR1);
 
-      buffer = recvCommand(1, &size); // OKTHINK
+      buffer = recvCommand(sock, 1, &size); // OKTHINK
       char *move = NULL;
       int move_size = 0;
 
@@ -59,11 +59,11 @@ void gamePhase(int fd[2], int shmId) {
 
       printf("send move\n");
 
-      sendCommand(PLAY, move);
+      sendCommand(sock, PLAY, move);
       //free(move);
       //free(events);
       printf("move send\n");
-      buffer = recvCommand(1, &size); // OKTHINK
+      buffer = recvCommand(sock, 1, &size); // OKTHINK
       printf("buffer after send move: %s\n", buffer);
 
       // free(buffer);

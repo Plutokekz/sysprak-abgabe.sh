@@ -1,6 +1,5 @@
 #include <arpa/inet.h>
 #include <errno.h>
-#include <limits.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -11,45 +10,6 @@
 #include <unistd.h>
 
 #include "performConnection.h"
-
-#define PORTNUMBER 1357
-#define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
-#define GAMEKINDNAME "Bashni"
-#define CLIENT_VERSION "2.42"
-#define RECV_BUFF_SIZE 100
-
-int SOCK;
-
-char *lookup(COMMAND c) {
-  char *command;
-  switch (c) {
-  case VERSION:
-    command = "VERSION";
-    break;
-  case ID:
-    command = "ID";
-    break;
-  case PLAYER:
-    command = "PLAYER";
-    break;
-  case THINKING:
-    command = "THINKING";
-    break;
-  case PLAY:
-    command = "PLAY";
-    break;
-  case OKWAIT:
-    command = "OKWAIT";
-    break;
-  case START:
-    command = "START";
-    break;
-  default:
-    printf("lookup COMMAND <%d> not found\n", c);
-    exit(EXIT_FAILURE);
-  }
-  return command;
-}
 
 // prefix nullable
 void rawAppend(game_info *gameInfo, char *recvBuff) {
@@ -195,102 +155,7 @@ void printProlog(game_info *gameInfo, P_FLAG f) {
   }
 }
 
-int linenCount(char *s, int n) {
-  int count = 0;
-  for (int i = 0; i < n; i++) {
-    if (s[i] == '\n')
-      count++;
-  }
-  return count;
-}
-
-void *recvCommand(int lines, int *size) {
-  static char buffer[RECV_BUFF_SIZE];
-  ssize_t totalBytes = 0; // number of bytes in buff
-  int blockCount = 2;
-  char *recvBuff = malloc(
-      blockCount * RECV_BUFF_SIZE); // initializing 2 memory blocks, so if one
-                                    // fills up the next one can just be used
-  // fills up recvBuff with oddments from last call
-  *size = blockCount * RECV_BUFF_SIZE;
-  strcpy(recvBuff, buffer);
-  totalBytes += strlen(buffer);
-
-  int lineCount = lines == 0 ? INT_MAX : lines;
-  lineCount -= linenCount(buffer, strnlen(buffer, RECV_BUFF_SIZE));
-  while (lineCount > 0) {
-    ssize_t receivedBytes;
-    switch ((receivedBytes =
-                 recv(SOCK, recvBuff + totalBytes, RECV_BUFF_SIZE - 1, 0))) {
-    case -1:
-      perror("receive error");
-      free(recvBuff);
-      exit(EXIT_FAILURE);
-    case 0:
-      printf("connection closed by server\n");
-      printf("already received: %s\n", recvBuff);
-      free(recvBuff);
-      exit(EXIT_FAILURE);
-    default:
-      if (recvBuff[0] == '-') {
-        recvBuff[totalBytes] = '\0';
-        printf("%s", recvBuff);
-        free(recvBuff);
-        exit(EXIT_FAILURE);
-      }
-      // lineCount -= linenCount(recvBuff + totalBytes, receivedBytes);
-      int bytes = 0;
-      while (bytes < receivedBytes) {
-        if (recvBuff[totalBytes + bytes] == '\n') {
-          lineCount--;
-        }
-        bytes++;
-        if (lineCount <= 0)
-          break;
-      }
-      if (bytes < receivedBytes) {
-        recvBuff[totalBytes + receivedBytes] = '\0';
-        strcpy(buffer, recvBuff + totalBytes + bytes);
-      }
-      totalBytes +=
-          bytes; // increment returned bytes every loop (at least 1 byte)
-      recvBuff[totalBytes] = '\0';
-      char *end;
-      if (lineCount > lines && (end = strstr(recvBuff, "END")) != NULL) {
-        end = strchr(end, '\n');
-        memset(buffer, 0, RECV_BUFF_SIZE);
-        strcpy(buffer,
-               end + 1); // splitted string size is less than RECV_BUFF_SIZe
-        end[1] = '\0';
-        lineCount = 0;
-      } else if ((blockCount * RECV_BUFF_SIZE) - totalBytes < RECV_BUFF_SIZE) {
-        recvBuff = realloc(recvBuff,
-                           ++blockCount * RECV_BUFF_SIZE); // no error handling
-        *size = blockCount * RECV_BUFF_SIZE;
-      }
-      break;
-    }
-  }
-  return (void *)recvBuff;
-}
-
-// supports VERSION, ID, PLAYER
-void sendCommand(COMMAND c, char *value) {
-  char sendBuff[50] = "";
-  char *command = lookup(c);
-  size_t size;
-  if (value == NULL || strlen(value) == 0) {
-    size = sprintf(sendBuff, "%s\n", command);
-  } else {
-    size = sprintf(sendBuff, "%s %s\n", command, value);
-  }
-  if (send(SOCK, sendBuff, size, 0) < 0) {
-    perror("sending failed\n");
-    exit(EXIT_FAILURE);
-  }
-}
-
-int _connect(char *hostname, int port) {
+int _connect(int sock, char *hostname, int port) {
 
   in_addr_t addr;
   struct sockaddr_in server;
@@ -307,41 +172,38 @@ int _connect(char *hostname, int port) {
   server.sin_family = AF_INET; // upgrade to IPv6 later
   server.sin_port = htons(port);
 
-  if (connect(SOCK, (struct sockaddr *)&server, sizeof(server)) < 0) {
+  if (connect(sock, (struct sockaddr *)&server, sizeof(server)) < 0) {
     perror("connection failed");
     return -1;
   }
   return 0;
 }
 
-int setupConnectionByStruct(config_t *config) {
-  if (_connect(config->host, config->port) != 0) {
+int setupConnectionByStruct(int sock, config_t *config) {
+  if (_connect(sock, config->host, config->port) != 0) {
     return -1;
   }
   return 0;
 }
 
-int setupConnection() {
-  if (_connect(HOSTNAME, PORTNUMBER) != 0) {
+int setupConnection(int sock) {
+  if (_connect(sock, HOSTNAME, PORTNUMBER) != 0) {
     return -1;
   }
   return 0;
 }
 
-int performConnection(int sock, config_t *config) {
-
-  SOCK = sock;
+void performConnection(int sock, config_t *config) {
   int size = 0;
-
   if (config == NULL) {
     printf("Using Default Settings\n");
-    if (setupConnection() != 0) {
+    if (setupConnection(sock) != 0) {
       exit(EXIT_FAILURE);
     }
   } else {
     printf("Using Config Settings\n");
     printfConfig(config);
-    if (setupConnectionByStruct(config) != 0) {
+    if (setupConnectionByStruct(sock, config) != 0) {
       freeConfig(config);
       exit(EXIT_FAILURE);
     }
@@ -349,44 +211,30 @@ int performConnection(int sock, config_t *config) {
   }
 
   void *recvBuff;
-  recvBuff = recvCommand(1, &size); // + MNM Gameserver <<Gameserver Version>>
+  recvBuff = recvCommand(sock, 1, &size); // + MNM Gameserver <<Gameserver Version>>
                              // accepting connections
   parseCommand(recvBuff, START);
   free(recvBuff);
 
-  sendCommand(VERSION, CLIENT_VERSION);
+  sendCommand(sock, VERSION, CLIENT_VERSION);
 
   recvBuff =
-      recvCommand(1, &size); // + Client version accepted - please send Game-ID to join
+      recvCommand(sock, 1, &size); // + Client version accepted - please send Game-ID to join
   parseCommand(recvBuff, VERSION);
   free(recvBuff);
 
-  sendCommand(ID, config->gameId);
+  sendCommand(sock, ID, config->gameId);
 
-  recvBuff = recvCommand(2, &size); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
+  recvBuff = recvCommand(sock, 2, &size); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
   parseCommand(recvBuff, ID);
   free(recvBuff);
 
   // retry without player id later
-  sendCommand(PLAYER, config->playerId);
+  sendCommand(sock, PLAYER, config->playerId);
 
-  recvBuff = recvCommand(0, &size); //
+  recvBuff = recvCommand(sock, 0, &size); //
   parseCommand(recvBuff, PLAYER);
   free(recvBuff);
 
-  // SHM (TODO Tim: Einbinden, sobald Erik's struct erstellt wurde)
-  // int shmID = setupSHM_GameStart(struct x);
-  // shmID über Pipeline an Parent Prozess (Thinker) schicken
-
-  game_info *gameInfo = getGameInfo();
-
-  //Setup SHM for gameInfo
-  int shmID = setupSHM_GameStart(gameInfo);
-  printf("shmID performC: %d\n", shmID);
-
-
-  printProlog(gameInfo, config->f);
-  freeGameInfo(gameInfo);
-
-  return shmID;
+  printProlog(getGameInfo(), config->f);
 }
