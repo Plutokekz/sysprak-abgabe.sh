@@ -1,3 +1,6 @@
+#ifndef PROTOCOL_UTILS_H
+#define PROTOCOL_UTILS_H
+
 /**
  * @brief COMMAND enum
  * \enum COMMAND
@@ -29,3 +32,4 @@ void sendCommand(int sock, COMMAND c, char *value);
  *  @return pointer to received data
  */
 void *recvCommand(int sock, int lines, int *size);
+#endif

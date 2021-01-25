@@ -31,6 +31,7 @@ void thinker() {
     childInit = 1;
   }
   memcpy(pieceList, shm + sizeof(struct Share), 300);
+  printf("Thinker Piece List: %s", pieceList);
   bitboard_t *currentBoard = parsFromString(pieceList);
   printBitboard(currentBoard);
   //TODO get player black or white ??
