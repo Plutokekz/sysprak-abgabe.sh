@@ -28,6 +28,10 @@
  */
 
 #include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <pthread.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,19 +39,13 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <signal.h>
-#include <pthread.h>
 
-#include "shareMemory.h"
 #include "config.h"
 #include "performConnection.h"
+#include "shareMemory.h"
 #include "thinker.h"
 
 int fd[2];
-
-
 
 /** @brief Parse arguments
  *
@@ -65,7 +63,8 @@ int fd[2];
  *  @param **config pointer to a pointer of a config_t struct
  *
  */
-void setOptions(int argc, char *argv[], opt_t *opt, config_t **config, P_FLAG *f) {
+void setOptions(int argc, char *argv[], opt_t *opt, config_t **config,
+                P_FLAG *f) {
   int c;
   while ((c = getopt(argc, argv, "g:p:c:d")) != -1) {
     switch (c) {
@@ -109,7 +108,7 @@ void setOptions(int argc, char *argv[], opt_t *opt, config_t **config, P_FLAG *f
   }
 }
 
-void handleSigusr1 () {
+void handleSigusr1() {
   write(0, "Ahhh! sig works!\n", 17);
   thinker(fd);
 }
@@ -122,7 +121,7 @@ int main(int argc, char *argv[]) {
   opt_t opt = {"", ""};
   config_t *config = NULL;
   P_FLAG f = PRETTY;
-  //int fd[2];
+  // int fd[2];
 
   setOptions(argc, argv, &opt, &config, &f);
 
@@ -145,16 +144,23 @@ int main(int argc, char *argv[]) {
       perror("creating socket failed");
       return EXIT_FAILURE;
     }
-    int shmID = performConnection(sock, &opt, config, f);
+
+    performConnection(sock, &opt, config, f);
+
+    // Setup SHM for gameInfo
+    game_info *gameInfo = getGameInfo();
+    int shmID = setupSHM_GameStart(gameInfo);
+    freeGameInfo(gameInfo);
+    printf("shmID performC: %d\n", shmID);
     printf("shmID in Child proc: %d\n", shmID);
 
-      //Pipe für shmID
-    close(fd[0]); //entweder var in perfC oder shmID ausgeben aus perfC
+    // Pipe für shmID
+    close(fd[0]); // entweder var in perfC oder shmID ausgeben aus perfC
     if (write(fd[1], &shmID, sizeof(int)) < 0) {
       perror("Error writing to pipe");
     }
 
-    //Signal--------------
+    // Signal--------------
     kill(getppid(), SIGUSR1);
     //---------------------
     close(sock);
@@ -167,7 +173,6 @@ int main(int argc, char *argv[]) {
     sa.sa_flags = SA_RESTART;
     sigaction(SIGUSR1, &sa, NULL);
 
-
     printf("Pid in main.c before waitpid: %d\n", pid);
     // last part of thinker; executed after game over
     if (wait(NULL) == -1) {
@@ -175,8 +180,6 @@ int main(int argc, char *argv[]) {
       perror("error waiting for connector");
       return EXIT_FAILURE;
     }
-    
-
   }
 
   return EXIT_SUCCESS;
