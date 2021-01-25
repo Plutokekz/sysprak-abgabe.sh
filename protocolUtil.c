@@ -1,10 +1,10 @@
-#include <stdlib.h>
-#include <string.h>
 #include <errno.h>
 #include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <stdio.h>
 
 #include "protocolUtil.h"
 
@@ -75,11 +75,24 @@ void *recvCommand(int sock, int lines, int *size) {
                                     // fills up the next one can just be used
   // fills up recvBuff with oddments from last call
   *size = blockCount * RECV_BUFF_SIZE;
-  strcpy(recvBuff, buffer);
-  totalBytes += strlen(buffer);
-
   int lineCount = lines == 0 ? INT_MAX : lines;
-  lineCount -= linenCount(buffer, strnlen(buffer, RECV_BUFF_SIZE));
+  char *pos;
+  while ((pos = strchr(buffer, '\n')) != NULL && lineCount > 0) {
+    size_t bytes = pos - buffer;
+    bytes++;
+    strncpy(recvBuff + totalBytes, buffer, bytes);
+    totalBytes += bytes;
+    recvBuff[totalBytes] = '\0';
+    lineCount--;
+    strcpy(buffer, pos + 1);
+  }
+
+  if (lineCount > 0) {
+    strcpy(recvBuff + totalBytes, buffer);
+    totalBytes += strlen(buffer);
+    memset(buffer, 0, RECV_BUFF_SIZE);
+  }
+
   while (lineCount > 0) {
     ssize_t receivedBytes;
     switch ((receivedBytes =
@@ -100,15 +113,12 @@ void *recvCommand(int sock, int lines, int *size) {
         free(recvBuff);
         exit(EXIT_FAILURE);
       }
-      // lineCount -= linenCount(recvBuff + totalBytes, receivedBytes);
       int bytes = 0;
-      while (bytes < receivedBytes) {
+      while (bytes < receivedBytes && lineCount > 0) {
         if (recvBuff[totalBytes + bytes] == '\n') {
           lineCount--;
         }
         bytes++;
-        if (lineCount <= 0)
-          break;
       }
       if (bytes < receivedBytes) {
         recvBuff[totalBytes + receivedBytes] = '\0';
@@ -120,7 +130,6 @@ void *recvCommand(int sock, int lines, int *size) {
       char *end;
       if (lineCount > lines && (end = strstr(recvBuff, "END")) != NULL) {
         end = strchr(end, '\n');
-        memset(buffer, 0, RECV_BUFF_SIZE);
         strcpy(buffer,
                end + 1); // splitted string size is less than RECV_BUFF_SIZe
         end[1] = '\0';
