@@ -63,8 +63,7 @@
  *
  */
 
-// TODO to mySignal
-void thinking() {
+void thinking(){
   thinker();
 }
 
@@ -93,12 +92,12 @@ void child(config_t *config, int fd[2]) {
 
 void parent(config_t *config) {
   freeConfig(config);
-
-  // TODO to mySignal
   struct sigaction sa = {0};
   sa.sa_handler = &thinking;
   sa.sa_flags = SA_RESTART;
   sigaction(SIGUSR1, &sa, NULL);
+
+
 
   // printf("Pid in main.c before waitpid: %d\n", pid);
   // last part of thinker; executed after game over
