@@ -47,42 +47,23 @@
 #include "performConnection.h"
 #include "thinker.h"
 
-/** @brief Parse arguments
- *
- * Parse arguments, copy them to Opt struct and if possible sets the config
- * struct pointer to the created config struct.
- *
- * -g gameId
- * -p playerId
- * -c configFilename
- *
- *
- *  @param argc length of argv
- *  @param argv char array with the args
- *  @param *opt opt_t struct
- *  @param **config pointer to a pointer of a config_t struct
- *
- */
-
-void thinking(){
-  thinker();
-}
+void thinking() { thinker(); }
 
 void child(config_t *config, int fd[2]) {
-  int sock;
-  // printf("child pid: %d\n", getpid());
+  int sock, shmID;
   if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
     freeConfig(config);
     perror("creating socket failed");
     exit(EXIT_FAILURE);
   }
   performConnection(sock, config);
+  freeConfig(config);
   // Setup SHM for gameInfo
   game_info *gameInfo = getGameInfo();
-  int shmID = setupSHM_GameStart(gameInfo);
+  shmID = setupSHM_GameStart(gameInfo);
   freeGameInfo(gameInfo);
 
-  sendInt(fd[1], &shmID);
+  sendInt(fd[1], &shmID);   // send shmid to thinker
   kill(getppid(), SIGUSR1); // init thinker
   gamePhase(sock, fd, shmID);
 
@@ -98,10 +79,6 @@ void parent(config_t *config) {
   sa.sa_flags = SA_RESTART;
   sigaction(SIGUSR1, &sa, NULL);
 
-
-
-  // printf("Pid in main.c before waitpid: %d\n", pid);
-  // last part of thinker; executed after game over
   if (wait(NULL) == -1) {
     perror("error waiting for connector");
     exit(EXIT_FAILURE);
@@ -121,8 +98,6 @@ int main(int argc, char *argv[]) {
     perror("Error creating pipe.");
     exit(EXIT_FAILURE);
   }
-  printf("WIESO KOMKMT HIERNICHTS AN ???????????\n");
-  printf("Main pipe fd[0]: %d, fd[1]: %d\n", fd[0], fd[1]);
   initThinker(fd);
   // splitting up in thinker and connector
   if ((pid = fork()) < 0) {
