@@ -86,7 +86,9 @@ void *recvCommand(int sock, int lines, int *size) {
     totalBytes += bytes;
     recvBuff[totalBytes] = '\0';
     lineCount--;
-    memmove(buffer, pos + 1, strlen(pos + 1));
+    size_t len = strlen(pos + 1);
+    memmove(buffer, pos + 1, len);
+    buffer[len] = '\0';
   }
 
   if (lineCount > 0) {
