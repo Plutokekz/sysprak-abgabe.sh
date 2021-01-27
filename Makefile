@@ -1,6 +1,7 @@
 EFLAGS = -Wall -Wextra -Werror -g
 G=0000000000000
 C=tests/config.conf
+P=1
 export C
 export G
 
@@ -32,7 +33,7 @@ bitboard.o: modules/bitboard.c
 	gcc $(EFLAGS) -c modules/bitboard.c
 
 play: sysprak-client
-	./sysprak-client -g $(GAME_ID) -p $(PLAYER)
+	./sysprak-client -g $(G) -p $(P) -c $(C)
 
 vg:
 	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./sysprak-client -g $(G) -c $(C)

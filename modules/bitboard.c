@@ -15,18 +15,20 @@ void print_board(long b) {
   int i, j, x;
   char *coord = "ABCDEFGH";
   printf(" ");
-  for(x=0;x<8;x++){printf(" %c", *(coord+x));}
+  for (x = 0; x < 8; x++) {
+    printf(" %c", *(coord + x));
+  }
   printf("\n ┌");
   for (x = 0; x < 15; x++) {
     x % 2 == 0 ? printf("─") : printf("┬");
   }
   printf("┐\n");
   for (i = 7; i >= 0; i--) {
-    printf("%d│", i+1);
+    printf("%d│", i + 1);
     for (j = 0; j < 8; j++) {
       printf("%d│", get(b, j + 8 * i) ? 1 : 0);
     }
-    printf("%d\n", i+1);
+    printf("%d\n", i + 1);
     if (i >= 1) {
       printf(" ├");
       for (x = 0; x < 15; x++) {
@@ -40,7 +42,9 @@ void print_board(long b) {
     x % 2 == 0 ? printf("─") : printf("┴");
   }
   printf("┘\n ");
-  for(x=0;x<8;x++){printf(" %c", *(coord+x));}
+  for (x = 0; x < 8; x++) {
+    printf(" %c", *(coord + x));
+  }
   printf("\n");
 }
 
@@ -76,18 +80,19 @@ bitboard_t *initBitboard() {
 }
 
 int parsCoordinateToSquare(char *coord) {
-  //int row = *(coord) - 'A'; // char coord to int index
-  //int column = *(coord+1) - '1'; // char number to int
-  //printf("Current Piece: %s, calc coords: row: %d, column: %d\n", coord, row, column);
+  // int row = *(coord) - 'A'; // char coord to int index
+  // int column = *(coord+1) - '1'; // char number to int
+  // printf("Current Piece: %s, calc coords: row: %d, column: %d\n", coord, row,
+  // column);
   return (*(coord) - 'A') + 8 * (*(coord + 1) - '1');
 }
 
-int addToBitboardPart(struct bitboardPart *board, int *square, char *type, int *i){
-    board->board = set(board->board, *square);
-    board->depth = *i;
-    board->type = *type;
+int addToBitboardPart(struct bitboardPart *board, int *square, char *type,
+                      int *i) {
+  board->board = set(board->board, *square);
+  board->depth = *i;
+  board->type = *type;
   return 0;
-
 }
 
 int addToBitboard(bitboardPart_t bitboards[24], int *square, char *type) {

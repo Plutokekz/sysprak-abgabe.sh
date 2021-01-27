@@ -7,7 +7,6 @@
 
 #include <stdbool.h>
 
-
 /**
  * @brief Config struct
  *

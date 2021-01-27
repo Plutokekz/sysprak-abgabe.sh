@@ -204,9 +204,10 @@ int setupConnection(int sock) {
 
 void performConnection(int sock, config_t *config) {
   int size = 0;
-  if (config->game == NULL || config->host || config->port == 0) {
+  if (config->game == NULL || config->host == NULL || config->port == 0) {
     printf("Using Default Settings\n");
     if (setupConnection(sock) != 0) {
+      freeConfig(config);
       exit(EXIT_FAILURE);
     }
   } else {
@@ -220,21 +221,23 @@ void performConnection(int sock, config_t *config) {
   }
 
   void *recvBuff;
-  recvBuff = recvCommand(sock, 1, &size); // + MNM Gameserver <<Gameserver Version>>
-                             // accepting connections
+  recvBuff = recvCommand(sock, 1, &size); // + MNM Gameserver <<Gameserver
+                                          // Version>> accepting connections
   parseCommand(recvBuff, START);
   free(recvBuff);
 
   sendCommand(sock, VERSION, CLIENT_VERSION);
 
-  recvBuff =
-      recvCommand(sock, 1, &size); // + Client version accepted - please send Game-ID to join
+  recvBuff = recvCommand(
+      sock, 1,
+      &size); // + Client version accepted - please send Game-ID to join
   parseCommand(recvBuff, VERSION);
   free(recvBuff);
 
   sendCommand(sock, ID, config->gameId);
 
-  recvBuff = recvCommand(sock, 2, &size); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
+  recvBuff = recvCommand(
+      sock, 2, &size); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
   parseCommand(recvBuff, ID);
   free(recvBuff);
 

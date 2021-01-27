@@ -7,7 +7,16 @@
  *
  * Contains all relevant commands for following functions.
  */
-typedef enum COMMAND { RETURN, START, VERSION, ID, PLAYER, THINKING, OKWAIT, PLAY } COMMAND;
+typedef enum COMMAND {
+  RETURN,
+  START,
+  VERSION,
+  ID,
+  PLAYER,
+  THINKING,
+  OKWAIT,
+  PLAY
+} COMMAND;
 
 /** @brief Sends command to server.
  *

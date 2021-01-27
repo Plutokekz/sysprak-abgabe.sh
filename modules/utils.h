@@ -39,9 +39,11 @@ typedef struct Config {
                */
   char *game; /**< the name of the game for the server as an pointer to a
                  string#game. */
-  char gameId[14]; /**< the game id from c args as an pointer to a string#game. */
-  char playerId[2]; /**< the player id from c args as an pointer to a string#game.
-                   */
+  char gameId[14];  /**< the game id from c args as an pointer to a string#game.
+                     */
+  char playerId[2]; /**< the player id from c args as an pointer to a
+                     * string#game.
+                     */
   P_FLAG f;
 } config_t;
 
