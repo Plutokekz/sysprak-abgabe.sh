@@ -7,7 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "protocolUtil.h"
+#include "modules/protocolUtils.h"
 #include "signal.h"
 #include "modules/cmdPipe.h"
 #include "modules/shareMemory.h"

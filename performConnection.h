@@ -18,7 +18,7 @@
 #include "infoStructs.h"
 #include "modules/shareMemory.h"
 #include "modules/utils.h"
-#include "protocolUtil.h"
+#include "modules/protocolUtils.h"
 
 #define GAME_ID_SIZE 13
 #define PORTNUMBER 1357
