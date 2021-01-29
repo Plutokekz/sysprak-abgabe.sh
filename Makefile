@@ -5,8 +5,8 @@ P=1
 export C
 export G
 
-sysprak-client: Main.c performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o bitboard.o protocolUtils.o
-	gcc $(EFLAGS) -o sysprak-client Main.c performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o bitboard.o protocolUtils.o
+sysprak-client: Main.c performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o bitboard.o protocolUtils.o mySignal.o
+	gcc $(EFLAGS) -o sysprak-client Main.c performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o bitboard.o protocolUtils.o mySignal.o
 
 performConnection.o: performConnection.c performConnection.h
 	gcc $(EFLAGS) -c performConnection.c
@@ -31,6 +31,8 @@ protocolUtils.o: modules/protocolUtils.c modules/protocolUtils.h
 
 bitboard.o: modules/bitboard.c
 	gcc $(EFLAGS) -c modules/bitboard.c
+mySignal.o: modules/mySignal.c modules/mySignal.h
+	gcc $(EFLAGS) -c modules/mySignal.c
 
 play: sysprak-client
 	./sysprak-client -g $(G) -p $(P) -c $(C)
