@@ -14,6 +14,12 @@
 #define WHITE_STARTING_BOARD 5614165
 #define NUMBER_OF_PIECES 24
 #define SIZE_OF_PIECE 7
+#define COLUMNS 8
+#define ALLOWED_SQUARES 6148914691236517205
+
+typedef unsigned long long board_t;
+
+typedef enum DIRECTION { NW, NE, SW, SE } DIRECTION;
 
 typedef struct bitboardPart {
   unsigned long board;
@@ -26,6 +32,11 @@ typedef struct bitboard {
   bitboardPart_t w[BITBOARDS];
   bitboardPart_t b[BITBOARDS];
 } bitboard_t;
+
+typedef struct MoveBoard {
+  unsigned long pieceBoard;
+  unsigned long movesBoard;
+} moveboard_t;
 
 bitboard_t *parsFromString(char *piece_list);
 
