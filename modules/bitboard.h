@@ -15,7 +15,9 @@
 #define NUMBER_OF_PIECES 24
 #define SIZE_OF_PIECE 7
 #define COLUMNS 8
-#define ALLOWED_SQUARES 6148914691236517205
+#define ALLOWED_SQUARES 12273903644374837845ULL
+#define WHITE_BASELINE 255ULL
+#define BLACK_BASELINE 18374686479671623680ULL
 
 typedef unsigned long long board_t;
 
@@ -39,6 +41,10 @@ typedef struct MoveBoard {
 } moveboard_t;
 
 bitboard_t *parsFromString(char *piece_list);
+
+int allowedSquaresIndices[] = {0,  2,  4,  6,  9,  11, 13, 15, 16, 18, 20,
+                               22, 25, 27, 29, 31, 32, 34, 36, 38, 41, 43,
+                               45, 47, 48, 50, 52, 54, 57, 59, 61, 63};
 
 void printBitboard(bitboard_t *board);
 #endif // BASCHNI_BITBOARD_H

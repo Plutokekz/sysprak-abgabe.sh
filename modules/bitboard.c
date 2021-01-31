@@ -149,43 +149,49 @@ bitboard_t *parsFromString(char *piece_list) {
 board_t shift(board_t piece, DIRECTION d) {
   switch (d) {
   case NW:
-    return (piece << (COLUMNS + 1)) & ALLOWED_SQUARES;
-  case NE:
     return (piece << (COLUMNS - 1)) & ALLOWED_SQUARES;
+  case NE:
+    return (piece << (COLUMNS + 1)) & ALLOWED_SQUARES;
   case SW:
-    return (piece >> (COLUMNS + 1)) & ALLOWED_SQUARES;
-  case SE:
     return (piece >> (COLUMNS - 1)) & ALLOWED_SQUARES;
+  case SE:
+    return (piece >> (COLUMNS + 1)) & ALLOWED_SQUARES;
   default:
     printf("wrong direction\n");
-    break;
+    return 0ULL;
   }
 }
 
 board_t captureMoves(board_t playerBoard, board_t opponentBoard,
-                     board_t emptyBoard, board_t piece) {
-  board_t moves;
+                     board_t emptyBoard, board_t piece, char type, char color) {
+  board_t moves = 0ULL;
   board_t move;
   board_t tmp;
+  char currentType = type;
   for (size_t d = NW; d <= SW; d++) {
     move = shift((shift(piece, d) & opponentBoard), d) & emptyBoard;
     moves |= move;
-    if (move &&
-        (tmp = captureMoves(playerBoard, opponentBoard, emptyBoard, move)))
+    if ((color == 'b' && (move & WHITE_BASELINE)) ||
+        (color == 'w' && (move & BLACK_BASELINE)))
+      currentType = 'k';
+    if (move && currentType == 'k') {
+      while ((tmp = shift(move, d)) & emptyBoard)
+        move = tmp;
+    }
+    if (move && (tmp = captureMoves(playerBoard, opponentBoard, emptyBoard,
+                                    move, currentType, color)))
       moves |= tmp;
   }
   return moves;
 }
 
-board_t calculateMoves(bitboard_t *currentBoard, board_t playerBoard,
+board_t calculateMoves(board_t playerBoard, board_t opponentBoard,
                        board_t piece, char type, char color) {
-  board_t opponentBoard =
-      (currentBoard->b[0].board | currentBoard->w[0].board) ^ playerBoard;
   board_t emptyBoard = ~(playerBoard | opponentBoard);
   board_t moves = 0ULL;
   if (type == 'n') {
-    // does not support conversion to king after capture move
-    moves = captureMoves(playerBoard, opponentBoard, emptyBoard, piece);
+    moves = captureMoves(playerBoard, opponentBoard, emptyBoard, piece, type,
+                         color);
     if (moves == 0ULL) {
       if (color == 'w') {
         moves = (shift(piece, NW) | shift(piece, NE)) & emptyBoard;
@@ -195,14 +201,15 @@ board_t calculateMoves(bitboard_t *currentBoard, board_t playerBoard,
     }
   } else if (type == 'k') {
     board_t move = piece;
-    board_t nonCaptureMoves;
+    board_t nonCaptureMoves = 0ULL;
     board_t tmp;
     for (size_t d = NW; d <= SW; d++) {
       while ((tmp = shift(move, d)) & emptyBoard) {
         move = tmp;
         nonCaptureMoves |= move;
       }
-      moves = captureMoves(playerBoard, opponentBoard, emptyBoard, move);
+      moves = captureMoves(playerBoard, opponentBoard, emptyBoard, move, type,
+                           color);
     }
     moves = moves ? moves : nonCaptureMoves;
   }
@@ -210,30 +217,39 @@ board_t calculateMoves(bitboard_t *currentBoard, board_t playerBoard,
 }
 
 moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
-  static moveboard_t **movesList;
-  if (movesList == NULL) {
-    movesList = malloc(12 * sizeof(moveboard_t *));
+  static moveboard_t **moveBoardList;
+  if (moveBoardList == NULL) {
+    moveBoardList = malloc(12 * sizeof(moveboard_t *));
     for (size_t i = 0; i < 12; i++) {
-      movesList[i] = malloc(sizeof(moveboard_t));
+      moveBoardList[i] = malloc(sizeof(moveboard_t));
+    }
+  } else {
+    for (size_t i = 0; i < 12; i++) {
+      moveBoardList[i]->pieceBoard = 0;
+      moveBoardList[i]->movesBoard = 0;
     }
   }
-  bitboardPart_t parts[BITBOARDS] =
-      color == 'w' ? currentBoard->w : currentBoard->b;
+  bitboardPart_t *parts = color == 'w' ? currentBoard->w : currentBoard->b;
+  board_t playerBoard = parts[0].board;
+  board_t opponentBoard =
+      (currentBoard->b[0].board | currentBoard->w[0].board) ^ playerBoard;
   board_t piece;
   int pieceCount = 0;
   char type;
-  for (size_t i = 1; i < 64; i++) {
-    if ((piece = get(parts[0].board, i))) {
-      type = get(parts[1].board, i) ? parts[1].type : parts[0].type;
+  for (size_t i = 1; i < 32; i++) {
+    if ((piece = get(parts[0].board, allowedSquaresIndices[i]))) {
+      type = get(parts[1].board, allowedSquaresIndices[i]) ? parts[1].type
+                                                           : parts[0].type;
       board_t moves =
-          calculateMoves(currentBoard, parts[0].board, piece, type, color);
+          calculateMoves(playerBoard, opponentBoard, piece, type, color);
       if (moves) {
-        movesList[pieceCount]->pieceBoard = piece;
-        movesList[pieceCount]->movesBoard = moves;
+        moveBoardList[pieceCount]->pieceBoard = piece;
+        moveBoardList[pieceCount]->movesBoard = moves;
         pieceCount++;
       }
     }
   }
+  return moveBoardList;
 }
 
 /*int main() {
@@ -263,8 +279,18 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
                      "+ w@C1\n"
                      "+ w@A1\n"
                      "+ ENDPIECESLIST";
-  bitboard_t *board;// = initBitboard();
-  //printBitboard(board);
-  board = parsFromString(pieceList);
-  printBitboard(board);
+  bitboard_t *currentBoard = parsFromString(pieceList);
+  // printBitboard(currentBoard);
+  board_t piece = 512ULL;
+  board_t playerBoard = 512ULL;
+  board_t opponentBoard = shift(shift(playerBoard, NE), NE);
+  board_t emptyBoard = ~(playerBoard | opponentBoard);
+  board_t moves = calculateMoves(playerBoard, opponentBoard, piece, 'n', 'w');
+  print_board(moves);
+  moveboard_t **moveBoardList = allPossibleMoves(currentBoard, 'w');
+  int i = 0;
+  while (moveBoardList[i++]->pieceBoard) {
+    print_board(moveBoardList[i]->pieceBoard);
+    print_board(moveBoardList[i]->movesBoard);
+  }
 }*/
