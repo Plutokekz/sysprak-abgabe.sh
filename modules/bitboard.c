@@ -72,10 +72,18 @@ bitboard_t *initBitboard() {
     board->w[i].type = 0;
     board->w[i].board = 0ULL;
   }
-  /*board->b[0].board = BLACK_STARTING_BOARD;
+  // Init Startboard
+  board->b[0].board = BLACK_STARTING_BOARD;
   board->b[0].depth = 0;
   board->w[0].board = WHITE_STARTING_BOARD;
-  board->w[0].depth = 0;*/
+  board->w[0].depth = 0;
+  // Init start Queen's board to empty but type 1 fo Queen
+  board->b[1].board = 0ULL;
+  board->b[1].depth = 1;
+  board->b[1].type = 1;
+  board->w[1].board = 0ULL;
+  board->w[1].depth = 1;
+  board->w[1].type = 1;
   return board;
 }
 
