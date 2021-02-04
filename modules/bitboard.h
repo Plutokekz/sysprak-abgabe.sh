@@ -36,8 +36,8 @@ typedef struct bitboard {
 } bitboard_t;
 
 typedef struct MoveBoard {
-  unsigned long pieceBoard;
-  unsigned long movesBoard;
+  board_t pieceBoard;
+  board_t *movesList;
 } moveboard_t;
 
 bitboard_t *parsFromString(char *piece_list);
