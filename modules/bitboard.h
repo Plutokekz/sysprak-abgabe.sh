@@ -42,9 +42,5 @@ typedef struct MoveBoard {
 
 bitboard_t *parsFromString(char *piece_list);
 
-int allowedSquaresIndices[] = {0,  2,  4,  6,  9,  11, 13, 15, 16, 18, 20,
-                               22, 25, 27, 29, 31, 32, 34, 36, 38, 41, 43,
-                               45, 47, 48, 50, 52, 54, 57, 59, 61, 63};
-
 void printBitboard(bitboard_t *board);
 #endif // BASCHNI_BITBOARD_H
