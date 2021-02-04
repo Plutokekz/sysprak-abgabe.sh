@@ -51,7 +51,7 @@ void sendCommand(int sock, COMMAND c, char *value) {
   } else {
     size = sprintf(sendBuff, "%s %s\n", command, value);
   }
-  printf("command %s, send buff %s\n", lookup(c), sendBuff);
+  //printf("command %s, send buff %s\n", lookup(c), sendBuff);
   if (send(sock, sendBuff, size, 0) < 0) {
     perror("sending failed\n");
     exit(EXIT_FAILURE);
@@ -69,7 +69,7 @@ int linenCount(char *s, int n) {
 
 void *recvCommand(int sock, int lines, int *size) {
   static char buffer[RECV_BUFF_SIZE];
-  printf("Current cmd buffer: %s\n", buffer);
+  //printf("Current cmd buffer: %s\n", buffer);
   ssize_t totalBytes = 0; // number of bytes in buff
   int blockCount = 2;
   char *recvBuff = malloc(

@@ -1,5 +1,5 @@
 EFLAGS = -Wall -Wextra -Werror -g
-G=0000000000000
+G=1v7x9j6u1935a
 C=tests/config.conf
 P=1
 export C
@@ -10,6 +10,9 @@ sysprak-client: Main.c performConnection.o utils.o shareMemory.o thinker.o gameP
 
 performConnection.o: performConnection.c performConnection.h
 	gcc $(EFLAGS) -c performConnection.c
+
+bitboard.o: modules/bitboard.c modules/bitboard.h
+	gcc $(EFLAGS) -c modules/bitboard.c
 
 shareMemory.o: modules/shareMemory.c modules/shareMemory.h
 	gcc $(EFLAGS) -c modules/shareMemory.c
@@ -29,8 +32,6 @@ thinker.o: thinker.c thinker.h
 protocolUtils.o: modules/protocolUtils.c modules/protocolUtils.h
 	gcc $(EFLAGS) -c modules/protocolUtils.c
 
-bitboard.o: modules/bitboard.c
-	gcc $(EFLAGS) -c modules/bitboard.c
 mySignal.o: modules/mySignal.c modules/mySignal.h
 	gcc $(EFLAGS) -c modules/mySignal.c
 

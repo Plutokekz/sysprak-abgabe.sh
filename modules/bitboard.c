@@ -3,62 +3,99 @@
 //
 
 #include "bitboard.h"
+char *rows = "ABCDEFGH";
+char WHITE = 'w', WHITE_QUEEN = 'W', BLACK = 'b', BLACK_QUEEN = 'B';
 
-static int allowedSquaresIndices[] = {0,  2,  4,  6,  9,  11, 13, 15, 16, 18, 20,
-                               22, 25, 27, 29, 31, 32, 34, 36, 38, 41, 43,
-                               45, 47, 48, 50, 52, 54, 57, 59, 61, 63};
+char BITBOARD_LOOKUP[64][3] = {
+    "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "B1", "B2", "B3",
+    "B4", "B5", "B6", "B7", "B8", "C1", "C2", "C3", "C4", "C5", "C6",
+    "C7", "C8", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "E1",
+    "E2", "E3", "E4", "E5", "E6", "E7", "E8", "F1", "F2", "F3", "F4",
+    "F5", "F6", "F7", "F8", "G1", "G2", "G3", "G4", "G5", "G6", "G7",
+    "G8", "H1", "H2", "H3", "H4", "H5", "H6", "H7", "H8"};
 
-// typedef uint64_t bboard;
+int LONG_BITBOARD_LOOKUP[59] = {-1, 0,  59, 50, 2,  6,  -1, 18, 61, -1, -1, 25,
+                                52, 45, -1, -1, 4,  -1, 43, 38, -1, -1, -1, 15,
+                                -1, -1, -1, 34, 20, -1, 57, -1, 63, -1, 41, -1,
+                                -1, -1, -1, -1, 9,  -1, 11, -1, 27, 48, 16, -1,
+                                54, 36, 13, 32, 47, 22, -1, 31, -1, -1, 29};
+
+static int allowedSquaresIndices[32] = {
+    0,  2,  4,  6,  9,  11, 13, 15, 16, 18, 20, 22, 25, 27, 29, 31,
+    32, 34, 36, 38, 41, 43, 45, 47, 48, 50, 52, 54, 57, 59, 61, 63};
 
 // Accessing a square of the bitboard
 long get(long b, int square) { return (b & (1ULL << square)); }
 
 long set(long b, int square) { return (b | (1ULL << square)); }
 
-void print_board(long b) {
+char *bitBoardToChar(board_t board){
+  return BITBOARD_LOOKUP[LONG_BITBOARD_LOOKUP[board%59]];
+}
+
+void print_board(char *b) {
   int i, j, x;
-  char *coord = "ABCDEFGH";
   printf(" ");
   for (x = 0; x < 8; x++) {
-    printf(" %c", *(coord + x));
+    printf("  %c ", *(rows + x));
   }
   printf("\n ┌");
   for (x = 0; x < 15; x++) {
-    x % 2 == 0 ? printf("─") : printf("┬");
+    x % 2 == 0 ? printf("───") : printf("┬");
   }
   printf("┐\n");
   for (i = 7; i >= 0; i--) {
     printf("%d│", i + 1);
     for (j = 0; j < 8; j++) {
-      printf("%d│", get(b, j + 8 * i) ? 1 : 0);
+      printf(" %c │", b[j * 8 + i]);
     }
     printf("%d\n", i + 1);
     if (i >= 1) {
       printf(" ├");
       for (x = 0; x < 15; x++) {
-        x % 2 == 0 ? printf("─") : printf("┼");
+        x % 2 == 0 ? printf("───") : printf("┼");
       }
       printf("┤\n");
     }
   }
   printf(" └");
   for (x = 0; x < 15; x++) {
-    x % 2 == 0 ? printf("─") : printf("┴");
+    x % 2 == 0 ? printf("───") : printf("┴");
   }
   printf("┘\n ");
   for (x = 0; x < 8; x++) {
-    printf(" %c", *(coord + x));
+    printf("  %c ", *(rows + x));
   }
   printf("\n");
 }
 
+void bitboardToArray(char *b, long long bitboard, char *color) {
+  int i, j;
+  for (i = 7; i >= 0; i--) {
+    for (j = 0; j < 8; j++) {
+      if (get(bitboard, (j * 8 + i))) {
+        b[j * 8 + i] = *color;
+      }
+    }
+  }
+}
+
 void printBitboard(bitboard_t *board) {
   int i;
-  long b = 0ULL;
-  for (i = 0; i < BITBOARDS; i++) {
-    b |= board->w[i].board | board->b[i].board;
+  char *b = malloc(sizeof(char) * 64);
+  for (i = 0; i < 64; i++) {
+    b[i] = ' ';
   }
+
+  bitboardToArray(b, board->w[0].board, &WHITE);
+  bitboardToArray(b, board->w[1].board, &WHITE_QUEEN);
+
+  bitboardToArray(b, board->b[0].board, &BLACK);
+  bitboardToArray(b, board->b[1].board, &BLACK_QUEEN);
+
   print_board(b);
+
+  free(b);
 }
 
 bitboard_t *initBitboard() {
@@ -76,11 +113,11 @@ bitboard_t *initBitboard() {
     board->w[i].type = 0;
     board->w[i].board = 0ULL;
   }
-  /*
+
   // Init Startboard
-  board->b[0].board = BLACK_STARTING_BOARD;
+  board->b[0].board = 0; // BLACK_STARTING_BOARD;
   board->b[0].depth = 0;
-  board->w[0].board = WHITE_STARTING_BOARD;
+  board->w[0].board = 0; // WHITE_STARTING_BOARD;
   board->w[0].depth = 0;
   // Init start Queen's board to empty but type 1 fo Queen
   board->b[1].board = 0ULL;
@@ -89,7 +126,7 @@ bitboard_t *initBitboard() {
   board->w[1].board = 0ULL;
   board->w[1].depth = 1;
   board->w[1].type = 1;
-  */
+
   return board;
 }
 
@@ -98,7 +135,7 @@ int parsCoordinateToSquare(char *coord) {
   // int column = *(coord+1) - '1'; // char number to int
   // printf("Current Piece: %s, calc coords: row: %d, column: %d\n", coord, row,
   // column);
-  return (*(coord) - 'A') + 8 * (*(coord + 1) - '1');
+  return (*(coord) - 'A') * 8 + (*(coord + 1) - '1');
 }
 
 int addToBitboardPart(struct bitboardPart *board, int *square, char type,
@@ -283,8 +320,39 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
   return moveBoardList;
 }
 
-/*
-int main() {
+/*int main() {
+  unsigned long longOnlyPos[32] = {1,
+                                   4,
+                                   16,
+                                   64,
+                                   512,
+                                   2048,
+                                   8192,
+                                   32768,
+                                   65536,
+                                   262144,
+                                   1048576,
+                                   4194304,
+                                   33554432,
+                                   134217728,
+                                   536870912,
+                                   2147483648,
+                                   4294967296,
+                                   17179869184,
+                                   68719476736,
+                                   274877906944,
+                                   2199023255552,
+                                   8796093022208,
+                                   35184372088832,
+                                   140737488355328,
+                                   281474976710656,
+                                   1125899906842624,
+                                   4503599627370496,
+                                   18014398509481984,
+                                   144115188075855872,
+                                   576460752303423488,
+                                   2305843009213693952,
+                                   9223372036854775808};
   char pieceList[] = "+ PIECESLIST 24\n"
                      "+ b@H8\n"
                      "+ b@F8\n"
@@ -311,7 +379,20 @@ int main() {
                      "+ w@C1\n"
                      "+ w@A1\n"
                      "+ ENDPIECESLIST";
-  bitboard_t *currentBoard = parsFromString(pieceList);
+  int i;
+  for (i = 0; i < 32; i++) {
+    int index = allowedSquaresIndices[i];
+    int calc_index = parsCoordinateToSquare(BITBOARD_LOOKUP[index]);
+    bitboard_t *currentBoard = initBitboard();
+    addToBitboard(currentBoard->w, &index, 'w');
+    printf("|Calc Square: %d, Square: %d mod square: %d, map to: %s|\n|Current "
+           "Board Long: "
+           "%ld, Given Board Long: %ld|\n",
+           calc_index, index, LONG_BITBOARD_LOOKUP[longOnlyPos[i] % 59], BITBOARD_LOOKUP[index],
+           currentBoard->w[0].board, longOnlyPos[i]);
+    printBitboard(currentBoard);
+  }
+  bitboard_t *currentBoard; // = parsFromString(pieceList);
   // printBitboard(currentBoard);
   // board_t piece = 512ULL;
   // board_t playerBoard = 512ULL;
@@ -321,8 +402,8 @@ int main() {
   // board_t *movesList =
   //    calculateMoves(playerBoard, opponentBoard, piece, 'n', 'w');
   // print_board(movesList[1]);
-  moveboard_t **moveBoardList = allPossibleMoves(currentBoard, 'w');
-  print_board(moveBoardList[0]->movesList[0]);
+  // moveboard_t **moveBoardList = allPossibleMoves(currentBoard, 'w');
+  // print_board(moveBoardList[0]->movesList[0]);
   // int i = 0;
   // while (moveBoardList[i++]->pieceBoard) {
   //  print_board(moveBoardList[i]->pieceBoard);

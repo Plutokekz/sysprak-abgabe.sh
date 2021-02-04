@@ -219,13 +219,13 @@ void performConnection(int sock, config_t *config) {
     }
     freeConfig(config);
   }
-
+  printf("1\n");
   void *recvBuff;
   recvBuff = recvCommand(sock, 1, &size); // + MNM Gameserver <<Gameserver
                                           // Version>> accepting connections
   parseCommand(recvBuff, START);
   free(recvBuff);
-
+  printf("2\n");
   sendCommand(sock, VERSION, CLIENT_VERSION);
 
   recvBuff = recvCommand(
@@ -233,20 +233,21 @@ void performConnection(int sock, config_t *config) {
       &size); // + Client version accepted - please send Game-ID to join
   parseCommand(recvBuff, VERSION);
   free(recvBuff);
-
+  printf("3\n");
   sendCommand(sock, ID, config->gameId);
 
   recvBuff = recvCommand(
       sock, 2, &size); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
+  printf("id ? : %s", (char*)recvBuff);
   parseCommand(recvBuff, ID);
   free(recvBuff);
-
+  printf("3.1\n");
   // retry without player id later
   sendCommand(sock, PLAYER, config->playerId);
-
+  printf("4\n");
   recvBuff = recvCommand(sock, 0, &size); //
   parseCommand(recvBuff, PLAYER);
   free(recvBuff);
-
+  printf("5\n");
   printProlog(getGameInfo(), config->f);
 }
