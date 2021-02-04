@@ -72,6 +72,7 @@ bitboard_t *initBitboard() {
     board->w[i].type = 0;
     board->w[i].board = 0ULL;
   }
+  /*
   // Init Startboard
   board->b[0].board = BLACK_STARTING_BOARD;
   board->b[0].depth = 0;
@@ -84,6 +85,7 @@ bitboard_t *initBitboard() {
   board->w[1].board = 0ULL;
   board->w[1].depth = 1;
   board->w[1].type = 1;
+  */
   return board;
 }
 
@@ -95,15 +97,15 @@ int parsCoordinateToSquare(char *coord) {
   return (*(coord) - 'A') + 8 * (*(coord + 1) - '1');
 }
 
-int addToBitboardPart(struct bitboardPart *board, int *square, char *type,
+int addToBitboardPart(struct bitboardPart *board, int *square, char type,
                       int *i) {
   board->board = set(board->board, *square);
   board->depth = *i;
-  board->type = *type;
+  board->type = type;
   return 0;
 }
 
-int addToBitboard(bitboardPart_t bitboards[24], int *square, char *type) {
+int addToBitboard(bitboardPart_t bitboards[24], int *square, char type) {
   if (bitboards == NULL) {
     printf("Error bitboard strut is null\n");
     return -1;
@@ -111,7 +113,7 @@ int addToBitboard(bitboardPart_t bitboards[24], int *square, char *type) {
   int i;
   for (i = 0; i < BITBOARDS; i++) {
     if (!get(bitboards[i].board, *square)) {
-      if (bitboards[i].type == *type || bitboards[i].type == 0) {
+      if (bitboards[i].type == type || bitboards[i].type == 0) {
         addToBitboardPart(&bitboards[i], square, type, &i);
         return 0;
       }
@@ -123,25 +125,28 @@ int addToBitboard(bitboardPart_t bitboards[24], int *square, char *type) {
 
 bitboard_t *parsFromString(char *piece_list) {
   bitboard_t *board = initBitboard();
+  // 24 can change
   piece_list += 16; // skipp + PIECESLIST 24\n
   int i;
   char normal_piece = 'n', king_piece = 'k';
+  // why malloc
   char *piece = malloc(sizeof(char) * SIZE_OF_PIECE - 3);
   for (i = 0; i < NUMBER_OF_PIECES; i++) {
     memcpy(piece, piece_list + 2, sizeof(char) * SIZE_OF_PIECE - 3);
     int square = parsCoordinateToSquare(piece + 2);
     switch (*piece) {
     case 'b':
-      addToBitboard(board->b, &square, &normal_piece);
+      // why passing pointer instead of int
+      addToBitboard(board->b, &square, normal_piece);
       break;
     case 'B':
-      addToBitboard(board->b, &square, &king_piece);
+      addToBitboard(board->b, &square, king_piece);
       break;
     case 'w':
-      addToBitboard(board->w, &square, &normal_piece);
+      addToBitboard(board->w, &square, normal_piece);
       break;
     case 'W':
-      addToBitboard(board->w, &square, &king_piece);
+      addToBitboard(board->w, &square, king_piece);
       break;
     default:
       printf("Error color and type <%c> does not exist\n", *piece);
@@ -174,6 +179,7 @@ void captureMoves(board_t playerBoard, board_t opponentBoard,
                   board_t emptyBoard, board_t piece, char type, char color,
                   board_t *movesList, int depth) {
   board_t tmpOpponentBoard = opponentBoard;
+  board_t tmpEmptyBoard = emptyBoard;
   board_t move;
   board_t tmp;
   char currentType = type;
@@ -181,16 +187,17 @@ void captureMoves(board_t playerBoard, board_t opponentBoard,
     move = shift((shift(piece, d) & opponentBoard), d) & emptyBoard;
     if (move) {
       tmpOpponentBoard = opponentBoard & (~shift(move, (d + 1) % 4));
+      tmpEmptyBoard = ~(playerBoard | tmpOpponentBoard);
       movesList[depth] |= move;
       if ((color == 'b' && (move & WHITE_BASELINE)) ||
           (color == 'w' && (move & BLACK_BASELINE)))
         currentType = 'k';
       if (move && currentType == 'k') {
-        while ((tmp = shift(move, d)) & emptyBoard)
+        while ((tmp = shift(move, d)) & tmpEmptyBoard)
           move = tmp;
       }
-      captureMoves(playerBoard, tmpOpponentBoard, emptyBoard, move, currentType,
-                   color, movesList, depth + 1);
+      captureMoves(playerBoard, tmpOpponentBoard, tmpEmptyBoard, move,
+                   currentType, color, movesList, depth + 1);
     }
   }
 }
@@ -244,7 +251,7 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
   } else {
     for (size_t i = 0; i < 12; i++) {
       moveBoardList[i]->pieceBoard = 0ULL;
-      moveBoardList[i]->movesList = NULL;
+      memset(moveBoardList[i]->movesList, 0, 12 * sizeof(board_t));
     }
   }
   bitboardPart_t *parts = color == 'w' ? currentBoard->w : currentBoard->b;
@@ -252,17 +259,19 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
   board_t opponentBoard =
       (currentBoard->b[0].board | currentBoard->w[0].board) ^ playerBoard;
   board_t piece;
+  board_t *movesList;
   int count = 0;
   char type;
-  for (size_t i = 1; i < 32; i++) {
+  for (size_t i = 0; i < 32; i++) {
     if ((piece = get(parts[0].board, allowedSquaresIndices[i]))) {
       type = get(parts[1].board, allowedSquaresIndices[i]) ? parts[1].type
                                                            : parts[0].type;
-      board_t *movesList =
+      movesList =
           calculateMoves(playerBoard, opponentBoard, piece, type, color);
       if (movesList[0]) {
         moveBoardList[count]->pieceBoard = piece;
-        moveBoardList[count]->movesList = movesList;
+        memcpy(moveBoardList[count]->movesList, movesList,
+               12 * sizeof(board_t));
         count++;
       }
     }
@@ -270,6 +279,7 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
   return moveBoardList;
 }
 
+/*
 int main() {
   char pieceList[] = "+ PIECESLIST 24\n"
                      "+ b@H8\n"
@@ -299,18 +309,20 @@ int main() {
                      "+ ENDPIECESLIST";
   bitboard_t *currentBoard = parsFromString(pieceList);
   // printBitboard(currentBoard);
-  board_t piece = 512ULL;
-  board_t playerBoard = 512ULL;
-  board_t opponentBoard = shift(playerBoard, NE);
-  opponentBoard |= shift(shift(opponentBoard, NE), NE);
-  board_t emptyBoard = ~(playerBoard | opponentBoard);
-  board_t *movesList =
-      calculateMoves(playerBoard, opponentBoard, piece, 'n', 'w');
-  print_board(movesList[1]);
-  // moveboard_t **moveBoardList = allPossibleMoves(currentBoard, 'w');
+  // board_t piece = 512ULL;
+  // board_t playerBoard = 512ULL;
+  // board_t opponentBoard = shift(playerBoard, NE);
+  // opponentBoard |= shift(shift(opponentBoard, NE), NE);
+  // board_t emptyBoard = ~(playerBoard | opponentBoard);
+  // board_t *movesList =
+  //    calculateMoves(playerBoard, opponentBoard, piece, 'n', 'w');
+  // print_board(movesList[1]);
+  moveboard_t **moveBoardList = allPossibleMoves(currentBoard, 'w');
+  print_board(moveBoardList[0]->movesList[0]);
   // int i = 0;
   // while (moveBoardList[i++]->pieceBoard) {
   //  print_board(moveBoardList[i]->pieceBoard);
   //  print_board(moveBoardList[i]->movesBoard);
   //}
 }
+*/

@@ -37,7 +37,7 @@ typedef struct bitboard {
 
 typedef struct MoveBoard {
   board_t pieceBoard;
-  board_t *movesList;
+  board_t movesList[12];
 } moveboard_t;
 
 bitboard_t *parsFromString(char *piece_list);
