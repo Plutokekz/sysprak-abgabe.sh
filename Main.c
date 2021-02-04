@@ -46,8 +46,7 @@
 #include "modules/utils.h"
 #include "performConnection.h"
 #include "thinker.h"
-
-void thinking() { thinker(); }
+#include "modules/mySignal.h"
 
 void child(config_t *config, int fd[2]) {
   int sock, shmID;
@@ -72,12 +71,7 @@ void child(config_t *config, int fd[2]) {
 
 void parent(config_t *config) {
   freeConfig(config);
-
-  // TODO to mySignal
-  struct sigaction sa = {0};
-  sa.sa_handler = &thinking;
-  sa.sa_flags = SA_RESTART;
-  sigaction(SIGUSR1, &sa, NULL);
+  activateSignal();
 
   if (wait(NULL) == -1) {
     perror("error waiting for connector");
