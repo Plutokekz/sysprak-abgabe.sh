@@ -42,7 +42,6 @@ void gamePhase(int sock, int fd[2], int shmId) {
       // receive OKWAIT command
       buffer = recvCommand(sock, 1, &size); // OKTHINK
       if (strncmp(buffer, "+ OKTHINK", 9) == 0) {
-        printf("was ist denn hier los ?: %s\n", buffer);
         // wait for thinker written move to pipe
         epoll_wait(epfd, events, 1, 1000 /*timeout*/);
         if (events[0].events & EPOLLIN) {

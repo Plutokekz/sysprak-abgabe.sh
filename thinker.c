@@ -35,7 +35,12 @@ void thinker() {
     printf("Thinker Piece List: %s", pieceList);
     bitboard_t *currentBoard = parsFromString(pieceList);
     printBitboard(currentBoard);
-    // TODO get player black or white ??
-    sendCMD(fdw, "G3:F4"); // A3:B4 B6:A5
+    printf("player id: %i\n", ptrGameStart->ownPlayerNumber);
+    char playerColor = ptrGameStart->ownPlayerNumber ? 'b' : 'w';
+    moveboard_t **moveBoardList = allPossibleMoves(currentBoard, playerColor);
+    char moveString[35] = {0};
+    pickFirstMove(moveBoardList, moveString);
+    printf("send: %s\n", moveString);
+    sendCMD(fdw, moveString);
   }
 }

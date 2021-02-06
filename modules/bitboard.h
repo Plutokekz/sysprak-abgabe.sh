@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define BITBOARDS 24
 #define BLACK_STARTING_BOARD -6172840797264674816
@@ -43,4 +44,9 @@ typedef struct MoveBoard {
 bitboard_t *parsFromString(char *piece_list);
 
 void printBitboard(bitboard_t *board);
+
+moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color);
+
+void pickFirstMove(moveboard_t **moveBoardList, char *moveString);
+
 #endif // BASCHNI_BITBOARD_H

@@ -5,6 +5,7 @@
 #include "bitboard.h"
 char *rows = "ABCDEFGH";
 char WHITE = 'w', WHITE_QUEEN = 'W', BLACK = 'b', BLACK_QUEEN = 'B';
+char *colon = ":";
 
 char BITBOARD_LOOKUP[64][3] = {
     "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "B1", "B2", "B3",
@@ -29,8 +30,8 @@ long get(long b, int square) { return (b & (1ULL << square)); }
 
 long set(long b, int square) { return (b | (1ULL << square)); }
 
-char *bitBoardToChar(board_t board){
-  return BITBOARD_LOOKUP[LONG_BITBOARD_LOOKUP[board%59]];
+char *bitBoardToChar(board_t board) {
+  return BITBOARD_LOOKUP[LONG_BITBOARD_LOOKUP[board % 59]];
 }
 
 void print_board(char *b) {
@@ -224,7 +225,7 @@ void captureMoves(board_t playerBoard, board_t opponentBoard,
   board_t move;
   board_t tmp;
   char currentType = type;
-  for (size_t d = NW; d <= SW; d++) {
+  for (size_t d = NW; d <= SE; d++) {
     move = shift((shift(piece, d) & opponentBoard), d) & emptyBoard;
     if (move) {
       tmpOpponentBoard = opponentBoard & (~shift(move, (d + 1) % 4));
@@ -244,7 +245,8 @@ void captureMoves(board_t playerBoard, board_t opponentBoard,
 }
 
 board_t *calculateMoves(board_t playerBoard, board_t opponentBoard,
-                        board_t piece, char type, char color) {
+                        board_t piece, char type, char color,
+                        bool *captureMovesOnly) {
   static board_t *movesList;
   if (movesList == NULL) {
     movesList = calloc(12, sizeof(board_t));
@@ -257,18 +259,20 @@ board_t *calculateMoves(board_t playerBoard, board_t opponentBoard,
   if (type == 'n') {
     captureMoves(playerBoard, opponentBoard, emptyBoard, piece, type, color,
                  movesList, 0);
-    if (movesList[0] == 0ULL) {
+    if (movesList[0] == 0ULL && !(*captureMovesOnly)) {
       if (color == 'w') {
         movesList[0] = (shift(piece, NW) | shift(piece, NE)) & emptyBoard;
       } else if (color == 'b') {
         movesList[0] = (shift(piece, SW) | shift(piece, SE)) & emptyBoard;
       }
+    } else {
+      *captureMovesOnly = true;
     }
   } else if (type == 'k') {
     board_t move = piece;
     board_t nonCaptureMoves = 0ULL;
     board_t tmp;
-    for (size_t d = NW; d <= SW; d++) {
+    for (size_t d = NW; d <= SE; d++) {
       while ((tmp = shift(move, d)) & emptyBoard) {
         move = tmp;
         nonCaptureMoves |= move;
@@ -276,8 +280,11 @@ board_t *calculateMoves(board_t playerBoard, board_t opponentBoard,
       captureMoves(playerBoard, opponentBoard, emptyBoard, move, type, color,
                    movesList, 0);
     }
-    if (movesList[0] == 0ULL)
+    if (movesList[0] == 0ULL && !(*captureMovesOnly)) {
       movesList[0] = nonCaptureMoves;
+    } else {
+      *captureMovesOnly = true;
+    }
   }
   return movesList;
 }
@@ -303,13 +310,23 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
   board_t *movesList;
   int count = 0;
   char type;
+  bool captureMovesOnly = false;
+  bool tmp;
   for (size_t i = 0; i < 32; i++) {
     if ((piece = get(parts[0].board, allowedSquaresIndices[i]))) {
       type = get(parts[1].board, allowedSquaresIndices[i]) ? parts[1].type
                                                            : parts[0].type;
-      movesList =
-          calculateMoves(playerBoard, opponentBoard, piece, type, color);
+      tmp = captureMovesOnly;
+      movesList = calculateMoves(playerBoard, opponentBoard, piece, type, color,
+                                 &captureMovesOnly);
       if (movesList[0]) {
+        if (captureMovesOnly != tmp) {
+          for (int j = 0; j < count; j++) {
+            moveBoardList[j]->pieceBoard = 0ULL;
+            memset(moveBoardList[j]->movesList, 0, 12 * sizeof(board_t));
+          }
+          count = 0;
+        }
         moveBoardList[count]->pieceBoard = piece;
         memcpy(moveBoardList[count]->movesList, movesList,
                12 * sizeof(board_t));
@@ -320,39 +337,67 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
   return moveBoardList;
 }
 
-/*int main() {
-  unsigned long longOnlyPos[32] = {1,
-                                   4,
-                                   16,
-                                   64,
-                                   512,
-                                   2048,
-                                   8192,
-                                   32768,
-                                   65536,
-                                   262144,
-                                   1048576,
-                                   4194304,
-                                   33554432,
-                                   134217728,
-                                   536870912,
-                                   2147483648,
-                                   4294967296,
-                                   17179869184,
-                                   68719476736,
-                                   274877906944,
-                                   2199023255552,
-                                   8796093022208,
-                                   35184372088832,
-                                   140737488355328,
-                                   281474976710656,
-                                   1125899906842624,
-                                   4503599627370496,
-                                   18014398509481984,
-                                   144115188075855872,
-                                   576460752303423488,
-                                   2305843009213693952,
-                                   9223372036854775808};
+void pickNextCaptureMove(board_t *movesList, int depth, board_t move,
+                         char *moveString, char type) {
+  if (depth > 0) {
+    strcat(moveString, colon);
+  }
+  strcat(moveString, bitBoardToChar(move));
+  board_t nextMove;
+  board_t tmp;
+  for (size_t d = NW; d <= SE; d++) {
+    nextMove = shift(shift(move, d), d);
+    if (type == 'k') {
+      while (!(nextMove & movesList[depth]) &&
+             (tmp = shift(shift(nextMove, d), d)))
+        nextMove = tmp;
+    }
+    if (nextMove & movesList[depth]) {
+      pickNextCaptureMove(movesList, depth + 1, nextMove, moveString, type);
+      return;
+    }
+  }
+}
+
+void pickFirstMove(moveboard_t **moveBoardList, char *moveString) {
+  if (moveBoardList[0] != NULL) {
+    strcat(moveString, bitBoardToChar(moveBoardList[0]->pieceBoard));
+    board_t move;
+    for (size_t d = NW; d <= SE; d++) {
+      move = shift(moveBoardList[0]->pieceBoard, d);
+      if (move & moveBoardList[0]->movesList[0]) {
+        // normal move
+        strcat(moveString, colon);
+        strcat(moveString, bitBoardToChar(move));
+        return;
+      }
+      move = shift(move, d);
+      if (move & moveBoardList[0]->movesList[0]) {
+        // capture move
+        pickNextCaptureMove(moveBoardList[0]->movesList, 1, move, moveString,
+                            'n');
+        return;
+      }
+    }
+    // has to be king
+    pickNextCaptureMove(moveBoardList[0]->movesList, 0,
+                        moveBoardList[0]->pieceBoard, moveString, 'k');
+  }
+}
+
+void print_bitboard(long board, char color) {
+  int i;
+  char *b = malloc(sizeof(char) * 64);
+  for (i = 0; i < 64; i++) {
+    b[i] = ' ';
+  }
+  bitboardToArray(b, board, &color);
+  print_board(b);
+  free(b);
+}
+
+/*
+int main() {
   char pieceList[] = "+ PIECESLIST 24\n"
                      "+ b@H8\n"
                      "+ b@F8\n"
@@ -388,22 +433,15 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
     printf("|Calc Square: %d, Square: %d mod square: %d, map to: %s|\n|Current "
            "Board Long: "
            "%ld, Given Board Long: %ld|\n",
-           calc_index, index, LONG_BITBOARD_LOOKUP[longOnlyPos[i] % 59], BITBOARD_LOOKUP[index],
-           currentBoard->w[0].board, longOnlyPos[i]);
+           calc_index, index, LONG_BITBOARD_LOOKUP[longOnlyPos[i] % 59],
+BITBOARD_LOOKUP[index], currentBoard->w[0].board, longOnlyPos[i]);
     printBitboard(currentBoard);
   }
-  bitboard_t *currentBoard; // = parsFromString(pieceList);
-  // printBitboard(currentBoard);
-  // board_t piece = 512ULL;
-  // board_t playerBoard = 512ULL;
-  // board_t opponentBoard = shift(playerBoard, NE);
-  // opponentBoard |= shift(shift(opponentBoard, NE), NE);
-  // board_t emptyBoard = ~(playerBoard | opponentBoard);
-  // board_t *movesList =
-  //    calculateMoves(playerBoard, opponentBoard, piece, 'n', 'w');
-  // print_board(movesList[1]);
-  // moveboard_t **moveBoardList = allPossibleMoves(currentBoard, 'w');
-  // print_board(moveBoardList[0]->movesList[0]);
+  bitboard_t *currentBoard = parsFromString(pieceList);
+  moveboard_t **moveBoardList = allPossibleMoves(currentBoard, 'w');
+  char moveString[35] = {0};
+  pickFirstMove(moveBoardList, moveString);
+  printf("%s\n", moveString);
   // int i = 0;
   // while (moveBoardList[i++]->pieceBoard) {
   //  print_board(moveBoardList[i]->pieceBoard);
