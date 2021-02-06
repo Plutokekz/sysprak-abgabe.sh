@@ -24,6 +24,7 @@ typedef unsigned long long board_t;
 
 typedef enum DIRECTION { NW, NE, SW, SE } DIRECTION;
 
+// One bitboard layer
 typedef struct bitboardPart {
   unsigned long board;
   char color;
@@ -31,6 +32,9 @@ typedef struct bitboardPart {
   char depth;
 } bitboardPart_t;
 
+// 24 bitboard layers per colour. Top one is for top stones (ones that can move), second to top is to show where the kings are,
+// all layers below are for pieces which have pieces on top of them and therefore can't move.
+// Layers 3-13 are for normal pieces, layers 14-24 are for kings which are under other pieces.
 typedef struct bitboard {
   bitboardPart_t w[BITBOARDS];
   bitboardPart_t b[BITBOARDS];
