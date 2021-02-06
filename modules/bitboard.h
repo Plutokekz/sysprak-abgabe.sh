@@ -10,6 +10,8 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include "queue.h"
+
 #define BITBOARDS 24
 #define BLACK_STARTING_BOARD -6172840797264674816
 #define WHITE_STARTING_BOARD 5614165
