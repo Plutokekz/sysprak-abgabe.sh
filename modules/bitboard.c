@@ -7,6 +7,8 @@ char *rows = "ABCDEFGH";
 char WHITE = 'w', WHITE_QUEEN = 'W', BLACK = 'b', BLACK_QUEEN = 'B';
 char *colon = ":";
 
+
+
 char BITBOARD_LOOKUP[64][3] = {
     "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "B1", "B2", "B3",
     "B4", "B5", "B6", "B7", "B8", "C1", "C2", "C3", "C4", "C5", "C6",
@@ -82,21 +84,36 @@ void bitboardToArray(char *b, long long bitboard, char *color) {
 }
 
 void printBitboard(bitboard_t *board) {
-  int i;
-  char *b = malloc(sizeof(char) * 64);
-  for (i = 0; i < 64; i++) {
-    b[i] = ' ';
+  int bb;
+  for(bb=0;bb<BITBOARDS;bb++) {
+    int i;
+    char *b = malloc(sizeof(char) * 64);
+    for (i = 0; i < 64; i++) {
+      b[i] = ' ';
+    }
+
+    // bitboardToArray(b, board->w[0].board, &WHITE);
+    char tw, tb;
+    if(board->w[bb].type == NORMAL){
+      tw = WHITE;
+    } else if (board->w[bb].type == QUEEN){
+      tw = WHITE_QUEEN;
+    }
+    bitboardToArray(b, board->w[bb].board, &tw);
+    if(board->b[bb].type == NORMAL){
+      tb = BLACK;
+    } else if (board->b[bb].type == QUEEN){
+      tb = BLACK_QUEEN;
+    }
+    // bitboardToArray(b, board->b[0].board, &BLACK);
+    bitboardToArray(b, board->b[bb].board, &tb);
+
+    printf("Current Depth: %d, Board W type: %d, Board B type: %d, Board W depth %d, Board B depth %d\n", bb, board->w[bb].type, board->b[bb].type, board->w[bb].depth, board->b[bb].depth);
+
+    print_board(b);
+
+    free(b);
   }
-
-  bitboardToArray(b, board->w[0].board, &WHITE);
-  bitboardToArray(b, board->w[1].board, &WHITE_QUEEN);
-
-  bitboardToArray(b, board->b[0].board, &BLACK);
-  bitboardToArray(b, board->b[1].board, &BLACK_QUEEN);
-
-  print_board(b);
-
-  free(b);
 }
 
 bitboard_t *initBitboard() {
@@ -107,25 +124,27 @@ bitboard_t *initBitboard() {
   for (i = 0; i < BITBOARDS; i++) {
     board->b[i].color = 'b';
     board->b[i].depth = -1;
-    board->b[i].type = 0;
+    board->b[i].type = NOT_IN_USE;
     board->b[i].board = 0ULL;
     board->w[i].color = 'w';
     board->w[i].depth = -1;
-    board->w[i].type = 0;
+    board->w[i].type = NOT_IN_USE;
     board->w[i].board = 0ULL;
   }
 
   // Init Startboard
   board->b[0].board = 0; // BLACK_STARTING_BOARD;
   board->b[0].depth = 0;
+  board->b[0].type = NORMAL;
   board->w[0].board = 0; // WHITE_STARTING_BOARD;
   board->w[0].depth = 0;
+  board->w[0].type = NORMAL;
   // Init start Queen's board to empty but type 1 fo Queen
   board->b[1].board = 0ULL;
   board->b[1].depth = 1;
-  board->b[1].type = 1;
+  board->b[1].type = QUEEN;
   board->w[1].board = 0ULL;
-  board->w[1].depth = 1;
+  board->w[1].depth = QUEEN;
   board->w[1].type = 1;
 
   return board;
@@ -139,24 +158,25 @@ int parsCoordinateToSquare(char *coord) {
   return (*(coord) - 'A') * 8 + (*(coord + 1) - '1');
 }
 
-int addToBitboardPart(struct bitboardPart *board, int *square, char type,
-                      int *i) {
-  board->board = set(board->board, *square);
-  board->depth = *i;
+int addToBitboardPart(struct bitboardPart *board, int square, char type,
+                      int i) {
+  board->board = set(board->board, square);
+  board->depth = i;
   board->type = type;
   return 0;
 }
 
-int addToBitboard(bitboardPart_t bitboards[24], int *square, char type) {
+int addToBitboard(bitboardPart_t bitboards[24], int square, enum PIECE_TYPE type) {
   if (bitboards == NULL) {
     printf("Error bitboard strut is null\n");
     return -1;
   }
   int i;
   for (i = 0; i < BITBOARDS; i++) {
-    if (!get(bitboards[i].board, *square)) {
-      if (bitboards[i].type == type || bitboards[i].type == 0) {
-        addToBitboardPart(&bitboards[i], square, type, &i);
+    if (!get(bitboards[i].board, square)) {
+      if (bitboards[i].type == type || bitboards[i].type == NOT_IN_USE) {
+        //printf("Add piece at %s, depth %d\n", BITBOARD_LOOKUP[square], i);
+        addToBitboardPart(&bitboards[i], square, type, i);
         return 0;
       }
     }
@@ -171,8 +191,8 @@ bitboard_t *parsFromString(char *piece_list) {
   piece_list += 16 + (SIZE_OF_PIECE * 23); // skipp + PIECESLIST 24\n
   //printf("%s\n", piece_list);
   int i;
-  char normal_piece = 'n', king_piece = 'k';
-  // why malloc
+  //char normal_piece = 'n', king_piece = 'k';
+  // why malloc why not ?
   char *piece = malloc(sizeof(char) * SIZE_OF_PIECE - 3);
   for (i = 0; i < NUMBER_OF_PIECES; i++) {
     memcpy(piece, piece_list + 2, sizeof(char) * SIZE_OF_PIECE - 3);
@@ -181,16 +201,16 @@ bitboard_t *parsFromString(char *piece_list) {
     switch (*piece) {
     case 'b':
       // why passing pointer instead of int
-      addToBitboard(board->b, &square, normal_piece);
+      addToBitboard(board->b, square, NORMAL);
       break;
     case 'B':
-      addToBitboard(board->b, &square, king_piece);
+      addToBitboard(board->b, square, QUEEN);
       break;
     case 'w':
-      addToBitboard(board->w, &square, normal_piece);
+      addToBitboard(board->w, square, NORMAL);
       break;
     case 'W':
-      addToBitboard(board->w, &square, king_piece);
+      addToBitboard(board->w, square, QUEEN);
       break;
     default:
       printf("Error color and type <%c> does not exist\n", *piece);
@@ -398,8 +418,8 @@ void print_bitboard(long board, char color) {
   free(b);
 }
 
-/*
-int main() {
+
+/*int main() {
   char pieceList[] = "+ PIECESLIST 24\n"
                      "+ b@H8\n"
                      "+ b@F8\n"
@@ -407,16 +427,16 @@ int main() {
                      "+ b@B8\n"
                      "+ b@G7\n"
                      "+ b@E7\n"
-                     "+ b@C7\n"
                      "+ b@A7\n"
                      "+ b@H6\n"
                      "+ b@F6\n"
                      "+ b@D6\n"
                      "+ b@B6\n"
+                     "+ w@E5\n"
+                     "+ b@E5\n"
                      "+ w@G3\n"
                      "+ w@E3\n"
                      "+ w@C3\n"
-                     "+ w@A3\n"
                      "+ w@H2\n"
                      "+ w@F2\n"
                      "+ w@D2\n"
@@ -425,25 +445,26 @@ int main() {
                      "+ w@E1\n"
                      "+ w@C1\n"
                      "+ w@A1\n"
-                     "+ ENDPIECESLIST";*/
-  /*int i;
-  for (i = 0; i < 32; i++) {
-    int index = allowedSquaresIndices[i];
-    int calc_index = parsCoordinateToSquare(BITBOARD_LOOKUP[index]);
-    bitboard_t *currentBoard = initBitboard();
-    addToBitboard(currentBoard->w, &index, 'w');
-    printf("|Calc Square: %d, Square: %d mod square: %d, map to: %s|\n|Current "
-           "Board Long: "
-           "%ld, Given Board Long: %ld|\n",
-           calc_index, index, LONG_BITBOARD_LOOKUP[longOnlyPos[i] % 59],
-BITBOARD_LOOKUP[index], currentBoard->w[0].board, longOnlyPos[i]);
-    printBitboard(currentBoard);
-  }
+                     "+ ENDPIECESLIST\n";
+  //int i;
+  //for (i = 0; i < 32; i++) {
+  //  int index = allowedSquaresIndices[i];
+  //  int calc_index = parsCoordinateToSquare(BITBOARD_LOOKUP[index]);
+  //  bitboard_t *currentBoard = initBitboard();
+  //  addToBitboard(currentBoard->w, &index, 'w');
+  //  printf("|Calc Square: %d, Square: %d mod square: %d, map to: %s|\n|Current "
+  //         "Board Long: "
+  //         "%ld, Given Board Long: %ld|\n",
+  //         calc_index, index, LONG_BITBOARD_LOOKUP[longOnlyPos[i] % 59],
+//BITBOARD_LOOKUP[index], currentBoard->w[0].board, longOnlyPos[i]);
+  //  printBitboard(currentBoard);
+  //}
   bitboard_t *currentBoard = parsFromString(pieceList);
-  moveboard_t **moveBoardList = allPossibleMoves(currentBoard, 'w');
-  char moveString[35] = {0};
-  pickFirstMove(moveBoardList, moveString);
-  printf("%s\n", moveString);
+  printBitboard(currentBoard);
+  //moveboard_t **moveBoardList = allPossibleMoves(currentBoard, 'w');
+  //char moveString[35] = {0};
+  //pickFirstMove(moveBoardList, moveString);
+  //printf("%s\n", moveString);
   // int i = 0;
   // while (moveBoardList[i++]->pieceBoard) {
   //  print_board(moveBoardList[i]->pieceBoard);

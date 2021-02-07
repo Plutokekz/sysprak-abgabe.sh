@@ -4,11 +4,11 @@
 
 #ifndef BASCHNI_BITBOARD_H
 #define BASCHNI_BITBOARD_H
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 #define BITBOARDS 24
 #define BLACK_STARTING_BOARD -6172840797264674816
@@ -23,11 +23,11 @@
 typedef unsigned long long board_t;
 
 typedef enum DIRECTION { NW, NE, SW, SE } DIRECTION;
-
+typedef enum PIECE_TYPE { NORMAL, QUEEN, NOT_IN_USE } PIECE_TYPE;
 typedef struct bitboardPart {
   unsigned long board;
   char color;
-  char type;
+  PIECE_TYPE type;
   char depth;
 } bitboardPart_t;
 
