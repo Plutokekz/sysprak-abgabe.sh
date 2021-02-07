@@ -25,7 +25,7 @@ static int allowedSquaresIndices[32] = {
     0,  2,  4,  6,  9,  11, 13, 15, 16, 18, 20, 22, 25, 27, 29, 31,
     32, 34, 36, 38, 41, 43, 45, 47, 48, 50, 52, 54, 57, 59, 61, 63};
 
-tower_t towerBoard[32]; 
+tower_t *TOWER_BOARD[64] = {NULL};
 
 // Accessing a square of the bitboard
 long get(long b, int square) { return (b & (1ULL << square)); }
@@ -34,6 +34,10 @@ long set(long b, int square) { return (b | (1ULL << square)); }
 
 char *bitBoardToChar(board_t board) {
   return BITBOARD_LOOKUP[LONG_BITBOARD_LOOKUP[board % 59]];
+}
+
+tower_t *getTower(board_t board) {
+  return TOWER_BOARD[LONG_BITBOARD_LOOKUP[board % 59]];
 }
 
 void print_board(char *b) {
@@ -167,6 +171,7 @@ int addToBitboard(bitboardPart_t bitboards[24], int *square, char type) {
   return -1;
 }
 
+/*
 bitboard_t *parsFromString(char *piece_list) {
   bitboard_t *board = initBitboard();
   // 24 can change
@@ -201,6 +206,11 @@ bitboard_t *parsFromString(char *piece_list) {
   free(piece);
 
   return board;
+}
+*/
+
+bitboard_t parsFromString(char *pieceList) {
+  initTowerBoard()
 }
 
 board_t shift(board_t piece, DIRECTION d) {
