@@ -167,13 +167,15 @@ int addToBitboard(bitboardPart_t bitboards[24], int *square, char type) {
 bitboard_t *parsFromString(char *piece_list) {
   bitboard_t *board = initBitboard();
   // 24 can change
-  piece_list += 16; // skipp + PIECESLIST 24\n
+  piece_list += 16 + (SIZE_OF_PIECE * 23); // skipp + PIECESLIST 24\n
+  //printf("%s\n", piece_list);
   int i;
   char normal_piece = 'n', king_piece = 'k';
   // why malloc
   char *piece = malloc(sizeof(char) * SIZE_OF_PIECE - 3);
   for (i = 0; i < NUMBER_OF_PIECES; i++) {
     memcpy(piece, piece_list + 2, sizeof(char) * SIZE_OF_PIECE - 3);
+    //printf("Current piece: %s\n", piece);
     int square = parsCoordinateToSquare(piece + 2);
     switch (*piece) {
     case 'b':
@@ -192,7 +194,7 @@ bitboard_t *parsFromString(char *piece_list) {
     default:
       printf("Error color and type <%c> does not exist\n", *piece);
     }
-    piece_list += SIZE_OF_PIECE;
+    piece_list -= SIZE_OF_PIECE;
   }
 
   free(piece);
@@ -320,8 +322,8 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
   return moveBoardList;
 }
 
-/*int main() {
-  unsigned long longOnlyPos[32] = {1,
+//int main() {
+  /*unsigned long longOnlyPos[32] = {1,
                                    4,
                                    16,
                                    64,
@@ -352,8 +354,8 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
                                    144115188075855872,
                                    576460752303423488,
                                    2305843009213693952,
-                                   9223372036854775808};
-  char pieceList[] = "+ PIECESLIST 24\n"
+                                   9223372036854775808}; */
+  /*char pieceList[] = "+ PIECESLIST 24\n"
                      "+ b@H8\n"
                      "+ b@F8\n"
                      "+ b@D8\n"
@@ -378,8 +380,8 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
                      "+ w@E1\n"
                      "+ w@C1\n"
                      "+ w@A1\n"
-                     "+ ENDPIECESLIST";
-  int i;
+                     "+ ENDPIECESLIST";*/
+  /*int i;
   for (i = 0; i < 32; i++) {
     int index = allowedSquaresIndices[i];
     int calc_index = parsCoordinateToSquare(BITBOARD_LOOKUP[index]);
@@ -391,9 +393,9 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
            calc_index, index, LONG_BITBOARD_LOOKUP[longOnlyPos[i] % 59], BITBOARD_LOOKUP[index],
            currentBoard->w[0].board, longOnlyPos[i]);
     printBitboard(currentBoard);
-  }
-  bitboard_t *currentBoard; // = parsFromString(pieceList);
-  // printBitboard(currentBoard);
+  }*//*
+  bitboard_t *currentBoard = parsFromString(pieceList);
+  printBitboard(currentBoard);
   // board_t piece = 512ULL;
   // board_t playerBoard = 512ULL;
   // board_t opponentBoard = shift(playerBoard, NE);
@@ -409,5 +411,4 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
   //  print_board(moveBoardList[i]->pieceBoard);
   //  print_board(moveBoardList[i]->movesBoard);
   //}
-}
-*/
+}*/
