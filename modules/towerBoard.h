@@ -9,7 +9,7 @@
 typedef struct piece {
     char color;
     char type;
-    piece_t *next;
+    struct piece *next;
 } piece_t;
 
 // first is the piece on top (the one getting dequeued next), last the one on the bottom 
@@ -23,7 +23,7 @@ typedef struct tower {
     queue_t queue;
 } tower_t;
 
-void initTower(tower_t **towerBoard, int *allowedSquaresIndices);
+void initTowerBoard(tower_t **towerBoard, int *allowedSquaresIndices);
 
 char getType(tower_t *tower);
 
@@ -31,7 +31,9 @@ char getColor(tower_t *tower);
 
 void toKing(tower_t *tower);
 
-piece_t *capture(tower_t **old, tower_t **new, tower_t *captured);
+char capture(tower_t **old, tower_t **new, tower_t *captured);
+
+void moveTower(tower_t **old, tower_t **new);
 
 // Used when building the towers by parsing serverinput. Being built as stacks, pushPiece pushes a new piece onto the stack.
 void pushPiece(tower_t *tower, piece_t *piece);

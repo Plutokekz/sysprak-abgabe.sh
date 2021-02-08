@@ -4,7 +4,6 @@
 
 #include "bitboard.h"
 char *rows = "ABCDEFGH";
-char WHITE = 'w', WHITE_QUEEN = 'W', BLACK = 'b', BLACK_QUEEN = 'B';
 char *colon = ":";
 
 char BITBOARD_LOOKUP[64][3] = {
@@ -21,9 +20,9 @@ int LONG_BITBOARD_LOOKUP[59] = {-1, 0,  59, 50, 2,  6,  -1, 18, 61, -1, -1, 25,
                                 -1, -1, -1, -1, 9,  -1, 11, -1, 27, 48, 16, -1,
                                 54, 36, 13, 32, 47, 22, -1, 31, -1, -1, 29};
 
-static int allowedSquaresIndices[32] = {
-    0,  2,  4,  6,  9,  11, 13, 15, 16, 18, 20, 22, 25, 27, 29, 31,
-    32, 34, 36, 38, 41, 43, 45, 47, 48, 50, 52, 54, 57, 59, 61, 63};
+int allowedSquaresIndices[32] = {0,  2,  4,  6,  9,  11, 13, 15, 16, 18, 20,
+                                 22, 25, 27, 29, 31, 32, 34, 36, 38, 41, 43,
+                                 45, 47, 48, 50, 52, 54, 57, 59, 61, 63};
 
 tower_t *TOWER_BOARD[64] = {NULL};
 
@@ -76,65 +75,15 @@ void print_board(char *b) {
   printf("\n");
 }
 
-void bitboardToArray(char *b, long long bitboard, char *color) {
+void bitboardToArray(char *b, long long bitboard, char color) {
   int i, j;
   for (i = 7; i >= 0; i--) {
     for (j = 0; j < 8; j++) {
       if (get(bitboard, (j * 8 + i))) {
-        b[j * 8 + i] = *color;
+        b[j * 8 + i] = color;
       }
     }
   }
-}
-
-void printBitboard(bitboard_t *board) {
-  int i;
-  char *b = malloc(sizeof(char) * 64);
-  for (i = 0; i < 64; i++) {
-    b[i] = ' ';
-  }
-
-  bitboardToArray(b, board->w[0].board, &WHITE);
-  bitboardToArray(b, board->w[1].board, &WHITE_QUEEN);
-
-  bitboardToArray(b, board->b[0].board, &BLACK);
-  bitboardToArray(b, board->b[1].board, &BLACK_QUEEN);
-
-  print_board(b);
-
-  free(b);
-}
-
-bitboard_t *initBitboard() {
-
-  bitboard_t *board = malloc(sizeof(bitboard_t));
-
-  int i;
-  for (i = 0; i < BITBOARDS; i++) {
-    board->b[i].color = 'b';
-    board->b[i].depth = -1;
-    board->b[i].type = 0;
-    board->b[i].board = 0ULL;
-    board->w[i].color = 'w';
-    board->w[i].depth = -1;
-    board->w[i].type = 0;
-    board->w[i].board = 0ULL;
-  }
-
-  // Init Startboard
-  board->b[0].board = 0; // BLACK_STARTING_BOARD;
-  board->b[0].depth = 0;
-  board->w[0].board = 0; // WHITE_STARTING_BOARD;
-  board->w[0].depth = 0;
-  // Init start Queen's board to empty but type 1 fo Queen
-  board->b[1].board = 0ULL;
-  board->b[1].depth = 1;
-  board->b[1].type = 1;
-  board->w[1].board = 0ULL;
-  board->w[1].depth = 1;
-  board->w[1].type = 1;
-
-  return board;
 }
 
 int parsCoordinateToSquare(char *coord) {
@@ -145,84 +94,101 @@ int parsCoordinateToSquare(char *coord) {
   return (*(coord) - 'A') * 8 + (*(coord + 1) - '1');
 }
 
-int addToBitboardPart(struct bitboardPart *board, int *square, char type,
-                      int *i) {
-  board->board = set(board->board, *square);
-  board->depth = *i;
-  board->type = type;
-  return 0;
+void printBitboard(bitboard_t *board) {
+  char *b = malloc(sizeof(char) * 64);
+  for (int i = 0; i < 64; i++) {
+    b[i] = ' ';
+  }
+  bitboardToArray(b, board->whiteBoard, 'w');
+  bitboardToArray(b, board->whiteQueenBoard, 'W');
+  bitboardToArray(b, board->blackBoard, 'b');
+  bitboardToArray(b, board->blackQueenBoard, 'B');
+  print_board(b);
+  free(b);
 }
 
-int addToBitboard(bitboardPart_t bitboards[24], int *square, char type) {
-  if (bitboards == NULL) {
-    printf("Error bitboard strut is null\n");
-    return -1;
+bitboard_t *parsFromString(char *pieceList) {
+  initTowerBoard(TOWER_BOARD, allowedSquaresIndices);
+  bitboard_t *board = malloc(sizeof(bitboard_t));
+  pieceList = strchr(pieceList, '\n') + 1; // skipp + PIECESLIST 24\n
+  char pieceString[4];                     // e.g. b@F8
+  for (size_t i = 0; i < NUMBER_OF_PIECES; i++) {
+    memcpy(pieceString, pieceList + 2, 4);
+    piece_t *piece = malloc(sizeof(piece_t));
+    piece->next = NULL;
+    switch (pieceString[0]) {
+    case 'b':
+      piece->color = 'b';
+      piece->type = 'n';
+      break;
+    case 'B':
+      piece->color = 'b';
+      piece->type = 'k';
+      break;
+    case 'w':
+      piece->color = 'w';
+      piece->type = 'n';
+      break;
+    case 'W':
+      piece->color = 'w';
+      piece->type = 'k';
+      break;
+    default:
+      printf("Error color and type <%c> does not exist\n", *pieceString);
+    }
+    int index = parsCoordinateToSquare(pieceString + 2);
+    pushPiece(TOWER_BOARD[index], piece);
+    pieceList += SIZE_OF_PIECE;
   }
-  int i;
-  for (i = 0; i < BITBOARDS; i++) {
-    if (!get(bitboards[i].board, *square)) {
-      if (bitboards[i].type == type || bitboards[i].type == 0) {
-        addToBitboardPart(&bitboards[i], square, type, &i);
-        return 0;
+  for (size_t i = 0; i < 32; i++) {
+    tower_t *tower = TOWER_BOARD[allowedSquaresIndices[i]];
+    if (getColor(tower) == 'b') {
+      if (getType(tower) == 'n') {
+        board->blackBoard = set(board->blackBoard, allowedSquaresIndices[i]);
+      } else {
+        board->blackQueenBoard =
+            set(board->blackQueenBoard, allowedSquaresIndices[i]);
+      }
+    } else if (getColor(tower) == 'w') {
+      if (getType(tower) == 'n') {
+        board->whiteBoard = set(board->whiteBoard, allowedSquaresIndices[i]);
+      } else {
+        board->whiteQueenBoard =
+            set(board->whiteQueenBoard, allowedSquaresIndices[i]);
       }
     }
   }
-  printf("Error Out of Bitboards\n");
-  return -1;
-}
-
-/*
-bitboard_t *parsFromString(char *piece_list) {
-  bitboard_t *board = initBitboard();
-  // 24 can change
-  piece_list += 16; // skipp + PIECESLIST 24\n
-  int i;
-  char normal_piece = 'n', king_piece = 'k';
-  // why malloc
-  char *piece = malloc(sizeof(char) * SIZE_OF_PIECE - 3);
-  for (i = 0; i < NUMBER_OF_PIECES; i++) {
-    memcpy(piece, piece_list + 2, sizeof(char) * SIZE_OF_PIECE - 3);
-    int square = parsCoordinateToSquare(piece + 2);
-    switch (*piece) {
-    case 'b':
-      // why passing pointer instead of int
-      addToBitboard(board->b, &square, normal_piece);
-      break;
-    case 'B':
-      addToBitboard(board->b, &square, king_piece);
-      break;
-    case 'w':
-      addToBitboard(board->w, &square, normal_piece);
-      break;
-    case 'W':
-      addToBitboard(board->w, &square, king_piece);
-      break;
-    default:
-      printf("Error color and type <%c> does not exist\n", *piece);
-    }
-    piece_list += SIZE_OF_PIECE;
-  }
-
-  free(piece);
-
+  board->emptyBoard = ~(board->blackBoard | board->blackQueenBoard |
+                        board->whiteBoard | board->whiteQueenBoard);
   return board;
 }
-*/
 
-bitboard_t parsFromString(char *pieceList) {
-  initTowerBoard()
+DIRECTION turnAroundDirection(DIRECTION d) {
+  switch (d) {
+  case NW:
+    return SE;
+  case NE:
+    return SW;
+  case SW:
+    return NE;
+  case SE:
+    return NW;
+  default:
+    printf("wrong direction\n");
+    return 0;
+  }
 }
 
 board_t shift(board_t piece, DIRECTION d) {
   switch (d) {
   case NW:
-    return (piece << (COLUMNS - 1)) & ALLOWED_SQUARES;
+    return (piece >> (COLUMNS - 1)) & ALLOWED_SQUARES;
   case NE:
     return (piece << (COLUMNS + 1)) & ALLOWED_SQUARES;
   case SW:
     return (piece >> (COLUMNS + 1)) & ALLOWED_SQUARES;
   case SE:
-    return (piece >> (COLUMNS - 1)) & ALLOWED_SQUARES;
+    return (piece << (COLUMNS - 1)) & ALLOWED_SQUARES;
   default:
     printf("wrong direction\n");
     return 0ULL;
@@ -231,27 +197,50 @@ board_t shift(board_t piece, DIRECTION d) {
 
 void captureMoves(board_t playerBoard, board_t opponentBoard,
                   board_t emptyBoard, board_t piece, char type, char color,
-                  board_t *movesList, int depth) {
-  board_t tmpOpponentBoard = opponentBoard;
-  board_t tmpEmptyBoard = emptyBoard;
+                  board_t *movesList, int depth, DIRECTION lockedDirection) {
   board_t move;
   board_t tmp;
-  char currentType = type;
   for (size_t d = NW; d <= SE; d++) {
-    move = shift((shift(piece, d) & opponentBoard), d) & emptyBoard;
-    if (move) {
-      tmpOpponentBoard = opponentBoard & (~shift(move, (d + 1) % 4));
-      tmpEmptyBoard = ~(playerBoard | tmpOpponentBoard);
-      movesList[depth] |= move;
-      if ((color == 'b' && (move & WHITE_BASELINE)) ||
-          (color == 'w' && (move & BLACK_BASELINE)))
-        currentType = 'k';
-      if (move && currentType == 'k') {
-        while ((tmp = shift(move, d)) & tmpEmptyBoard)
+    if (d != lockedDirection) {
+      if (type == 'k') {
+        tmp = piece;
+        board_t start = piece;
+        move = piece;
+        while ((tmp = shift(move, d)) & emptyBoard)
           move = tmp;
+        if (shift((shift(move, d) & opponentBoard), d) & emptyBoard) {
+          tower_t *oldTower, *newTower;
+          oldTower = getTower(start);
+          newTower = getTower(move);
+          moveTower(&oldTower, &newTower);
+          playerBoard = (playerBoard & ~start) | move;
+          emptyBoard = ~(playerBoard | opponentBoard);
+        }
       }
-      captureMoves(playerBoard, tmpOpponentBoard, tmpEmptyBoard, move,
-                   currentType, color, movesList, depth + 1);
+      move = shift((shift(piece, d) & opponentBoard), d) & emptyBoard;
+      if (move) {
+        tower_t *oldTower, *newTower;
+        tmp = piece;
+        oldTower = getTower(tmp);
+        newTower = getTower(move);
+        board_t captured = shift(move, turnAroundDirection(d));
+        char capturedTowerColor =
+            capture(&oldTower, &newTower, getTower(captured));
+        playerBoard = (playerBoard & ~tmp) | move;
+        opponentBoard = opponentBoard & ~captured;
+        if (capturedTowerColor == color) {
+          playerBoard |= captured;
+        } else if (capturedTowerColor != 0) {
+          opponentBoard |= captured;
+        }
+        emptyBoard = ~(playerBoard | opponentBoard);
+        movesList[depth] |= move;
+        if ((color == 'b' && (move & WHITE_BASELINE)) ||
+            (color == 'w' && (move & BLACK_BASELINE)))
+          type = 'k';
+        captureMoves(playerBoard, opponentBoard, emptyBoard, move, type, color,
+                     movesList, depth + 1, turnAroundDirection(d));
+      }
     }
   }
 }
@@ -270,7 +259,7 @@ board_t *calculateMoves(board_t playerBoard, board_t opponentBoard,
   board_t emptyBoard = ~(playerBoard | opponentBoard);
   if (type == 'n') {
     captureMoves(playerBoard, opponentBoard, emptyBoard, piece, type, color,
-                 movesList, 0);
+                 movesList, 0, UNDEFINED);
     if (movesList[0] == 0ULL && !(*captureMovesOnly)) {
       if (color == 'w') {
         movesList[0] = (shift(piece, NW) | shift(piece, NE)) & emptyBoard;
@@ -281,18 +270,19 @@ board_t *calculateMoves(board_t playerBoard, board_t opponentBoard,
       *captureMovesOnly = true;
     }
   } else if (type == 'k') {
-    board_t move = piece;
-    board_t nonCaptureMoves = 0ULL;
-    board_t tmp;
-    for (size_t d = NW; d <= SE; d++) {
-      while ((tmp = shift(move, d)) & emptyBoard) {
-        move = tmp;
-        nonCaptureMoves |= move;
-      }
-      captureMoves(playerBoard, opponentBoard, emptyBoard, move, type, color,
-                   movesList, 0);
-    }
+    captureMoves(playerBoard, opponentBoard, emptyBoard, piece, type, color,
+                 movesList, 0, UNDEFINED);
     if (movesList[0] == 0ULL && !(*captureMovesOnly)) {
+      board_t move;
+      board_t nonCaptureMoves = 0ULL;
+      board_t tmp;
+      for (size_t d = NW; d <= SE; d++) {
+        move = piece;
+        while ((tmp = shift(move, d)) & emptyBoard) {
+          move = tmp;
+          nonCaptureMoves |= move;
+        }
+      }
       movesList[0] = nonCaptureMoves;
     } else {
       *captureMovesOnly = true;
@@ -314,10 +304,15 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
       memset(moveBoardList[i]->movesList, 0, 12 * sizeof(board_t));
     }
   }
-  bitboardPart_t *parts = color == 'w' ? currentBoard->w : currentBoard->b;
-  board_t playerBoard = parts[0].board;
-  board_t opponentBoard =
-      (currentBoard->b[0].board | currentBoard->w[0].board) ^ playerBoard;
+  board_t playerBoard;
+  board_t opponentBoard;
+  if (color == 'w') {
+    playerBoard = currentBoard->whiteBoard | currentBoard->whiteQueenBoard;
+    opponentBoard = currentBoard->blackBoard | currentBoard->blackQueenBoard;
+  } else {
+    playerBoard = currentBoard->blackBoard | currentBoard->blackQueenBoard;
+    opponentBoard = currentBoard->whiteBoard | currentBoard->whiteQueenBoard;
+  }
   board_t piece;
   board_t *movesList;
   int count = 0;
@@ -325,9 +320,8 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
   bool captureMovesOnly = false;
   bool tmp;
   for (size_t i = 0; i < 32; i++) {
-    if ((piece = get(parts[0].board, allowedSquaresIndices[i]))) {
-      type = get(parts[1].board, allowedSquaresIndices[i]) ? parts[1].type
-                                                           : parts[0].type;
+    if ((piece = get(playerBoard, allowedSquaresIndices[i]))) {
+      type = getType(getTower(piece));
       tmp = captureMovesOnly;
       movesList = calculateMoves(playerBoard, opponentBoard, piece, type, color,
                                  &captureMovesOnly);
@@ -338,6 +332,11 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
             memset(moveBoardList[j]->movesList, 0, 12 * sizeof(board_t));
           }
           count = 0;
+          // only look for first capture move
+          moveBoardList[count]->pieceBoard = piece;
+          memcpy(moveBoardList[count]->movesList, movesList,
+                 12 * sizeof(board_t));
+          return moveBoardList;
         }
         moveBoardList[count]->pieceBoard = piece;
         memcpy(moveBoardList[count]->movesList, movesList,
@@ -403,7 +402,7 @@ void print_bitboard(long board, char color) {
   for (i = 0; i < 64; i++) {
     b[i] = ' ';
   }
-  bitboardToArray(b, board, &color);
+  bitboardToArray(b, board, color);
   print_board(b);
   free(b);
 }
@@ -436,28 +435,15 @@ int main() {
                      "+ w@C1\n"
                      "+ w@A1\n"
                      "+ ENDPIECESLIST";
-  int i;
-  for (i = 0; i < 32; i++) {
-    int index = allowedSquaresIndices[i];
-    int calc_index = parsCoordinateToSquare(BITBOARD_LOOKUP[index]);
-    bitboard_t *currentBoard = initBitboard();
-    addToBitboard(currentBoard->w, &index, 'w');
-    printf("|Calc Square: %d, Square: %d mod square: %d, map to: %s|\n|Current "
-           "Board Long: "
-           "%ld, Given Board Long: %ld|\n",
-           calc_index, index, LONG_BITBOARD_LOOKUP[longOnlyPos[i] % 59],
-BITBOARD_LOOKUP[index], currentBoard->w[0].board, longOnlyPos[i]);
-    printBitboard(currentBoard);
-  }
+  char pieceList[] =
+      "+ PIECESLIST 24\n+ b@H8\n+ b@G7\n+ b@E7\n+ b@D6\n+ b@D6\n+ b@D6\n+ "
+      "b@D6\n+ b@D6\n+ W@D6\n+ b@G5\n+ b@E5\n+ w@E5\n+ b@F4\n+ b@F4\n+ w@F4\n+ "
+      "w@E3\n+ w@C3\n+ w@H2\n+ w@F2\n+ w@D2\n+ w@G1\n+ w@E1\n+ w@C1\n+ w@A1\n+ "
+      "ENDPIECESLIST";
   bitboard_t *currentBoard = parsFromString(pieceList);
   moveboard_t **moveBoardList = allPossibleMoves(currentBoard, 'w');
   char moveString[35] = {0};
   pickFirstMove(moveBoardList, moveString);
   printf("%s\n", moveString);
-  // int i = 0;
-  // while (moveBoardList[i++]->pieceBoard) {
-  //  print_board(moveBoardList[i]->pieceBoard);
-  //  print_board(moveBoardList[i]->movesBoard);
-  //}
 }
 */

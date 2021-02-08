@@ -4,11 +4,11 @@
 
 #ifndef BASCHNI_BITBOARD_H
 #define BASCHNI_BITBOARD_H
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 #include "towerBoard.h"
 
@@ -24,11 +24,13 @@
 
 typedef unsigned long long board_t;
 
-typedef enum DIRECTION { NW, NE, SW, SE } DIRECTION;
+typedef enum DIRECTION { NW, NE, SW, SE, UNDEFINED } DIRECTION;
 
 typedef struct bitboard {
   board_t whiteBoard;
+  board_t whiteQueenBoard;
   board_t blackBoard;
+  board_t blackQueenBoard;
   board_t emptyBoard;
 } bitboard_t;
 
@@ -37,9 +39,17 @@ typedef struct MoveBoard {
   board_t movesList[12];
 } moveboard_t;
 
-bitboard_t *parsFromString(char *piece_list);
+extern char BITBOARD_LOOKUP[64][3];
+
+extern int LONG_BITBOARD_LOOKUP[59];
+
+extern int allowedSquaresIndices[32];
+
+extern tower_t *TOWER_BOARD[64];
 
 void printBitboard(bitboard_t *board);
+
+bitboard_t *parsFromString(char *piece_list);
 
 moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color);
 

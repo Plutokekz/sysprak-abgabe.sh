@@ -35,7 +35,6 @@ void thinker() {
     printf("Thinker Piece List: %s", pieceList);
     bitboard_t *currentBoard = parsFromString(pieceList);
     printBitboard(currentBoard);
-    printf("player id: %i\n", ptrGameStart->ownPlayerNumber);
     char playerColor = ptrGameStart->ownPlayerNumber ? 'b' : 'w';
     moveboard_t **moveBoardList = allPossibleMoves(currentBoard, playerColor);
     char moveString[35] = {0};
