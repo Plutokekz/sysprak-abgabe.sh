@@ -359,8 +359,7 @@ void pickNextCaptureMove(board_t *movesList, int depth, board_t move,
   board_t tmp;
   for (size_t d = NW; d <= SE; d++) {
     nextMove = shift(shift(move, d), d);
-    while (!(nextMove & movesList[depth]) &&
-           (tmp = shift(shift(nextMove, d), d)))
+    while (!(nextMove & movesList[depth]) && (tmp = shift(nextMove, d)))
       nextMove = tmp;
     if (nextMove & movesList[depth]) {
       pickNextCaptureMove(movesList, depth + 1, nextMove, moveString);
@@ -427,9 +426,9 @@ int main() {
                      "+ w@A1\n"
                      "+ ENDPIECESLIST";
   char pieceList[] =
-      "+ PIECESLIST 24\n+ b@G7\n+ b@C7\n+ b@C7\n+ b@C7\n+ b@A7\n+ w@D6\n+ "
-      "b@D6\n+ w@B6\n+ w@B6\n+ w@G5\n+ w@G5\n+ b@G5\n+ b@G5\n+ b@G5\n+ b@G5\n+ "
-      "b@G5\n+ b@E5\n+ w@C5\n+ w@B4\n+ w@H2\n+ w@D2\n+ w@G1\n+ w@E1\n+ w@C1\n+ "
+      "+ PIECESLIST 24\n+ w@D8\n+ b@D8\n+ b@B8\n+ W@B8\n+ b@E7\n+ b@A7\n+ "
+      "b@D6\n+ w@F4\n+ w@F4\n+ b@F4\n+ b@F4\n+ b@F4\n+ b@D4\n+ b@D4\n+ b@D4\n+ "
+      "b@D4\n+ w@D4\n+ W@D4\n+ w@B4\n+ w@H2\n+ w@D2\n+ w@G1\n+ w@E1\n+ w@C1\n+ "
       "ENDPIECESLIST";
   bitboard_t *currentBoard = parsFromString(pieceList);
   printBitboard(currentBoard);
