@@ -62,20 +62,25 @@ void gamePhase(int sock, int fd[2], int shmId) {
       exit(EXIT_FAILURE);
     }
   }
+  free(buffer);
+  buffer = recvCommand(sock, 26, &size); //receive piecelist
   char *pieceList;
   pieceList = malloc(300);
   memcpy(pieceList, buffer + 11, 300); // + 11 so GAMEOVER doesnt get written into the piecelist
   bitboard_t *currentBoard = parsFromString(pieceList);
   printBitboard(currentBoard);
   
-  // Bitlength of piecelist: 226, if \n after each line counts as 2 bits and each char as 1 bit.
-  if (strncmp(buffer + 227, "+ PLAYER0WON Yes", 16) == 0) {
+  free(buffer);
+  buffer = recvCommand(sock, 1, &size);
+  if (strncmp(buffer, "+ PLAYER0WON Yes", 16) == 0) {
     printf("White won! \n");
-  } else if (strncmp(buffer + 246, "+ PLAYER1WON Yes", 16) == 0) { //Previous line +18 for linelength with "No" instead of "Yes" 
-    printf("Black won! \n");
-  } else {
-    printf("Seems as though neither player has won. \n");
   }
+  free(buffer);
+  buffer = recvCommand(sock, 1, &size);
+  if (strncmp(buffer, "+ PLAYER1WON Yes", 16) == 0) {
+    printf("Black won! \n");
+  }
+
   free(buffer);
   free(move);
   free(shmPtr); // mybe special free ?
