@@ -215,6 +215,7 @@ void captureMoves(board_t playerBoard, board_t opponentBoard,
           moveTower(&oldTower, &newTower);
           playerBoard = (playerBoard & ~start) | move;
           emptyBoard = ~(playerBoard | opponentBoard);
+          piece = move;
         }
       }
       move = shift((shift(piece, d) & opponentBoard), d) & emptyBoard;
@@ -349,7 +350,7 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color) {
 }
 
 void pickNextCaptureMove(board_t *movesList, int depth, board_t move,
-                         char *moveString, char type) {
+                         char *moveString) {
   if (depth > 0) {
     strcat(moveString, colon);
   }
@@ -358,13 +359,11 @@ void pickNextCaptureMove(board_t *movesList, int depth, board_t move,
   board_t tmp;
   for (size_t d = NW; d <= SE; d++) {
     nextMove = shift(shift(move, d), d);
-    if (type == 'k') {
-      while (!(nextMove & movesList[depth]) &&
-             (tmp = shift(shift(nextMove, d), d)))
-        nextMove = tmp;
-    }
+    while (!(nextMove & movesList[depth]) &&
+           (tmp = shift(shift(nextMove, d), d)))
+      nextMove = tmp;
     if (nextMove & movesList[depth]) {
-      pickNextCaptureMove(movesList, depth + 1, nextMove, moveString, type);
+      pickNextCaptureMove(movesList, depth + 1, nextMove, moveString);
       return;
     }
   }
@@ -372,27 +371,19 @@ void pickNextCaptureMove(board_t *movesList, int depth, board_t move,
 
 void pickFirstMove(moveboard_t **moveBoardList, char *moveString) {
   if (moveBoardList[0] != NULL) {
-    strcat(moveString, bitBoardToChar(moveBoardList[0]->pieceBoard));
     board_t move;
     for (size_t d = NW; d <= SE; d++) {
       move = shift(moveBoardList[0]->pieceBoard, d);
       if (move & moveBoardList[0]->movesList[0]) {
         // normal move
+        strcat(moveString, bitBoardToChar(moveBoardList[0]->pieceBoard));
         strcat(moveString, colon);
         strcat(moveString, bitBoardToChar(move));
         return;
       }
-      move = shift(move, d);
-      if (move & moveBoardList[0]->movesList[0]) {
-        // capture move
-        pickNextCaptureMove(moveBoardList[0]->movesList, 1, move, moveString,
-                            'n');
-        return;
-      }
     }
-    // has to be king
     pickNextCaptureMove(moveBoardList[0]->movesList, 0,
-                        moveBoardList[0]->pieceBoard, moveString, 'k');
+                        moveBoardList[0]->pieceBoard, moveString);
   }
 }
 
@@ -436,11 +427,12 @@ int main() {
                      "+ w@A1\n"
                      "+ ENDPIECESLIST";
   char pieceList[] =
-      "+ PIECESLIST 24\n+ b@H8\n+ b@G7\n+ b@E7\n+ b@D6\n+ b@D6\n+ b@D6\n+ "
-      "b@D6\n+ b@D6\n+ W@D6\n+ b@G5\n+ b@E5\n+ w@E5\n+ b@F4\n+ b@F4\n+ w@F4\n+ "
-      "w@E3\n+ w@C3\n+ w@H2\n+ w@F2\n+ w@D2\n+ w@G1\n+ w@E1\n+ w@C1\n+ w@A1\n+ "
+      "+ PIECESLIST 24\n+ b@G7\n+ b@C7\n+ b@C7\n+ b@C7\n+ b@A7\n+ w@D6\n+ "
+      "b@D6\n+ w@B6\n+ w@B6\n+ w@G5\n+ w@G5\n+ b@G5\n+ b@G5\n+ b@G5\n+ b@G5\n+ "
+      "b@G5\n+ b@E5\n+ w@C5\n+ w@B4\n+ w@H2\n+ w@D2\n+ w@G1\n+ w@E1\n+ w@C1\n+ "
       "ENDPIECESLIST";
   bitboard_t *currentBoard = parsFromString(pieceList);
+  printBitboard(currentBoard);
   moveboard_t **moveBoardList = allPossibleMoves(currentBoard, 'w');
   char moveString[35] = {0};
   pickFirstMove(moveBoardList, moveString);
