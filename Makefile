@@ -36,7 +36,7 @@ mySignal.o: modules/mySignal.c modules/mySignal.h
 	gcc $(EFLAGS) -c modules/mySignal.c
 
 play: sysprak-client
-	./sysprak-client -g $(G) -p $(P) -c $(C)
+	./sysprak-client -g $(GAME_ID) -p $(PLAYER)
 
 vg:
 	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./sysprak-client -g $(G) -c $(C)
