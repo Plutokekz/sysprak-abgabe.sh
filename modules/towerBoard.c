@@ -17,7 +17,7 @@ char getColor(tower_t *tower) {
 
 // void toKing(tower_t *tower) { tower->queue.top->type = 'k'; }
 
-void initTowerBoard(tower_t **towerBoard, int *allowedSquaresIndices) {
+void initTowerBoard(tower_t **towerBoard) {
   static tower_t *towerList = NULL;
   if (towerList == NULL) {
     towerList = malloc(64 * sizeof(tower_t));

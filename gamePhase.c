@@ -73,7 +73,7 @@ void gamePhase(int sock, int fd[2], int shmId) {
   buffer = recvCommand(sock, 26, &size); //receive piecelist
   char *pieceList;
   pieceList = malloc(300);
-  memcpy(pieceList, buffer + 11, 300); // + 11 so GAMEOVER doesnt get written into the piecelist
+  memcpy(pieceList, buffer, 300);
   bitboard_t *currentBoard = parsFromString(pieceList);
   printBitboard(currentBoard);
   
