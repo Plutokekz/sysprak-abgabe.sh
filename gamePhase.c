@@ -90,7 +90,6 @@ void gamePhase(int sock, int fd[2], int shmId) {
 
   free(buffer);
   free(move);
-  free(shmPtr); // mybe special free ?
-  free(buffer);
+  deleteSHM(shmId);
   exit(EXIT_SUCCESS);
 }
