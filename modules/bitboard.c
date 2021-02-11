@@ -108,7 +108,7 @@ void printBitboard(bitboard_t *board) {
 }
 
 bitboard_t *parsFromString(char *pieceList) {
-  initTowerBoard(TOWER_BOARD, allowedSquaresIndices);
+  initTowerBoard(TOWER_BOARD);
   bitboard_t *board = malloc(sizeof(bitboard_t));
   pieceList = strchr(pieceList, '\n') + 1; // skipp + PIECESLIST 24\n
   char pieceString[4];                     // e.g. b@F8

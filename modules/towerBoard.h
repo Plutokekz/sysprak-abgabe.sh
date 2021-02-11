@@ -23,7 +23,7 @@ typedef struct tower {
     queue_t queue;
 } tower_t;
 
-void initTowerBoard(tower_t **towerBoard, int *allowedSquaresIndices);
+void initTowerBoard(tower_t **towerBoard);
 
 char getType(tower_t *tower);
 
