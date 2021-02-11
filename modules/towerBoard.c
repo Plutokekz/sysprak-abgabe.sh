@@ -20,7 +20,7 @@ char getColor(tower_t *tower) {
 void initTowerBoard(tower_t **towerBoard) {
   static tower_t *towerList = NULL;
   if (towerList == NULL) {
-    towerList = malloc(64 * sizeof(tower_t));
+    towerList = calloc(64, sizeof(tower_t));
   } else {
     memset(towerList, 0, 64 * sizeof(tower_t));
   }
