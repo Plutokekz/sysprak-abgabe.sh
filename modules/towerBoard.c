@@ -20,12 +20,12 @@ char getColor(tower_t *tower) {
 void initTowerBoard(tower_t **towerBoard, int *allowedSquaresIndices) {
   static tower_t *towerList = NULL;
   if (towerList == NULL) {
-    towerList = malloc(32 * sizeof(tower_t));
+    towerList = malloc(64 * sizeof(tower_t));
   } else {
-    memset(towerList, 0, 32 * sizeof(tower_t));
+    memset(towerList, 0, 64 * sizeof(tower_t));
   }
-  for (size_t i = 0; i < 32; i++) {
-    towerBoard[allowedSquaresIndices[i]] = towerList + i;
+  for (size_t i = 0; i < 64; i++) {
+    towerBoard[i] = towerList + i;
   }
 }
 
