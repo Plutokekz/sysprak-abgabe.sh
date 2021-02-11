@@ -22,7 +22,7 @@ void setupEpoll(int fd[2]) {
 }
 
 void gamePhase(int sock, int fd[2], int shmId) {
-  char *buffer;
+  char *buffer = NULL;
   struct Share *shmPtr;
   setupEpoll(fd);
   shmPtr = attachSHM(shmId);
@@ -30,16 +30,18 @@ void gamePhase(int sock, int fd[2], int shmId) {
   char *move = NULL;
   int move_size = 0;
   // main game loop receiving commands, thinking and sending them back
-  while (strncmp(buffer, "+ GAMEOVER", 10) != 0) {
+  do {
+    free(buffer);
     buffer = recvCommand(sock, 1, &size); // receive WAIT or MOVE command
     // handle wait command
     if (strncmp(buffer, "+ WAIT", 6) == 0) {
-      free(buffer);
+      //free(buffer);
       sendCommand(sock, OKWAIT, "");
     }
     // handle move commands
     if (strncmp(buffer, "+ MOVE", 6) == 0) {
       sendCommand(sock, THINKING, "");
+      free(buffer);
       buffer = recvCommand(sock, 26, &size);
       // write piece list buffer to shared memmory
       memcpy((void *)shmPtr + sizeof(Share), buffer, size - 12);
@@ -47,6 +49,7 @@ void gamePhase(int sock, int fd[2], int shmId) {
       // send signal to thinker
       kill(getppid(), SIGUSR1);
       // receive OKWAIT command
+      free(buffer);
       buffer = recvCommand(sock, 1, &size); // OKTHINK
       if (strncmp(buffer, "+ OKTHINK", 9) == 0) {
         // wait for thinker written move to pipe
@@ -56,9 +59,11 @@ void gamePhase(int sock, int fd[2], int shmId) {
         }
         sendCommand(sock, PLAY, move);
         // receive MOVEOK command
-        buffer = recvCommand(sock, 1, &size); // OKTHINK
+        free(buffer);
+        buffer = recvCommand(sock, 1, &size); // MOVEOK
         printf("buffer after send move: %s\n", buffer);
       }
+    //free(buffer);
     }
     if (strncmp(buffer, "+ QUIT", 6) == 0) {
       free(move);
@@ -68,7 +73,7 @@ void gamePhase(int sock, int fd[2], int shmId) {
              "error. \n");
       exit(EXIT_FAILURE);
     }
-  }
+  } while (strncmp(buffer, "+ GAMEOVER", 10) != 0);
   free(buffer);
   buffer = recvCommand(sock, 26, &size); //receive piecelist
   char *pieceList;

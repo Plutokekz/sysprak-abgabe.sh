@@ -109,12 +109,12 @@ void printBitboard(bitboard_t *board) {
 
 bitboard_t *parsFromString(char *pieceList) {
   initTowerBoard(TOWER_BOARD);
-  bitboard_t *board = malloc(sizeof(bitboard_t));
+  bitboard_t *board = calloc(1, sizeof(bitboard_t));
   pieceList = strchr(pieceList, '\n') + 1; // skipp + PIECESLIST 24\n
   char pieceString[4];                     // e.g. b@F8
   for (size_t i = 0; i < NUMBER_OF_PIECES; i++) {
     memcpy(pieceString, pieceList + 2, 4);
-    piece_t *piece = malloc(sizeof(piece_t));
+    piece_t *piece = calloc(1, sizeof(piece_t));
     piece->next = NULL;
     switch (pieceString[0]) {
     case 'b':
