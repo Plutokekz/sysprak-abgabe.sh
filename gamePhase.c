@@ -8,6 +8,13 @@ struct epoll_event *events;
 void setupEpoll(int fd[2]) {
   printf("gamePhase pipe fd[0]: %d, fd[1]: %d\n", fd[0], fd[1]);
   events = malloc(sizeof(struct epoll_event));
+  //initialisierung
+  events->events = 0;
+  events->data.fd = 0;
+  events->data.ptr = NULL;
+  events->data.u32 = 0;
+  events->data.u64 = 0;
+  //
   epfd = epoll_create(1);
   events[0].events = EPOLLIN;
   events[0].data.fd = fd[0];
