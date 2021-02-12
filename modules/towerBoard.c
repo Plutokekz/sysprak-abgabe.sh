@@ -37,13 +37,6 @@ void freeQueue(queue_t *queue) {
   }
 }
 
-void freeTowerBoard(tower_t **towerBoard) {
-  for (size_t i = 0; i < 64; i++) {
-    freeQueue(&(towerBoard[i]->queue));
-    free(towerBoard[i]);
-  }
-}
-
 void enqueue(queue_t *queue, piece_t *piece) {
   if (queue->top == NULL) {
     queue->top = piece;

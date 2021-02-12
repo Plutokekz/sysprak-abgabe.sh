@@ -163,6 +163,13 @@ bitboard_t *parsFromString(char *pieceList) {
   return board;
 }
 
+void freeTowerBoard() {
+  for (size_t i = 0; i < 64; i++) {
+    freeQueue(&(TOWER_BOARD[i]->queue));
+    free(TOWER_BOARD[i]);
+  }
+}
+
 DIRECTION turnAroundDirection(DIRECTION d) {
   switch (d) {
   case NW:

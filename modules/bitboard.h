@@ -55,4 +55,6 @@ moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color);
 
 void pickFirstMove(moveboard_t **moveBoardList, char *moveString);
 
+void freeTowerBoard();
+
 #endif // BASCHNI_BITBOARD_H

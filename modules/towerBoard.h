@@ -25,6 +25,8 @@ typedef struct tower {
 
 void initTowerBoard(tower_t **towerBoard);
 
+void freeQueue(queue_t *queue);
+
 char getType(tower_t *tower);
 
 char getColor(tower_t *tower);
