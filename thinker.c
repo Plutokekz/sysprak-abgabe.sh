@@ -38,6 +38,7 @@ void thinker() {
     char playerColor = ptrGameStart->ownPlayerNumber ? 'b' : 'w';
     moveboard_t **moveBoardList = allPossibleMoves(currentBoard, playerColor);
     free(currentBoard);
+    freeTowerBoard();
     char moveString[35] = {0};
     pickFirstMove(moveBoardList, moveString);
     printf("send: %s\n", moveString);
