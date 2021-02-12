@@ -179,17 +179,7 @@ int readConfigFile(char *filename, config_t *config) {
 }
 
 config_t *setOptions(int argc, char *argv[]) {
-  config_t *config = malloc(sizeof(config_t));
-  //Initialisierung
-  config->game = NULL;
-  config->host = NULL;
-  config->port = 0;
-  for (int i = 0;i>GAME_ID_SIZE;i++) {
-    config->gameId[i] = '0';
-  }
-  config->playerId[0] = '9';
-  config->playerId[0] = '9';
-  //
+  config_t *config = calloc(1, sizeof(config_t));
   int c;
   config->f = PRETTY;
   while ((c = getopt(argc, argv, "g:p:c:d")) != -1) {

@@ -241,6 +241,7 @@ void captureMoves(board_t playerBoard, board_t opponentBoard,
           type = 'k';
         captureMoves(playerBoard, opponentBoard, emptyBoard, move, type, color,
                      movesList, depth + 1, turnAroundDirection(d));
+        break;
       }
     }
   }
@@ -425,14 +426,13 @@ int main() {
                      "+ w@C1\n"
                      "+ w@A1\n"
                      "+ ENDPIECESLIST";
-  char pieceList[] =
-      "+ PIECESLIST 24\n+ w@D8\n+ b@D8\n+ b@B8\n+ W@B8\n+ b@E7\n+ b@A7\n+ "
-      "b@D6\n+ w@F4\n+ w@F4\n+ b@F4\n+ b@F4\n+ b@F4\n+ b@D4\n+ b@D4\n+ b@D4\n+ "
-      "b@D4\n+ w@D4\n+ W@D4\n+ w@B4\n+ w@H2\n+ w@D2\n+ w@G1\n+ w@E1\n+ w@C1\n+ "
-      "ENDPIECESLIST";
+  char pieceList[] = "PIECESLIST 24\n+ b@F8\n+ b@F8\n+ W@F8\n+ b@H6\n+ b@D6\n+ "
+                     "w@D6\n+ W@D6\n+ b@E5\n+ b@E5\n+ b@E5\n+ b@C5\n+ b@C5\n+ "
+                     "w@C5\n+ b@D4\n+ b@D4\n+ w@D4\n+ w@B4\n+ w@A3\n+ w@H2\n+ "
+                     "b@F2\n+ w@F2\n+ w@B2\n+ w@C1\n+ w@A1\n+ ENDPIECESLIST";
   bitboard_t *currentBoard = parsFromString(pieceList);
   printBitboard(currentBoard);
-  moveboard_t **moveBoardList = allPossibleMoves(currentBoard, 'w');
+  moveboard_t **moveBoardList = allPossibleMoves(currentBoard, 'b');
   char moveString[35] = {0};
   pickFirstMove(moveBoardList, moveString);
   printf("%s\n", moveString);
