@@ -25,6 +25,8 @@ int allowedSquaresIndices[32] = {0,  2,  4,  6,  9,  11, 13, 15, 16, 18, 20,
                                  45, 47, 48, 50, 52, 54, 57, 59, 61, 63};
 
 tower_t *TOWER_BOARD[64] = {NULL};
+piece_t *PIECE_POINTER_BUFFER[100] = {NULL};
+size_t piecePointerCounter = 0;
 
 // Accessing a square of the bitboard
 long get(long b, int square) { return (b & (1ULL << square)); }
@@ -115,6 +117,8 @@ bitboard_t *parsFromString(char *pieceList) {
   for (size_t i = 0; i < NUMBER_OF_PIECES; i++) {
     memcpy(pieceString, pieceList + 2, 4);
     piece_t *piece = calloc(1, sizeof(piece_t));
+    PIECE_POINTER_BUFFER[piecePointerCounter] = piece;
+    piecePointerCounter++;
     piece->next = NULL;
     switch (pieceString[0]) {
     case 'b':
@@ -164,10 +168,10 @@ bitboard_t *parsFromString(char *pieceList) {
 }
 
 void freeTowerBoard() {
-  for (size_t i = 0; i < 64; i++) {
-    freeQueue(&(TOWER_BOARD[i]->queue));
-    free(TOWER_BOARD[i]);
+  for (size_t i = 0; i <= piecePointerCounter; i++) {
+    free(PIECE_POINTER_BUFFER[i]);
   }
+  piecePointerCounter = 0;
 }
 
 DIRECTION turnAroundDirection(DIRECTION d) {
