@@ -1,3 +1,0 @@
-function cache für all possible moves -> über Spiele hinaus
-min max mit alpha beta pruning
-q learning ? wenn möglich vielleicht zu viele optionen
