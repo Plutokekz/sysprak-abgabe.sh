@@ -11,6 +11,7 @@
 #include <string.h>
 
 #include "towerBoard.h"
+#include "log.h"
 
 #define BITBOARDS 24
 #define BLACK_STARTING_BOARD -6172840797264674816

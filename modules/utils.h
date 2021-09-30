@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "log.h"
 
 #define DEFAULT_CONFIG_FILENAME "tests/config.conf"
 #define GAME_ID_SIZE 13
@@ -25,7 +26,7 @@
  *
  * Contains the flags for the function printProlog.
  */
-typedef enum P_FLAG { PRETTY, DEBUG } P_FLAG;
+typedef enum P_FLAG { PRETTY, DEBUG, NONE } P_FLAG;
 
 /**
  * @brief Config struct

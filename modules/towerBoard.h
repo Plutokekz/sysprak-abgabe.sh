@@ -2,6 +2,7 @@
 #define BASCHNI_QUEUE_H
 
 #include <stddef.h>
+#include "log.h"
 
 // piece in queue
 // colour may be 'b' or 'w'
@@ -12,7 +13,7 @@ typedef struct piece {
     struct piece *next;
 } piece_t;
 
-// first is the piece on top (the one getting dequeued next), last the one on the bottom 
+// first is the piece on top (the one getting dequeued next), last the one on the bottom
 typedef struct queue {
     piece_t *top;
     piece_t *bottom;

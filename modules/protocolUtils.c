@@ -35,7 +35,7 @@ char *lookup(COMMAND c) {
     command = "START";
     break;
   default:
-    printf("lookup COMMAND <%d> not found\n", c);
+    log_error("lookup COMMAND <%d> not found", c);
     exit(EXIT_FAILURE);
   }
   return command;
@@ -106,14 +106,14 @@ void *recvCommand(int sock, int lines, int *size) {
       free(recvBuff);
       exit(EXIT_FAILURE);
     case 0:
-      printf("connection closed by server\n");
-      printf("already received: %s\n", recvBuff);
+      log_error("connection closed by server");
+      log_error("already received: %s", recvBuff);
       free(recvBuff);
       exit(EXIT_FAILURE);
     default:
       if (recvBuff[0] == '-') {
         recvBuff[totalBytes] = '\0';
-        printf("%s", recvBuff);
+        log_error("%s", recvBuff);
         free(recvBuff);
         exit(EXIT_FAILURE);
       }

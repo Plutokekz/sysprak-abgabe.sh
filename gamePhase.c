@@ -6,7 +6,7 @@ int epfd;
 struct epoll_event *events;
 
 void setupEpoll(int fd[2]) {
-  printf("gamePhase pipe fd[0]: %d, fd[1]: %d\n", fd[0], fd[1]);
+  log_debug("gamePhase pipe fd[0]: %d, fd[1]: %d", fd[0], fd[1]);
   events = malloc(sizeof(struct epoll_event));
   //initialisierung
   events->events = 0;
@@ -61,7 +61,7 @@ void gamePhase(int sock, int fd[2], int shmId) {
         // receive MOVEOK command
         free(buffer);
         buffer = recvCommand(sock, 1, &size); // MOVEOK
-        printf("buffer after send move: %s\n", buffer);
+        log_debug("buffer after send move: %s", buffer);
       }
     //free(buffer);
     }
@@ -69,8 +69,8 @@ void gamePhase(int sock, int fd[2], int shmId) {
       free(move);
       free(shmPtr); // mybe special free ?
       free(buffer);
-      printf("Server closed connection during gamephase due to protocoll "
-             "error. \n");
+      log_error("Server closed connection during gamephase due to protocoll "
+             "error.");
       exit(EXIT_FAILURE);
     }
   } while (strncmp(buffer, "+ GAMEOVER", 10) != 0);
@@ -80,17 +80,18 @@ void gamePhase(int sock, int fd[2], int shmId) {
   pieceList = malloc(300);
   memcpy(pieceList, buffer, 300);
   bitboard_t *currentBoard = parsFromString(pieceList);
-  printBitboard(currentBoard);
-  
+  if (get_quiet() == false && get_level() >= 2){
+    printBitboard(currentBoard);
+  }
   free(buffer);
   buffer = recvCommand(sock, 1, &size);
   if (strncmp(buffer, "+ PLAYER0WON Yes", 16) == 0) {
-    printf("White won! \n");
+    log_info("White won!");
   }
   free(buffer);
   buffer = recvCommand(sock, 1, &size);
   if (strncmp(buffer, "+ PLAYER1WON Yes", 16) == 0) {
-    printf("Black won! \n");
+    log_info("Black won!");
   }
 
   free(buffer);

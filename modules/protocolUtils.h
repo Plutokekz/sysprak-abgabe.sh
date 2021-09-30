@@ -1,6 +1,8 @@
 #ifndef PROTOCOL_UTILS_H
 #define PROTOCOL_UTILS_H
 
+#include "log.h"
+
 /**
  * @brief COMMAND enum
  * \enum COMMAND

@@ -138,7 +138,7 @@ bitboard_t *parsFromString(char *pieceList) {
       piece->type = 'k';
       break;
     default:
-      printf("Error color and type <%c> does not exist\n", *pieceString);
+      log_error("Error color and type <%c> does not exist", *pieceString);
     }
     int index = parsCoordinateToSquare(pieceString + 2);
     pushPiece(TOWER_BOARD[index], piece);
@@ -185,7 +185,7 @@ DIRECTION turnAroundDirection(DIRECTION d) {
   case SE:
     return NW;
   default:
-    printf("wrong direction\n");
+    log_error("wrong direction\n");
     return 0;
   }
 }
@@ -201,7 +201,7 @@ board_t shift(board_t piece, DIRECTION d) {
   case SE:
     return (piece << (COLUMNS - 1)) & ALLOWED_SQUARES;
   default:
-    printf("wrong direction\n");
+    log_error("wrong direction\n");
     return 0ULL;
   }
 }

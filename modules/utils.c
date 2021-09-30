@@ -5,12 +5,12 @@
 
 void printfConfig(config_t *config) {
   if (config != NULL) {
-    printf("<Config{game: %s, host: %s, port: %d, playerId: %s, gameId: %s, "
-           "printFlag: %s}>\n",
-           config->game, config->host, config->port, config->playerId,
-           config->gameId, config->f == PRETTY ? "PRETTY" : "DEBUG");
+    log_info("<Config{game: %s, host: %s, port: %d, playerId: %s, gameId: %s, "
+             "printFlag: %s}>",
+             config->game, config->host, config->port, config->playerId,
+             config->gameId, config->f == PRETTY ? "PRETTY" : "DEBUG");
   } else {
-    printf("Given Config is NULL\n");
+    log_info("Given Config is NULL");
   }
 }
 
@@ -35,9 +35,7 @@ int parseAttr(char *attr, char *value, config_t *config) {
     config->port = atoi(value);
     free(value);
   } else {
-    printf("Error the attribute <%s> is not available in the Config Struct and "
-           "value <%s>\n",
-           attr, value);
+    log_error("Error the attribute <%s> is not available in the Config Struct and value <%s>", attr, value);
     free(attr);
     free(value);
     return -1;
@@ -81,14 +79,14 @@ int parseLine(char *line, config_t *config) {
     }
   }
   if (attr != NULL || value != NULL) {
-    printf("length attr: %d, length value: %d\n", length_attr, length_value);
+    log_debug("length attr: %d, length value: %d", length_attr, length_value);
     attr = (char *)realloc(attr, length_attr + 1);
     attr[length_attr] = '\0';
 
     value = (char *)realloc(value, length_value + 1);
     value[length_value] = '\0';
 
-    printf("Attribute: %s with the Value: %s\n", attr, value);
+    log_debug("Attribute: %s with the Value: %s", attr, value);
     return parseAttr(attr, value, config);
   }
 
@@ -128,7 +126,7 @@ int parseLine_f(char *line, config_t *config, int line_index) {
   }
 
   if (is_value == 0) {
-    printf("Config File formatting error in line <%i>\n", line_index);
+    log_error("Config File formatting error in line <%i>", line_index);
     return -1;
   }
 
@@ -154,11 +152,11 @@ int readConfigFile(char *filename, config_t *config) {
 
   fp = fopen(filename, "r");
   if (fp == NULL) {
-    printf("Could not find <%s>\n", filename);
-    printf("Using Default Config File\n");
+    log_info("Could not find <%s>", filename);
+    log_info("Using Default Config File");
     fp = fopen(DEFAULT_CONFIG_FILENAME, "r");
     if (fp == NULL) {
-      printf("Default config file not available\n");
+      log_error("Default config file not available");
       return -1;
     }
   }
@@ -182,11 +180,11 @@ config_t *setOptions(int argc, char *argv[]) {
   config_t *config = calloc(1, sizeof(config_t));
   int c;
   config->f = PRETTY;
-  while ((c = getopt(argc, argv, "g:p:c:d")) != -1) {
+  while ((c = getopt(argc, argv, "g:p:c:d:")) != -1) {
     switch (c) {
     case 'g':
       if (strlen(optarg) != GAME_ID_SIZE) {
-        printf("wrong game id\n");
+        log_error("wrong game id");
         exit(EXIT_FAILURE);
       }
       strcpy(config->gameId, optarg);
@@ -194,7 +192,7 @@ config_t *setOptions(int argc, char *argv[]) {
     case 'p': {
       unsigned int id;
       if (sscanf(optarg, "%u", &id) < 1 || id < 1 || id > 2) {
-        printf("wrong player id\n");
+        log_error("wrong player id");
         exit(EXIT_FAILURE);
       }
       snprintf(config->playerId, 2, "%u", id - 1);
@@ -204,10 +202,17 @@ config_t *setOptions(int argc, char *argv[]) {
       readConfigFile(optarg, config);
       break;
     case 'd':
-      config->f = DEBUG;
+      if (*optarg == 'd'){
+        config->f = DEBUG;
+      }else if (*optarg == 'n'){
+        config->f = NONE;
+      }else {
+        config->f = PRETTY;
+      }
       break;
     case '?':
-      printf("wrong argument\n");
+      log_error("wrong argument");
+      // printf("wrong argument\n");
       freeConfig(config);
       exit(EXIT_FAILURE);
       break;
@@ -218,8 +223,23 @@ config_t *setOptions(int argc, char *argv[]) {
   }
   // temporary add game id in Makefile
   if (strlen(config->gameId) == 0) {
-    printf("game id is missing\n");
+    log_error("game id is missing");
     exit(EXIT_FAILURE);
+  }
+  if (config->f == NONE){
+    log_set_quiet(true);
+  }else{
+    switch (config->f){
+    case DEBUG:
+      log_set_level(1);
+      break;
+    case PRETTY:
+      log_set_level(2);
+      break;
+    default:
+      log_set_level(0);
+      break;
+    }
   }
   return config;
 }

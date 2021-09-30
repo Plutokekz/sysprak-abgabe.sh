@@ -19,6 +19,7 @@
 #define RECV_BUFF_SIZE 100
 
 int SOCK;
+P_FLAG p;
 
 // prefix nullable
 void rawAppend(game_info *gameInfo, char *recvBuff) {
@@ -112,7 +113,7 @@ game_info *parseCommand(char *recvBuff, COMMAND c) {
     break;
   }
   default:
-    printf("command not supported\n");
+    log_error("command not supported");
     exit(EXIT_FAILURE);
     break;
   }
@@ -136,32 +137,18 @@ void freeGameInfo(game_info *gameInfo) {
   }
 }
 
-void printProlog(game_info *gameInfo, P_FLAG f) {
-  switch (f) {
-  case PRETTY:
-    printf("Your are connected with MNM Gameserver v%s\n",
-           gameInfo->serverVersion);
-    printf("In %s %s:\n", gameInfo->gamekindName, gameInfo->gameName);
-    for (unsigned int i = 0; i < gameInfo->total; i++) {
-      if (gameInfo->playerList[i]->ready) {
-        printf("Player %u (%s) is ready\n",
-               gameInfo->playerList[i]->playerId + 1,
-               gameInfo->playerList[i]->playerName);
-      } else {
-        printf("Player %u (%s) is not ready\n",
-               gameInfo->playerList[i]->playerId + 1,
-               gameInfo->playerList[i]->playerName);
+void printProlog(game_info *gameInfo) {
+  log_info("Your are connected with MNM Gameserver v%s", gameInfo->serverVersion);
+  log_info("In %s %s:", gameInfo->gamekindName, gameInfo->gameName);
+  for (unsigned int i = 0; i < gameInfo->total; i++) {
+    if (gameInfo->playerList[i]->ready) {
+      log_info("Player %u (%s) is ready", gameInfo->playerList[i]->playerId + 1, gameInfo->playerList[i]->playerName);
+    } else {
+      log_info("Player %u (%s) is not ready", gameInfo->playerList[i]->playerId + 1,gameInfo->playerList[i]->playerName);
       }
     }
-    break;
-  case DEBUG:
-    printf("%s", gameInfo->raw);
-    break;
-  default:
-    printf("wrong flag\n");
-    exit(EXIT_FAILURE);
-    break;
-  }
+   log_debug("%s", gameInfo->raw);
+
 }
 
 int _connect(int sock, char *hostname, int port) {
@@ -172,7 +159,7 @@ int _connect(int sock, char *hostname, int port) {
 
   // upgrade to better function later
   if ((host = gethostbyname(hostname)) == NULL) {
-    printf("can't resolve hostname\n");
+    log_error("can't resolve hostname");
     return -1;
   }
 
@@ -204,14 +191,15 @@ int setupConnection(int sock) {
 
 void performConnection(int sock, config_t *config) {
   int size = 0;
+  p = config->f;
   if (config->game == NULL || config->host == NULL || config->port == 0) {
-    printf("Using Default Settings\n");
+    log_info("Using Default Settings");
     if (setupConnection(sock) != 0) {
       freeConfig(config);
       exit(EXIT_FAILURE);
     }
   } else {
-    printf("Using Config Settings\n");
+    log_info("Using Config Settings");
     printfConfig(config);
     if (setupConnectionByStruct(sock, config) != 0) {
       freeConfig(config);
@@ -233,21 +221,21 @@ void performConnection(int sock, config_t *config) {
       &size); // + Client version accepted - please send Game-ID to join
   parseCommand(recvBuff, VERSION);
   free(recvBuff);
-  
+
   sendCommand(sock, ID, config->gameId);
 
   recvBuff = recvCommand(
       sock, 2, &size); // + PLAYING <<Gamekind-Name>>\n + <<Game-Name>>
-  
+
   parseCommand(recvBuff, ID);
   free(recvBuff);
-  
+
   // retry without player id later
   sendCommand(sock, PLAYER, config->playerId);
-  
+
   recvBuff = recvCommand(sock, 0, &size); //
   parseCommand(recvBuff, PLAYER);
   free(recvBuff);
-  
-  printProlog(getGameInfo(), config->f);
+
+  printProlog(getGameInfo());
 }
