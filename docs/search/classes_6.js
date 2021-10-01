@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['queue_44',['queue',['../d2/d36/structqueue.html',1,'']]]
+  ['piece_51',['piece',['../d0/d2a/structpiece.html',1,'']]],
+  ['player_52',['Player',['../dc/d7b/structPlayer.html',1,'']]]
 ];
