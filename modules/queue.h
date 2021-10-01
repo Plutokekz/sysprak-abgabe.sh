@@ -1,3 +1,11 @@
+/**  @file queue.h
+  *
+  *  @brief Generic Queue.
+  *
+  * Queue Struct, put, pop, free, print
+  *
+  * @bug not known
+  */
 #ifndef QUEUE_H
 #define QUEUE_H
 
