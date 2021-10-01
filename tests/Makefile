@@ -2,6 +2,13 @@ CFLAGS=-Wall -Wextra -Werror -g
 RUN=-1
 export RUN
 
+test-queue: testQueue.c queue.o
+	gcc $(CFLAGS) -o queue testQueue.c queue.o
+	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./queue
+
+queue.o: ../modules/queue.h ../modules/queue.c
+	gcc $(CFLAGS) -c ../modules/queue.c
+
 ifeq ($(RUN),1)
 sysprak-client-tests-pipe: testCmdPipe.c cmdPipe.o
 	gcc $(CFLAGS) -o sysprak-client-tests-pipe testCmdPipe.c cmdPipe.o
