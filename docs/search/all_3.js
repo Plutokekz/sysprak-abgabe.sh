@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['main_5',['main',['../Main_8c.html#a0ddf1224851353fc92bfbff6f499fa97',1,'Main.c']]],
-  ['main_2ec_6',['Main.c',['../Main_8c.html',1,'']]],
-  ['my_20personal_20index_20page_7',['My Personal Index Page',['../index.html',1,'']]]
+  ['deleteshm_8',['deleteSHM',['../da/dbc/shareMemory_8c.html#afb2e27ff9c4d7355309486fb75d85215',1,'shareMemory.c']]],
+  ['detachshm_9',['detachSHM',['../da/dbc/shareMemory_8c.html#a6a99edf44b62ddee00fe98d1abf3b008',1,'shareMemory.c']]]
 ];

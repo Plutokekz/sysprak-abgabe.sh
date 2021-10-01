@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['performconnection_8',['performConnection',['../performConnection_8h.html#a810e48631ff65df542158a0c7bfbca53',1,'performConnection.c']]],
-  ['performconnection_2eh_9',['performConnection.h',['../performConnection_8h.html',1,'']]],
-  ['player_10',['Player',['../structPlayer.html',1,'']]]
+  ['freegameinfo_10',['freeGameInfo',['../d9/d59/performConnection_8h.html#a6f72486ea2f588d520bfd79abf1c3e57',1,'performConnection.c']]]
 ];
