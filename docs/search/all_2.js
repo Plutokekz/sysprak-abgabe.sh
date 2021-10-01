@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['gameinfo_3',['GameInfo',['../structGameInfo.html',1,'']]],
-  ['getgameinfo_4',['getGameInfo',['../performConnection_8h.html#a3422bd40d37dcdb1b25b25ec3567d64f',1,'performConnection.c']]]
+  ['callback_4',['Callback',['../d7/dde/structCallback.html',1,'']]],
+  ['cmdpipe_2eh_5',['cmdPipe.h',['../df/d4b/cmdPipe_8h.html',1,'']]],
+  ['config_6',['Config',['../df/d87/structConfig.html',1,'']]],
+  ['createshm_7',['createSHM',['../da/dbc/shareMemory_8c.html#ac89bbdd9883422a7c52b9af79acb9b4a',1,'shareMemory.c']]]
 ];

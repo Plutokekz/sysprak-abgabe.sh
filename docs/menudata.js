@@ -23,13 +23,16 @@
  @licend  The above is the entire license notice for the JavaScript code in this file
 */
 var menudata={children:[
-{text:"Main Page",url:"index.html"},
-{text:"Related Pages",url:"pages.html"},
-{text:"Data Structures",url:"annotated.html",children:[
-{text:"Data Structures",url:"annotated.html"},
-{text:"Data Structure Index",url:"classes.html"}]},
-{text:"Files",url:"files.html",children:[
-{text:"File List",url:"files.html"},
-{text:"Globals",url:"globals.html",children:[
-{text:"All",url:"globals.html"},
-{text:"Functions",url:"globals_func.html"}]}]}]}
+{text:"\u202AMain Page",url:"index.html"},
+{text:"\u202ARelated Pages",url:"pages.html"},
+{text:"\u202AData Structures",url:"annotated.html",children:[
+{text:"\u202AData Structures",url:"annotated.html"},
+{text:"\u202AData Structure Index",url:"classes.html"},
+{text:"\u202AData Fields",url:"functions.html",children:[
+{text:"\u202AAll",url:"functions.html"},
+{text:"\u202AVariables",url:"functions_vars.html"}]}]},
+{text:"\u202AFiles",url:"files.html",children:[
+{text:"\u202AFile List",url:"files.html"},
+{text:"\u202AGlobals",url:"globals.html",children:[
+{text:"\u202AAll",url:"globals.html"},
+{text:"\u202AFunctions",url:"globals_func.html"}]}]}]}
