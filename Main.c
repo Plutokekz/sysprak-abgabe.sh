@@ -83,6 +83,7 @@ void parent(config_t *config) {
  *
  */
 int main(int argc, char *argv[]) {
+
   pid_t pid;
   int fd[2];
 

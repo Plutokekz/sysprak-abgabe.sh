@@ -8,7 +8,7 @@
 #include <sys/shm.h>
 #include <sys/types.h>
 
-#include "modules/bitboard.h"
+#include "modules/old_bitboard.h"
 #include "modules/log.h"
 #include "modules/cmdPipe.h"
 #include "modules/shareMemory.h"

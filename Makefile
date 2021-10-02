@@ -12,11 +12,11 @@ export G
 
 
 
-sysprak-client: Main.c log.o performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o bitboard.o protocolUtils.o mySignal.o towerBoard.o
-	gcc $(EFLAGS) -o sysprak-client Main.c performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o bitboard.o protocolUtils.o mySignal.o towerBoard.o log.o
+sysprak-client: Main.c log.o performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o old_bitboard.o protocolUtils.o mySignal.o towerBoard.o
+	gcc $(EFLAGS) -o sysprak-client Main.c performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o old_bitboard.o protocolUtils.o mySignal.o towerBoard.o log.o
 
-sysprak-multi-client: main_vs.c log.o performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o bitboard.o protocolUtils.o mySignal.o towerBoard.o
-	gcc $(EFLAGS) -o sysprak-multi-client main_vs.c performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o bitboard.o protocolUtils.o mySignal.o towerBoard.o log.o
+sysprak-multi-client: main_vs.c log.o performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o old_bitboard.o protocolUtils.o mySignal.o towerBoard.o
+	gcc $(EFLAGS) -o sysprak-multi-client main_vs.c performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o old_bitboard.o protocolUtils.o mySignal.o towerBoard.o log.o
 
 towerBoard.o: modules/towerBoard.c modules/towerBoard.h
 	gcc $(EFLAGS) -c modules/towerBoard.c
@@ -24,8 +24,8 @@ towerBoard.o: modules/towerBoard.c modules/towerBoard.h
 performConnection.o: performConnection.c performConnection.h
 	gcc $(EFLAGS) -c performConnection.c
 
-bitboard.o: modules/bitboard.c modules/bitboard.h
-	gcc $(EFLAGS) -c modules/bitboard.c
+old_bitboard.o: modules/old_bitboard.c modules/old_bitboard.h
+	gcc $(EFLAGS) -c modules/old_bitboard.c
 
 shareMemory.o: modules/shareMemory.c modules/shareMemory.h
 	gcc $(EFLAGS) -c modules/shareMemory.c

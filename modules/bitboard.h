@@ -1,61 +1,64 @@
-//
-// Created by Lukas on 21.01.2021.
-//
+/**  @file bitboard.h
+  *
+  *  @brief Bitboard 8x8
+  *
+  * bitboard type, print, flipping
+  *
+  * @bug not known
+  */
+#ifndef BITBOARD_H
+#define BITBOARD_H
 
-#ifndef BASCHNI_BITBOARD_H
-#define BASCHNI_BITBOARD_H
-#include <stdbool.h>
-#include <stddef.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stdbool.h>
 
-#include "towerBoard.h"
 #include "log.h"
 
-#define BITBOARDS 24
-#define BLACK_STARTING_BOARD -6172840797264674816
-#define WHITE_STARTING_BOARD 5614165
-#define NUMBER_OF_PIECES 24
-#define SIZE_OF_PIECE 7
-#define COLUMNS 8
-#define ALLOWED_SQUARES 12273903644374837845ULL
-#define WHITE_BASELINE 281479271743489ULL
-#define BLACK_BASELINE 9223512776490647552ULL
+typedef unsigned long long bitboard;
 
-typedef unsigned long long board_t;
 
-typedef enum DIRECTION { NW, NE, SW, SE, UNDEFINED } DIRECTION;
+/** @brief prints the given layer
+  *
+  * @param board bitboard pointer
+  *
+  * crapy print funktion to print all bits
+  * from a unsigned long long with coordinates.
+  *
+  */
+void showbits(bitboard *board);
 
-typedef struct bitboard {
-  board_t whiteBoard;
-  board_t whiteQueenBoard;
-  board_t blackBoard;
-  board_t blackQueenBoard;
-  board_t emptyBoard;
-} bitboard_t;
 
-typedef struct MoveBoard {
-  board_t pieceBoard;
-  board_t movesList[12];
-} moveboard_t;
+/** @brief flips a bit
+  *
+  * @param board bitboard pointer
+  *
+  * flips the bit on the given position
+  * of the layer (0 - 63), 64 bits.
+  *
+  */
+void _flip_bit(bitboard *board, int position);
 
-extern char BITBOARD_LOOKUP[64][3];
+/** @brief flip the bit
+  *
+  * @param x int between 0-7
+  * @param y int between 0-7
+  *
+  * flip the bit at the given x and y position.
+  *
+  */
+void flip_bit(bitboard *board, int y, int x);
 
-extern int LONG_BITBOARD_LOOKUP[59];
+/** @brief get the bit
+  *
+  * @param board
+  * @param x int between 0-7
+  * @param y int between 0-7
+  *
+  * returns true or false if the bit at the given x and y position is 1 or 0
+  *
+  * @return bool
+  *
+  */
+bool get_bit(bitboard *board, int x, int y);
 
-extern int allowedSquaresIndices[32];
-
-extern tower_t *TOWER_BOARD[64];
-
-void printBitboard(bitboard_t *board);
-
-bitboard_t *parsFromString(char *piece_list);
-
-moveboard_t **allPossibleMoves(bitboard_t *currentBoard, char color);
-
-void pickFirstMove(moveboard_t **moveBoardList, char *moveString);
-
-void freeTowerBoard();
-
-#endif // BASCHNI_BITBOARD_H
+#endif

@@ -9,6 +9,16 @@ test-queue: testQueue.c queue.o
 queue.o: ../modules/queue.h ../modules/queue.c
 	gcc $(CFLAGS) -c ../modules/queue.c
 
+test-bitboard: testBitboard.c bitboard.o log.o
+	gcc $(CFLAGS) -o bitboard testBitboard.c bitboard.o log.o
+	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./bitboard
+
+bitboard.o: ../modules/bitboard.h ../modules/bitboard.c
+	gcc $(CFLAGS) -c ../modules/bitboard.c
+
+log.o: ../modules/log.h ../modules/log.c
+	gcc $(CFLAGS) -c ../modules/log.c
+
 ifeq ($(RUN),1)
 sysprak-client-tests-pipe: testCmdPipe.c cmdPipe.o
 	gcc $(CFLAGS) -o sysprak-client-tests-pipe testCmdPipe.c cmdPipe.o
@@ -41,5 +51,5 @@ endif
 
 ifeq ($(RUN),-1)
 clean:
-	rm *.o
+	rm *.o queue bitboard
 endif
