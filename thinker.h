@@ -1,3 +1,13 @@
+/** @file thinker.h
+  *
+  * @brief Contains the thinker
+  *
+  *
+  * just the think funktion and its modules
+  *
+  * @bugs not known
+  *
+  */
 #ifndef BASCHNI_THINKER_H
 #define BASCHNI_THINKER_H
 
@@ -13,8 +23,21 @@
 #include "modules/cmdPipe.h"
 #include "modules/shareMemory.h"
 
+/** @brief initialises the Thinker
+  *
+  * @param *fd pipe for the thinker
+  *
+  * closes one side of the pipe end writes to the other side
+  * if he finished thinking
+  *
+  */
 void initThinker(int *fd);
 
+/** @brief thinks
+  *
+  * calculates the next move and send's over the pipe to @gamePhase.h
+  *
+  */
 void thinker();
 
 #endif
