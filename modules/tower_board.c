@@ -1,4 +1,4 @@
-#include "towerBoard.h"
+#include "tower_board.h"
 
 #include <stdlib.h>
 #include <string.h>

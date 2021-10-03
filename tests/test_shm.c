@@ -1,8 +1,8 @@
-#include "../module/mySignal.h"
-#include "../module/shareMemory.h"
+#include "../modules/my_signal.h"
+#include "../modules/share_memory.h"
 
 void my_handler(int signum) {
-    if (signum == SIGUSR1) { 
+    if (signum == SIGUSR1) {
         printf("Received SIGUSR1!\n");
     }
 }
@@ -31,12 +31,12 @@ int main() {
 		}
         read(fd[0], &shmID, sizeof(int));
         read(fd[0], &shmID2, sizeof(int));
-        
+
         //Create Struct
         struct Share *ptrGameStart, gameStart;
         ptrGameStart = &gameStart;
         ptrGameStart = attachSHM(shmID);
-        
+
         //Testen
         printf("Erfolg: %s\n", (*ptrGameStart).gameName);
         printf("GameNumber: %d\n", (*ptrGameStart).ownPlayerNumber);
@@ -46,15 +46,15 @@ int main() {
         printf("Player 0: %s\n", (*ptrGameStart).players[0].name);
         printf("Player 1: %s\n", (*ptrGameStart).players[1].name);
 
-        
+
         //Test Signal
-        
+
 
 
         signal(SIGUSR1, my_handler);
-        
-        
-        
+
+
+
         void handleSig1 (int sig) {
             //think();
             printf("Signal received");
@@ -78,14 +78,14 @@ int main() {
         sleep(10);
         signal(SIGUSR1, my_handler);
 
-     
+
     } else { //Kindprozess
         close(fd[0]); //close read
 
 
         //Test Signal**
 
-       
+
 
         struct Share *ptrTestGS, testGS;
         ptrTestGS = &testGS;
@@ -110,7 +110,7 @@ int main() {
         sleep(3);
         kill(getppid(), SIGUSR1);
         printf("sending signal to Parent\n");
-    } 
+    }
 }
 
 

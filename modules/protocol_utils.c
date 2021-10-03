@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
-#include "protocolUtils.h"
+#include "protocol_utils.h"
 
 #define RECV_BUFF_SIZE 100
 

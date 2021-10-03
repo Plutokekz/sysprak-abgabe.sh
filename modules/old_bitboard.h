@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "towerBoard.h"
+#include "tower_board.h"
 #include "log.h"
 
 #define BITBOARDS 24

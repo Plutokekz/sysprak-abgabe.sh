@@ -21,7 +21,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#include "../infoStructs.h"
+#include "../info_structs.h"
 
 /** @brief Struct for all Players
  *

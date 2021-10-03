@@ -1,5 +1,5 @@
 
-#include "shareMemory.h"
+#include "share_memory.h"
 
 int createSHM(size_t memorySize) {
   int shmID = shmget(IPC_PRIVATE, memorySize, 0666); // ist 0666 richtig?

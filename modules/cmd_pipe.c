@@ -2,7 +2,7 @@
 // Created by Lukas on 04.01.2021.
 //
 
-#include "cmdPipe.h"
+#include "cmd_pipe.h"
 
 int sendInt(int fdw, int *value) {
   if (write(fdw, value, sizeof(int)) < 0) {
