@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['log_5fevent_22',['log_Event',['../d2/dad/structlog__Event.html',1,'']]]
+  ['initthinker_22',['initThinker',['../db/d65/thinker_8h.html#a906f5b9a94ea70a4adadc51e5cd06811',1,'thinker.h']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['main_81',['main',['../df/d09/Main_8c.html#a0ddf1224851353fc92bfbff6f499fa97',1,'Main.c']]]
+  ['initthinker_85',['initThinker',['../db/d65/thinker_8h.html#a906f5b9a94ea70a4adadc51e5cd06811',1,'thinker.h']]]
 ];

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>&#x202A;Baschni: &#x202A;thinker.c Source File</title>
+<title>&#x202A;Baschni: &#x202A;thinker.h File Reference</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -47,7 +47,6 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
-</div><!-- top -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -62,30 +61,93 @@ $(function() {
 </iframe>
 </div>
 
+</div><!-- top -->
 <div class="header">
+  <div class="summary">
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
-<div class="title">thinker.c</div>  </div>
+<div class="title">thinker.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../db/d65/thinker_8h.html">thinker.h</a>&quot;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="keywordtype">void</span> *shm;</div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="keywordtype">int</span> shmId, fdr, fdw, childInit = 0;</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keywordtype">char</span> *pieceList;</div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">struct </span><a class="code" href="../../db/d41/structShare.html">Share</a> *ptrGameStart;</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keywordtype">void</span> <a class="code" href="../../db/d65/thinker_8h.html#a906f5b9a94ea70a4adadc51e5cd06811">initThinker</a>(<span class="keywordtype">int</span> fd[2]) {</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;  fdw = fd[1];</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;  fdr = fd[0];</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;}</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keywordtype">void</span> initChild() {</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;  pieceList = malloc(300);</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  receiveInt(fdr, &amp;shmId);</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  shm = <a class="code" href="../../da/dbc/shareMemory_8c.html#a6ed51f59c7e57ee04ce7afa9cac55e30">attachSHM</a>(shmId);</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;}</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="../../db/d65/thinker_8h.html#a07dc2d4b23509fe21feb3683e663b34a">   19</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="../../db/d65/thinker_8h.html#a07dc2d4b23509fe21feb3683e663b34a">thinker</a>() {</div>
+
+<p>&#x202A;Contains the thinker.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
+<code>#include &lt;stdlib.h&gt;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
+<code>#include &lt;sys/ipc.h&gt;</code><br />
+<code>#include &lt;sys/shm.h&gt;</code><br />
+<code>#include &lt;sys/types.h&gt;</code><br />
+<code>#include &quot;modules/old_bitboard.h&quot;</code><br />
+<code>#include &quot;modules/log.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../df/d4b/cmdPipe_8h_source.html">modules/cmdPipe.h</a>&quot;</code><br />
+<code>#include &quot;modules/shareMemory.h&quot;</code><br />
+</div>
+<p><a href="../../db/d65/thinker_8h_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a906f5b9a94ea70a4adadc51e5cd06811"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/d65/thinker_8h.html#a906f5b9a94ea70a4adadc51e5cd06811">initThinker</a> (int *fd)</td></tr>
+<tr class="memdesc:a906f5b9a94ea70a4adadc51e5cd06811"><td class="mdescLeft">&#160;</td><td class="mdescRight">&#x202A;initialises the Thinker  <a href="../../db/d65/thinker_8h.html#a906f5b9a94ea70a4adadc51e5cd06811">More...</a><br /></td></tr>
+<tr class="separator:a906f5b9a94ea70a4adadc51e5cd06811"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07dc2d4b23509fe21feb3683e663b34a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/d65/thinker_8h.html#a07dc2d4b23509fe21feb3683e663b34a">thinker</a> ()</td></tr>
+<tr class="memdesc:a07dc2d4b23509fe21feb3683e663b34a"><td class="mdescLeft">&#160;</td><td class="mdescRight">&#x202A;thinks  <a href="../../db/d65/thinker_8h.html#a07dc2d4b23509fe21feb3683e663b34a">More...</a><br /></td></tr>
+<tr class="separator:a07dc2d4b23509fe21feb3683e663b34a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p class="DocNodeLTR">Contains the thinker. </p>
+<p class="DocNodeLTR">just the think funktion and its modules</p>
+<p class="DocNodeLTR">@bugs not known </p>
+
+<p class="definition">Definition in file <a class="el" href="../../db/d65/thinker_8h_source.html">thinker.h</a>.</p>
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="a906f5b9a94ea70a4adadc51e5cd06811"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a906f5b9a94ea70a4adadc51e5cd06811">&#9670;&nbsp;</a></span>initThinker()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void initThinker </td>
+          <td>(</td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>fd</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>&#x202A;initialises the Thinker </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">*fd</td><td>&#x202A;pipe for the thinker</td></tr>
+  </table>
+  </dd>
+</dl>
+<p class="DocNodeLTR">closes one side of the pipe end writes to the other side if he finished thinking </p>
+
+</div>
+</div>
+<a id="a07dc2d4b23509fe21feb3683e663b34a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07dc2d4b23509fe21feb3683e663b34a">&#9670;&nbsp;</a></span>thinker()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void thinker </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>&#x202A;thinks </p>
+<p class="DocNodeLTR">calculates the next move and send's over the pipe to @gamePhase.h </p>
+
+<p class="definition">Definition at line <a class="el" href="../../dc/d4e/thinker_8c_source.html#l00019">19</a> of file <a class="el" href="../../dc/d4e/thinker_8c_source.html">thinker.c</a>.</p>
+<div class="fragment"><div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;               {</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <span class="keywordflow">if</span> (childInit == 0) {</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    initChild();</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    childInit = 1;</div>
@@ -117,14 +179,13 @@ $(function() {
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  }</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;}</div>
 <div class="ttc" id="acmdPipe_8h_html_a273a3a8c15b3a242c7143081e1920317"><div class="ttname"><a href="../../df/d4b/cmdPipe_8h.html#a273a3a8c15b3a242c7143081e1920317">sendCMD</a></div><div class="ttdeci">int sendCMD(int fdw, char *cmd)</div><div class="ttdoc">send/writes the char array to the pipe</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/dba/cmdPipe_8c_source.html#l00023">cmdPipe.c:23</a></div></div>
-<div class="ttc" id="ashareMemory_8c_html_a6ed51f59c7e57ee04ce7afa9cac55e30"><div class="ttname"><a href="../../da/dbc/shareMemory_8c.html#a6ed51f59c7e57ee04ce7afa9cac55e30">attachSHM</a></div><div class="ttdeci">void * attachSHM(int shmID)</div><div class="ttdoc">attaches the reserved memory to the memory of our current process. afterwards, we can work with the r...</div><div class="ttdef"><b>Definition:</b> <a href="../../da/dbc/shareMemory_8c_source.html#l00013">shareMemory.c:13</a></div></div>
 <div class="ttc" id="astructMoveBoard_html"><div class="ttname"><a href="../../dd/d9d/structMoveBoard.html">MoveBoard</a></div><div class="ttdef"><b>Definition:</b> <a href="../../db/dc8/old__bitboard_8h_source.html#l00038">old_bitboard.h:38</a></div></div>
 <div class="ttc" id="astructShare_html"><div class="ttname"><a href="../../db/d41/structShare.html">Share</a></div><div class="ttdoc">SHM Struct, which contains all necessary infos for thinker().</div><div class="ttdef"><b>Definition:</b> <a href="../../db/d7a/shareMemory_8h_source.html#l00046">shareMemory.h:46</a></div></div>
 <div class="ttc" id="astructbitboard_html"><div class="ttname"><a href="../../da/dfa/structbitboard.html">bitboard</a></div><div class="ttdef"><b>Definition:</b> <a href="../../db/dc8/old__bitboard_8h_source.html#l00030">old_bitboard.h:30</a></div></div>
-<div class="ttc" id="athinker_8h_html"><div class="ttname"><a href="../../db/d65/thinker_8h.html">thinker.h</a></div><div class="ttdoc">Contains the thinker.</div></div>
-<div class="ttc" id="athinker_8h_html_a07dc2d4b23509fe21feb3683e663b34a"><div class="ttname"><a href="../../db/d65/thinker_8h.html#a07dc2d4b23509fe21feb3683e663b34a">thinker</a></div><div class="ttdeci">void thinker()</div><div class="ttdoc">thinks</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/d4e/thinker_8c_source.html#l00019">thinker.c:19</a></div></div>
-<div class="ttc" id="athinker_8h_html_a906f5b9a94ea70a4adadc51e5cd06811"><div class="ttname"><a href="../../db/d65/thinker_8h.html#a906f5b9a94ea70a4adadc51e5cd06811">initThinker</a></div><div class="ttdeci">void initThinker(int *fd)</div><div class="ttdoc">initialises the Thinker</div></div>
-</div><!-- fragment --></div><!-- contents -->
+</div><!-- fragment -->
+</div>
+</div>
+</div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="../../doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1

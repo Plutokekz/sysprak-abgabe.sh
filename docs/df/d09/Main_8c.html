@@ -89,7 +89,7 @@ $(function() {
 <code>#include &quot;modules/shareMemory.h&quot;</code><br />
 <code>#include &quot;modules/utils.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d9/d59/performConnection_8h_source.html">performConnection.h</a>&quot;</code><br />
-<code>#include &quot;thinker.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../db/d65/thinker_8h_source.html">thinker.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../dc/d0b/mySignal_8h_source.html">modules/mySignal.h</a>&quot;</code><br />
 </div>
 <p><a href="../../df/d09/Main_8c_source.html">Go to the source code of this file.</a></p>
@@ -152,7 +152,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>parent</b> (<a class=
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    perror(<span class="stringliteral">&quot;Error creating pipe.&quot;</span>);</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    exit(EXIT_FAILURE);</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  }</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  initThinker(fd);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <a class="code" href="../../db/d65/thinker_8h.html#a906f5b9a94ea70a4adadc51e5cd06811">initThinker</a>(fd);</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <span class="comment">// splitting up in thinker and connector</span></div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  <span class="keywordflow">if</span> ((pid = fork()) &lt; 0) {</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    freeConfig(config);</div>
@@ -167,6 +167,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>parent</b> (<a class=
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="keywordflow">return</span> EXIT_SUCCESS;</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;}</div>
 <div class="ttc" id="astructConfig_html"><div class="ttname"><a href="../../df/d87/structConfig.html">Config</a></div><div class="ttdoc">Config struct.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d60/utils_8h_source.html#l00037">utils.h:37</a></div></div>
+<div class="ttc" id="athinker_8h_html_a906f5b9a94ea70a4adadc51e5cd06811"><div class="ttname"><a href="../../db/d65/thinker_8h.html#a906f5b9a94ea70a4adadc51e5cd06811">initThinker</a></div><div class="ttdeci">void initThinker(int *fd)</div><div class="ttdoc">initialises the Thinker</div></div>
 </div><!-- fragment -->
 </div>
 </div>
