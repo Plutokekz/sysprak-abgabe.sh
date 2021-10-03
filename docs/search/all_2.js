@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['callback_4',['Callback',['../d7/dde/structCallback.html',1,'']]],
-  ['cmdpipe_2eh_5',['cmdPipe.h',['../df/d4b/cmdPipe_8h.html',1,'']]],
-  ['config_6',['Config',['../df/d87/structConfig.html',1,'']]],
-  ['createshm_7',['createSHM',['../da/dbc/shareMemory_8c.html#ac89bbdd9883422a7c52b9af79acb9b4a',1,'shareMemory.c']]]
+  ['baschni_2',['Baschni',['../d0/d30/md_README.html',1,'']]],
+  ['bitboard_3',['bitboard',['../da/dfa/structbitboard.html',1,'']]],
+  ['bitboard_2eh_4',['bitboard.h',['../d9/da6/bitboard_8h.html',1,'']]],
+  ['bug_20list_5',['Bug List',['../de/da5/bug.html',1,'']]]
 ];

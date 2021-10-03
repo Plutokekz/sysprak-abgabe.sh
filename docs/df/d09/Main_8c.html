@@ -142,29 +142,30 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>parent</b> (<a class=
 
 <p class="definition">Definition at line <a class="el" href="../../df/d09/Main_8c_source.html#l00085">85</a> of file <a class="el" href="../../df/d09/Main_8c_source.html">Main.c</a>.</p>
 <div class="fragment"><div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                                 {</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  pid_t pid;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <span class="keywordtype">int</span> fd[2];</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  <a class="code" href="../../df/d87/structConfig.html">config_t</a> *config = setOptions(argc, argv);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  <span class="keywordflow">if</span> (pipe(fd) &lt; 0) {</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    perror(<span class="stringliteral">&quot;Error creating pipe.&quot;</span>);</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    exit(EXIT_FAILURE);</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  }</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  initThinker(fd);</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="comment">// splitting up in thinker and connector</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <span class="keywordflow">if</span> ((pid = fork()) &lt; 0) {</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    freeConfig(config);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    perror(<span class="stringliteral">&quot;fork failed&quot;</span>);</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keywordflow">return</span> EXIT_FAILURE;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (pid == 0) {</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    child(config, fd);</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    parent(config);</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  }</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  <span class="keywordflow">return</span> EXIT_SUCCESS;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;}</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  pid_t pid;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="keywordtype">int</span> fd[2];</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  <a class="code" href="../../df/d87/structConfig.html">config_t</a> *config = setOptions(argc, argv);</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keywordflow">if</span> (pipe(fd) &lt; 0) {</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    perror(<span class="stringliteral">&quot;Error creating pipe.&quot;</span>);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    exit(EXIT_FAILURE);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  }</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  initThinker(fd);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <span class="comment">// splitting up in thinker and connector</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  <span class="keywordflow">if</span> ((pid = fork()) &lt; 0) {</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    freeConfig(config);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    perror(<span class="stringliteral">&quot;fork failed&quot;</span>);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordflow">return</span> EXIT_FAILURE;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (pid == 0) {</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    child(config, fd);</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    parent(config);</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  }</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="keywordflow">return</span> EXIT_SUCCESS;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;}</div>
 <div class="ttc" id="astructConfig_html"><div class="ttname"><a href="../../df/d87/structConfig.html">Config</a></div><div class="ttdoc">Config struct.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d60/utils_8h_source.html#l00037">utils.h:37</a></div></div>
 </div><!-- fragment -->
 </div>

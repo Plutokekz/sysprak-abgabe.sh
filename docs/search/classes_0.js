@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['bitboard_44',['bitboard',['../da/dfa/structbitboard.html',1,'']]]
+  ['bitboard_49',['bitboard',['../da/dfa/structbitboard.html',1,'']]]
 ];

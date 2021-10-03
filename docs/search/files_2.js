@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['performconnection_2eh_61',['performConnection.h',['../d9/d59/performConnection_8h.html',1,'']]]
+  ['main_2ec_65',['Main.c',['../df/d09/Main_8c.html',1,'']]],
+  ['mysignal_2eh_66',['mySignal.h',['../dc/d0b/mySignal_8h.html',1,'']]]
 ];

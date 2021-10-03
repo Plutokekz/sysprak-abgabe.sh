@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['deleteshm_66',['deleteSHM',['../da/dbc/shareMemory_8c.html#afb2e27ff9c4d7355309486fb75d85215',1,'shareMemory.c']]],
-  ['detachshm_67',['detachSHM',['../da/dbc/shareMemory_8c.html#a6a99edf44b62ddee00fe98d1abf3b008',1,'shareMemory.c']]]
+  ['createshm_72',['createSHM',['../da/dbc/shareMemory_8c.html#ac89bbdd9883422a7c52b9af79acb9b4a',1,'shareMemory.c']]]
 ];

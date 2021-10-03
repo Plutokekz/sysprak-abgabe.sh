@@ -84,7 +84,7 @@ $(function() {
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keywordtype">int</span> MAPPING[] = {7,6,5,4,3,2,1,0};</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keywordtype">void</span> showbits(layer x){</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keywordtype">void</span> <a class="code" href="../../d9/da6/bitboard_8h.html#a19dba0051b95f6e29bab5e6579010b31">showbits</a>(layer x){</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keywordtype">int</span> i=0;</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    printf(<span class="stringliteral">&quot; +--------+\n8|&quot;</span>);</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keywordflow">for</span> (i = (<span class="keyword">sizeof</span>(layer) * 8) - 1; i &gt;= 0; i--){</div>
@@ -97,7 +97,7 @@ $(function() {
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;}</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keywordtype">void</span> flip_bit(layer *l, <span class="keywordtype">int</span> position){</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keywordtype">void</span> <a class="code" href="../../d9/da6/bitboard_8h.html#a50f2ce3cc6113694df70ce5514f07b40">flip_bit</a>(layer *l, <span class="keywordtype">int</span> position){</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    *l = *l ^ (1ULL &lt;&lt; position);</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;}</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
@@ -120,25 +120,27 @@ $(function() {
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="keywordtype">int</span> <a class="code" href="../../df/d09/Main_8c.html#a0ddf1224851353fc92bfbff6f499fa97">main</a>(){</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    layer one = 0;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    showbits(one);</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <a class="code" href="../../d9/da6/bitboard_8h.html#a19dba0051b95f6e29bab5e6579010b31">showbits</a>(one);</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">char</span> * c_0 = <span class="stringliteral">&quot;H8&quot;</span>;</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">char</span> * c_1 = <span class="stringliteral">&quot;A8&quot;</span>;</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">char</span> * c_2 = <span class="stringliteral">&quot;A1&quot;</span>;</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">char</span> * c_3 = <span class="stringliteral">&quot;H1&quot;</span>;</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordtype">int</span> s = conv_coord(c_0);</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    flip_bit(&amp;one, s);</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <a class="code" href="../../d9/da6/bitboard_8h.html#a50f2ce3cc6113694df70ce5514f07b40">flip_bit</a>(&amp;one, s);</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    s = conv_coord(c_1);</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    flip_bit(&amp;one, s);</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <a class="code" href="../../d9/da6/bitboard_8h.html#a50f2ce3cc6113694df70ce5514f07b40">flip_bit</a>(&amp;one, s);</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    s = conv_coord(c_2);</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    flip_bit(&amp;one, s);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <a class="code" href="../../d9/da6/bitboard_8h.html#a50f2ce3cc6113694df70ce5514f07b40">flip_bit</a>(&amp;one, s);</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    s = conv_coord(c_3);</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    flip_bit(&amp;one, s);</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    showbits(one);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <a class="code" href="../../d9/da6/bitboard_8h.html#a50f2ce3cc6113694df70ce5514f07b40">flip_bit</a>(&amp;one, s);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <a class="code" href="../../d9/da6/bitboard_8h.html#a19dba0051b95f6e29bab5e6579010b31">showbits</a>(one);</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;}</div>
 <div class="ttc" id="aMain_8c_html_a0ddf1224851353fc92bfbff6f499fa97"><div class="ttname"><a href="../../df/d09/Main_8c.html#a0ddf1224851353fc92bfbff6f499fa97">main</a></div><div class="ttdeci">int main(int argc, char *argv[])</div><div class="ttdoc">set Options and splits up program in Thinker and Connector</div><div class="ttdef"><b>Definition:</b> <a href="../../df/d09/Main_8c_source.html#l00085">Main.c:85</a></div></div>
+<div class="ttc" id="abitboard_8h_html_a19dba0051b95f6e29bab5e6579010b31"><div class="ttname"><a href="../../d9/da6/bitboard_8h.html#a19dba0051b95f6e29bab5e6579010b31">showbits</a></div><div class="ttdeci">void showbits(bitboard *board)</div><div class="ttdoc">prints the given layer</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d33/bitboard_8c_source.html#l00005">bitboard.c:5</a></div></div>
+<div class="ttc" id="abitboard_8h_html_a50f2ce3cc6113694df70ce5514f07b40"><div class="ttname"><a href="../../d9/da6/bitboard_8h.html#a50f2ce3cc6113694df70ce5514f07b40">flip_bit</a></div><div class="ttdeci">void flip_bit(bitboard *board, int y, int x)</div><div class="ttdoc">flip the bit</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d33/bitboard_8c_source.html#l00030">bitboard.c:30</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

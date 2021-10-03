@@ -71,461 +71,55 @@ $(function() {
 <div class="title">bitboard.c</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// Created by Lukas on 19.01.2021.</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">//</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d9/da6/bitboard_8h.html">bitboard.h</a>&quot;</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="keywordtype">int</span> MAPPING[] = {7, 6, 5, 4, 3, 2, 1, 0};</div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;bitboard.h&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keywordtype">char</span> *rows = <span class="stringliteral">&quot;ABCDEFGH&quot;</span>;</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keywordtype">char</span> *colon = <span class="stringliteral">&quot;:&quot;</span>;</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keywordtype">char</span> BITBOARD_LOOKUP[64][3] = {</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="stringliteral">&quot;A1&quot;</span>, <span class="stringliteral">&quot;A2&quot;</span>, <span class="stringliteral">&quot;A3&quot;</span>, <span class="stringliteral">&quot;A4&quot;</span>, <span class="stringliteral">&quot;A5&quot;</span>, <span class="stringliteral">&quot;A6&quot;</span>, <span class="stringliteral">&quot;A7&quot;</span>, <span class="stringliteral">&quot;A8&quot;</span>, <span class="stringliteral">&quot;B1&quot;</span>, <span class="stringliteral">&quot;B2&quot;</span>, <span class="stringliteral">&quot;B3&quot;</span>,</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="stringliteral">&quot;B4&quot;</span>, <span class="stringliteral">&quot;B5&quot;</span>, <span class="stringliteral">&quot;B6&quot;</span>, <span class="stringliteral">&quot;B7&quot;</span>, <span class="stringliteral">&quot;B8&quot;</span>, <span class="stringliteral">&quot;C1&quot;</span>, <span class="stringliteral">&quot;C2&quot;</span>, <span class="stringliteral">&quot;C3&quot;</span>, <span class="stringliteral">&quot;C4&quot;</span>, <span class="stringliteral">&quot;C5&quot;</span>, <span class="stringliteral">&quot;C6&quot;</span>,</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="stringliteral">&quot;C7&quot;</span>, <span class="stringliteral">&quot;C8&quot;</span>, <span class="stringliteral">&quot;D1&quot;</span>, <span class="stringliteral">&quot;D2&quot;</span>, <span class="stringliteral">&quot;D3&quot;</span>, <span class="stringliteral">&quot;D4&quot;</span>, <span class="stringliteral">&quot;D5&quot;</span>, <span class="stringliteral">&quot;D6&quot;</span>, <span class="stringliteral">&quot;D7&quot;</span>, <span class="stringliteral">&quot;D8&quot;</span>, <span class="stringliteral">&quot;E1&quot;</span>,</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="stringliteral">&quot;E2&quot;</span>, <span class="stringliteral">&quot;E3&quot;</span>, <span class="stringliteral">&quot;E4&quot;</span>, <span class="stringliteral">&quot;E5&quot;</span>, <span class="stringliteral">&quot;E6&quot;</span>, <span class="stringliteral">&quot;E7&quot;</span>, <span class="stringliteral">&quot;E8&quot;</span>, <span class="stringliteral">&quot;F1&quot;</span>, <span class="stringliteral">&quot;F2&quot;</span>, <span class="stringliteral">&quot;F3&quot;</span>, <span class="stringliteral">&quot;F4&quot;</span>,</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="stringliteral">&quot;F5&quot;</span>, <span class="stringliteral">&quot;F6&quot;</span>, <span class="stringliteral">&quot;F7&quot;</span>, <span class="stringliteral">&quot;F8&quot;</span>, <span class="stringliteral">&quot;G1&quot;</span>, <span class="stringliteral">&quot;G2&quot;</span>, <span class="stringliteral">&quot;G3&quot;</span>, <span class="stringliteral">&quot;G4&quot;</span>, <span class="stringliteral">&quot;G5&quot;</span>, <span class="stringliteral">&quot;G6&quot;</span>, <span class="stringliteral">&quot;G7&quot;</span>,</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="stringliteral">&quot;G8&quot;</span>, <span class="stringliteral">&quot;H1&quot;</span>, <span class="stringliteral">&quot;H2&quot;</span>, <span class="stringliteral">&quot;H3&quot;</span>, <span class="stringliteral">&quot;H4&quot;</span>, <span class="stringliteral">&quot;H5&quot;</span>, <span class="stringliteral">&quot;H6&quot;</span>, <span class="stringliteral">&quot;H7&quot;</span>, <span class="stringliteral">&quot;H8&quot;</span>};</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keywordtype">int</span> LONG_BITBOARD_LOOKUP[59] = {-1, 0,  59, 50, 2,  6,  -1, 18, 61, -1, -1, 25,</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;                                52, 45, -1, -1, 4,  -1, 43, 38, -1, -1, -1, 15,</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                                -1, -1, -1, 34, 20, -1, 57, -1, 63, -1, 41, -1,</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;                                -1, -1, -1, -1, 9,  -1, 11, -1, 27, 48, 16, -1,</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;                                54, 36, 13, 32, 47, 22, -1, 31, -1, -1, 29};</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keywordtype">int</span> allowedSquaresIndices[32] = {0,  2,  4,  6,  9,  11, 13, 15, 16, 18, 20,</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;                                 22, 25, 27, 29, 31, 32, 34, 36, 38, 41, 43,</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;                                 45, 47, 48, 50, 52, 54, 57, 59, 61, 63};</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<a class="code" href="../../d2/d2c/structtower.html">tower_t</a> *TOWER_BOARD[64] = {NULL};</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<a class="code" href="../../d0/d2a/structpiece.html">piece_t</a> *PIECE_POINTER_BUFFER[100] = {NULL};</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keywordtype">size_t</span> piecePointerCounter = 0;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">// Accessing a square of the bitboard</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keywordtype">long</span> get(<span class="keywordtype">long</span> b, <span class="keywordtype">int</span> square) { <span class="keywordflow">return</span> (b &amp; (1ULL &lt;&lt; square)); }</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keywordtype">long</span> set(<span class="keywordtype">long</span> b, <span class="keywordtype">int</span> square) { <span class="keywordflow">return</span> (b | (1ULL &lt;&lt; square)); }</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keywordtype">char</span> *bitBoardToChar(board_t board) {</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keywordflow">return</span> BITBOARD_LOOKUP[LONG_BITBOARD_LOOKUP[board % 59]];</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;}</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<a class="code" href="../../d2/d2c/structtower.html">tower_t</a> *getTower(board_t board) {</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordflow">return</span> TOWER_BOARD[LONG_BITBOARD_LOOKUP[board % 59]];</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;}</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keywordtype">void</span> print_board(<span class="keywordtype">char</span> *b) {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keywordtype">int</span> i, j, x;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  printf(<span class="stringliteral">&quot; &quot;</span>);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keywordflow">for</span> (x = 0; x &lt; 8; x++) {</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    printf(<span class="stringliteral">&quot;  %c &quot;</span>, *(rows + x));</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  }</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  printf(<span class="stringliteral">&quot;\n ┌&quot;</span>);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keywordflow">for</span> (x = 0; x &lt; 15; x++) {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    x % 2 == 0 ? printf(<span class="stringliteral">&quot;───&quot;</span>) : printf(<span class="stringliteral">&quot;┬&quot;</span>);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  }</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  printf(<span class="stringliteral">&quot;┐\n&quot;</span>);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="keywordflow">for</span> (i = 7; i &gt;= 0; i--) {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    printf(<span class="stringliteral">&quot;%d│&quot;</span>, i + 1);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordflow">for</span> (j = 0; j &lt; 8; j++) {</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;      printf(<span class="stringliteral">&quot; %c │&quot;</span>, b[j * 8 + i]);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    }</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    printf(<span class="stringliteral">&quot;%d\n&quot;</span>, i + 1);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordflow">if</span> (i &gt;= 1) {</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      printf(<span class="stringliteral">&quot; ├&quot;</span>);</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;      <span class="keywordflow">for</span> (x = 0; x &lt; 15; x++) {</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        x % 2 == 0 ? printf(<span class="stringliteral">&quot;───&quot;</span>) : printf(<span class="stringliteral">&quot;┼&quot;</span>);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;      }</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;      printf(<span class="stringliteral">&quot;┤\n&quot;</span>);</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    }</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  }</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  printf(<span class="stringliteral">&quot; └&quot;</span>);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="keywordflow">for</span> (x = 0; x &lt; 15; x++) {</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    x % 2 == 0 ? printf(<span class="stringliteral">&quot;───&quot;</span>) : printf(<span class="stringliteral">&quot;┴&quot;</span>);</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  }</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  printf(<span class="stringliteral">&quot;┘\n &quot;</span>);</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keywordflow">for</span> (x = 0; x &lt; 8; x++) {</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    printf(<span class="stringliteral">&quot;  %c &quot;</span>, *(rows + x));</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  }</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  printf(<span class="stringliteral">&quot;\n&quot;</span>);</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;}</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="keywordtype">void</span> bitboardToArray(<span class="keywordtype">char</span> *b, <span class="keywordtype">long</span> <span class="keywordtype">long</span> <a class="code" href="../../da/dfa/structbitboard.html">bitboard</a>, <span class="keywordtype">char</span> color) {</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  <span class="keywordtype">int</span> i, j;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  <span class="keywordflow">for</span> (i = 7; i &gt;= 0; i--) {</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordflow">for</span> (j = 0; j &lt; 8; j++) {</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;      <span class="keywordflow">if</span> (get(<a class="code" href="../../da/dfa/structbitboard.html">bitboard</a>, (j * 8 + i))) {</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        b[j * 8 + i] = color;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;      }</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    }</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  }</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;}</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="keywordtype">int</span> parsCoordinateToSquare(<span class="keywordtype">char</span> *coord) {</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="comment">// int row = *(coord) - &#39;A&#39;; // char coord to int index</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="comment">// int column = *(coord+1) - &#39;1&#39;; // char number to int</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <span class="comment">// printf(&quot;Current Piece: %s, calc coords: row: %d, column: %d\n&quot;, coord, row,</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  <span class="comment">// column);</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keywordflow">return</span> (*(coord) - <span class="charliteral">&#39;A&#39;</span>) * 8 + (*(coord + 1) - <span class="charliteral">&#39;1&#39;</span>);</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;}</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="keywordtype">void</span> printBitboard(<a class="code" href="../../da/dfa/structbitboard.html">bitboard_t</a> *board) {</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  <span class="keywordtype">char</span> *b = malloc(<span class="keyword">sizeof</span>(<span class="keywordtype">char</span>) * 64);</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 64; i++) {</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    b[i] = <span class="charliteral">&#39; &#39;</span>;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  }</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  bitboardToArray(b, board-&gt;whiteBoard, <span class="charliteral">&#39;w&#39;</span>);</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  bitboardToArray(b, board-&gt;whiteQueenBoard, <span class="charliteral">&#39;W&#39;</span>);</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  bitboardToArray(b, board-&gt;blackBoard, <span class="charliteral">&#39;b&#39;</span>);</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  bitboardToArray(b, board-&gt;blackQueenBoard, <span class="charliteral">&#39;B&#39;</span>);</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  print_board(b);</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  free(b);</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;}</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<a class="code" href="../../da/dfa/structbitboard.html">bitboard_t</a> *parsFromString(<span class="keywordtype">char</span> *pieceList) {</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  initTowerBoard(TOWER_BOARD);</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  <a class="code" href="../../da/dfa/structbitboard.html">bitboard_t</a> *board = calloc(1, <span class="keyword">sizeof</span>(<a class="code" href="../../da/dfa/structbitboard.html">bitboard_t</a>));</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  pieceList = strchr(pieceList, <span class="charliteral">&#39;\n&#39;</span>) + 1; <span class="comment">// skipp + PIECESLIST 24\n</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="keywordtype">char</span> pieceString[4];                     <span class="comment">// e.g. b@F8</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; NUMBER_OF_PIECES; i++) {</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    memcpy(pieceString, pieceList + 2, 4);</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <a class="code" href="../../d0/d2a/structpiece.html">piece_t</a> *<a class="code" href="../../d0/d2a/structpiece.html">piece</a> = calloc(1, <span class="keyword">sizeof</span>(<a class="code" href="../../d0/d2a/structpiece.html">piece_t</a>));</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    PIECE_POINTER_BUFFER[piecePointerCounter] = <a class="code" href="../../d0/d2a/structpiece.html">piece</a>;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    piecePointerCounter++;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <a class="code" href="../../d0/d2a/structpiece.html">piece</a>-&gt;next = NULL;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keywordflow">switch</span> (pieceString[0]) {</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordflow">case</span> <span class="charliteral">&#39;b&#39;</span>:</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      <a class="code" href="../../d0/d2a/structpiece.html">piece</a>-&gt;color = <span class="charliteral">&#39;b&#39;</span>;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;      <a class="code" href="../../d0/d2a/structpiece.html">piece</a>-&gt;type = <span class="charliteral">&#39;n&#39;</span>;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;      <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordflow">case</span> <span class="charliteral">&#39;B&#39;</span>:</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;      <a class="code" href="../../d0/d2a/structpiece.html">piece</a>-&gt;color = <span class="charliteral">&#39;b&#39;</span>;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;      <a class="code" href="../../d0/d2a/structpiece.html">piece</a>-&gt;type = <span class="charliteral">&#39;k&#39;</span>;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;      <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordflow">case</span> <span class="charliteral">&#39;w&#39;</span>:</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;      <a class="code" href="../../d0/d2a/structpiece.html">piece</a>-&gt;color = <span class="charliteral">&#39;w&#39;</span>;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;      <a class="code" href="../../d0/d2a/structpiece.html">piece</a>-&gt;type = <span class="charliteral">&#39;n&#39;</span>;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;      <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordflow">case</span> <span class="charliteral">&#39;W&#39;</span>:</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;      <a class="code" href="../../d0/d2a/structpiece.html">piece</a>-&gt;color = <span class="charliteral">&#39;w&#39;</span>;</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;      <a class="code" href="../../d0/d2a/structpiece.html">piece</a>-&gt;type = <span class="charliteral">&#39;k&#39;</span>;</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;      <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;      log_error(<span class="stringliteral">&quot;Error color and type &lt;%c&gt; does not exist&quot;</span>, *pieceString);</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    }</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    <span class="keywordtype">int</span> index = parsCoordinateToSquare(pieceString + 2);</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    pushPiece(TOWER_BOARD[index], <a class="code" href="../../d0/d2a/structpiece.html">piece</a>);</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    pieceList += SIZE_OF_PIECE;</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;  }</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; 32; i++) {</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <a class="code" href="../../d2/d2c/structtower.html">tower_t</a> *<a class="code" href="../../d2/d2c/structtower.html">tower</a> = TOWER_BOARD[allowedSquaresIndices[i]];</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordflow">if</span> (getColor(<a class="code" href="../../d2/d2c/structtower.html">tower</a>) == <span class="charliteral">&#39;b&#39;</span>) {</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      <span class="keywordflow">if</span> (getType(<a class="code" href="../../d2/d2c/structtower.html">tower</a>) == <span class="charliteral">&#39;n&#39;</span>) {</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;        board-&gt;blackBoard = set(board-&gt;blackBoard, allowedSquaresIndices[i]);</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;      } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;        board-&gt;blackQueenBoard =</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;            set(board-&gt;blackQueenBoard, allowedSquaresIndices[i]);</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;      }</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (getColor(<a class="code" href="../../d2/d2c/structtower.html">tower</a>) == <span class="charliteral">&#39;w&#39;</span>) {</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;      <span class="keywordflow">if</span> (getType(<a class="code" href="../../d2/d2c/structtower.html">tower</a>) == <span class="charliteral">&#39;n&#39;</span>) {</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        board-&gt;whiteBoard = set(board-&gt;whiteBoard, allowedSquaresIndices[i]);</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;      } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;        board-&gt;whiteQueenBoard =</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;            set(board-&gt;whiteQueenBoard, allowedSquaresIndices[i]);</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;      }</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    }</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;  }</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;  board-&gt;emptyBoard = ~(board-&gt;blackBoard | board-&gt;blackQueenBoard |</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;                        board-&gt;whiteBoard | board-&gt;whiteQueenBoard);</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;  <span class="keywordflow">return</span> board;</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;}</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160; </div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="keywordtype">void</span> freeTowerBoard() {</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt;= piecePointerCounter; i++) {</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    free(PIECE_POINTER_BUFFER[i]);</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;  }</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;  piecePointerCounter = 0;</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;}</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;DIRECTION turnAroundDirection(DIRECTION d) {</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;  <span class="keywordflow">switch</span> (d) {</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;  <span class="keywordflow">case</span> NW:</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keywordflow">return</span> SE;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;  <span class="keywordflow">case</span> NE:</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keywordflow">return</span> SW;</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;  <span class="keywordflow">case</span> SW:</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="keywordflow">return</span> NE;</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;  <span class="keywordflow">case</span> SE:</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keywordflow">return</span> NW;</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;  <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    log_error(<span class="stringliteral">&quot;wrong direction\n&quot;</span>);</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  }</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;}</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160; </div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;board_t shift(board_t <a class="code" href="../../d0/d2a/structpiece.html">piece</a>, DIRECTION d) {</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;  <span class="keywordflow">switch</span> (d) {</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;  <span class="keywordflow">case</span> NW:</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <span class="keywordflow">return</span> (<a class="code" href="../../d0/d2a/structpiece.html">piece</a> &gt;&gt; (COLUMNS - 1)) &amp; ALLOWED_SQUARES;</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;  <span class="keywordflow">case</span> NE:</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="keywordflow">return</span> (<a class="code" href="../../d0/d2a/structpiece.html">piece</a> &lt;&lt; (COLUMNS + 1)) &amp; ALLOWED_SQUARES;</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;  <span class="keywordflow">case</span> SW:</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    <span class="keywordflow">return</span> (<a class="code" href="../../d0/d2a/structpiece.html">piece</a> &gt;&gt; (COLUMNS + 1)) &amp; ALLOWED_SQUARES;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;  <span class="keywordflow">case</span> SE:</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    <span class="keywordflow">return</span> (<a class="code" href="../../d0/d2a/structpiece.html">piece</a> &lt;&lt; (COLUMNS - 1)) &amp; ALLOWED_SQUARES;</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;  <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    log_error(<span class="stringliteral">&quot;wrong direction\n&quot;</span>);</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    <span class="keywordflow">return</span> 0ULL;</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;  }</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;}</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160; </div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;<span class="keywordtype">void</span> captureMoves(board_t playerBoard, board_t opponentBoard,</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                  board_t emptyBoard, board_t <a class="code" href="../../d0/d2a/structpiece.html">piece</a>, <span class="keywordtype">char</span> type, <span class="keywordtype">char</span> color,</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                  board_t *movesList, <span class="keywordtype">int</span> depth, DIRECTION lockedDirection) {</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;  board_t move;</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;  board_t tmp;</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> d = NW; d &lt;= SE; d++) {</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    <span class="keywordflow">if</span> (d != lockedDirection) {</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;      <span class="keywordflow">if</span> (type == <span class="charliteral">&#39;k&#39;</span>) {</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        tmp = <a class="code" href="../../d0/d2a/structpiece.html">piece</a>;</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        board_t start = <a class="code" href="../../d0/d2a/structpiece.html">piece</a>;</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;        move = <a class="code" href="../../d0/d2a/structpiece.html">piece</a>;</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        <span class="keywordflow">while</span> ((tmp = shift(move, d)) &amp; emptyBoard)</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;          move = tmp;</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;        <span class="keywordflow">if</span> (shift((shift(move, d) &amp; opponentBoard), d) &amp; emptyBoard) {</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;          <a class="code" href="../../d2/d2c/structtower.html">tower_t</a> *oldTower, *newTower;</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;          oldTower = getTower(start);</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;          newTower = getTower(move);</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;          moveTower(&amp;oldTower, &amp;newTower);</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;          playerBoard = (playerBoard &amp; ~start) | move;</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;          emptyBoard = ~(playerBoard | opponentBoard);</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;          <a class="code" href="../../d0/d2a/structpiece.html">piece</a> = move;</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        }</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;      }</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;      move = shift((shift(<a class="code" href="../../d0/d2a/structpiece.html">piece</a>, d) &amp; opponentBoard), d) &amp; emptyBoard;</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;      <span class="keywordflow">if</span> (move) {</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        <a class="code" href="../../d2/d2c/structtower.html">tower_t</a> *oldTower, *newTower;</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        tmp = <a class="code" href="../../d0/d2a/structpiece.html">piece</a>;</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        oldTower = getTower(tmp);</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;        newTower = getTower(move);</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;        board_t captured = shift(move, turnAroundDirection(d));</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;        <span class="keywordtype">char</span> capturedTowerColor =</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;            capture(&amp;oldTower, &amp;newTower, getTower(captured));</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;        playerBoard = (playerBoard &amp; ~tmp) | move;</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        opponentBoard = opponentBoard &amp; ~captured;</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        <span class="keywordflow">if</span> (capturedTowerColor == color) {</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;          playerBoard |= captured;</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (capturedTowerColor != 0) {</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;          opponentBoard |= captured;</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        }</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        emptyBoard = ~(playerBoard | opponentBoard);</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        movesList[depth] |= move;</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        <span class="keywordflow">if</span> ((color == <span class="charliteral">&#39;b&#39;</span> &amp;&amp; (move &amp; WHITE_BASELINE)) ||</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;            (color == <span class="charliteral">&#39;w&#39;</span> &amp;&amp; (move &amp; BLACK_BASELINE)))</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;          type = <span class="charliteral">&#39;k&#39;</span>;</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        captureMoves(playerBoard, opponentBoard, emptyBoard, move, type, color,</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;                     movesList, depth + 1, turnAroundDirection(d));</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;      }</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    }</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;  }</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;}</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;board_t *calculateMoves(board_t playerBoard, board_t opponentBoard,</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                        board_t <a class="code" href="../../d0/d2a/structpiece.html">piece</a>, <span class="keywordtype">char</span> type, <span class="keywordtype">char</span> color,</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                        <span class="keywordtype">bool</span> *captureMovesOnly) {</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;  <span class="keyword">static</span> board_t *movesList;</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;  <span class="keywordflow">if</span> (movesList == NULL) {</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    movesList = calloc(12, <span class="keyword">sizeof</span>(board_t));</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; 12; i++) {</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;      movesList[i] = 0ULL;</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    }</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;  }</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;  board_t emptyBoard = ~(playerBoard | opponentBoard);</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;  <span class="keywordflow">if</span> (type == <span class="charliteral">&#39;n&#39;</span>) {</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    captureMoves(playerBoard, opponentBoard, emptyBoard, <a class="code" href="../../d0/d2a/structpiece.html">piece</a>, type, color,</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                 movesList, 0, UNDEFINED);</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keywordflow">if</span> (movesList[0] == 0ULL &amp;&amp; !(*captureMovesOnly)) {</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;      <span class="keywordflow">if</span> (color == <span class="charliteral">&#39;w&#39;</span>) {</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;        movesList[0] = (shift(<a class="code" href="../../d0/d2a/structpiece.html">piece</a>, NW) | shift(<a class="code" href="../../d0/d2a/structpiece.html">piece</a>, NE)) &amp; emptyBoard;</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;      } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (color == <span class="charliteral">&#39;b&#39;</span>) {</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        movesList[0] = (shift(<a class="code" href="../../d0/d2a/structpiece.html">piece</a>, SW) | shift(<a class="code" href="../../d0/d2a/structpiece.html">piece</a>, SE)) &amp; emptyBoard;</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;      }</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;      *captureMovesOnly = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    }</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;  } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (type == <span class="charliteral">&#39;k&#39;</span>) {</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    captureMoves(playerBoard, opponentBoard, emptyBoard, <a class="code" href="../../d0/d2a/structpiece.html">piece</a>, type, color,</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                 movesList, 0, UNDEFINED);</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    <span class="keywordflow">if</span> (movesList[0] == 0ULL &amp;&amp; !(*captureMovesOnly)) {</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;      board_t move;</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;      board_t nonCaptureMoves = 0ULL;</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;      board_t tmp;</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> d = NW; d &lt;= SE; d++) {</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;        move = <a class="code" href="../../d0/d2a/structpiece.html">piece</a>;</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;        <span class="keywordflow">while</span> ((tmp = shift(move, d)) &amp; emptyBoard) {</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;          move = tmp;</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;          nonCaptureMoves |= move;</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;        }</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;      }</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;      movesList[0] = nonCaptureMoves;</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;      *captureMovesOnly = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    }</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;  }</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;  <span class="keywordflow">return</span> movesList;</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;}</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160; </div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;<a class="code" href="../../dd/d9d/structMoveBoard.html">moveboard_t</a> **allPossibleMoves(<a class="code" href="../../da/dfa/structbitboard.html">bitboard_t</a> *currentBoard, <span class="keywordtype">char</span> color) {</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;  <span class="keyword">static</span> <a class="code" href="../../dd/d9d/structMoveBoard.html">moveboard_t</a> **moveBoardList;</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;  <span class="keywordflow">if</span> (moveBoardList == NULL) {</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    moveBoardList = malloc(12 * <span class="keyword">sizeof</span>(<a class="code" href="../../dd/d9d/structMoveBoard.html">moveboard_t</a> *));</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; 12; i++) {</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;      moveBoardList[i] = malloc(<span class="keyword">sizeof</span>(<a class="code" href="../../dd/d9d/structMoveBoard.html">moveboard_t</a>));</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    }</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; 12; i++) {</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;      moveBoardList[i]-&gt;pieceBoard = 0ULL;</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;      memset(moveBoardList[i]-&gt;movesList, 0, 12 * <span class="keyword">sizeof</span>(board_t));</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    }</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;  }</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;  board_t playerBoard;</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;  board_t opponentBoard;</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;  <span class="keywordflow">if</span> (color == <span class="charliteral">&#39;w&#39;</span>) {</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    playerBoard = currentBoard-&gt;whiteBoard | currentBoard-&gt;whiteQueenBoard;</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    opponentBoard = currentBoard-&gt;blackBoard | currentBoard-&gt;blackQueenBoard;</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    playerBoard = currentBoard-&gt;blackBoard | currentBoard-&gt;blackQueenBoard;</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    opponentBoard = currentBoard-&gt;whiteBoard | currentBoard-&gt;whiteQueenBoard;</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;  }</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;  board_t <a class="code" href="../../d0/d2a/structpiece.html">piece</a>;</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;  board_t *movesList;</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;  <span class="keywordtype">int</span> count = 0;</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;  <span class="keywordtype">char</span> type;</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;  <span class="keywordtype">bool</span> captureMovesOnly = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;  <span class="keywordtype">bool</span> tmp;</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; 32; i++) {</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    <span class="keywordflow">if</span> ((<a class="code" href="../../d0/d2a/structpiece.html">piece</a> = get(playerBoard, allowedSquaresIndices[i]))) {</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;      type = getType(getTower(<a class="code" href="../../d0/d2a/structpiece.html">piece</a>));</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;      tmp = captureMovesOnly;</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;      movesList = calculateMoves(playerBoard, opponentBoard, <a class="code" href="../../d0/d2a/structpiece.html">piece</a>, type, color,</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;                                 &amp;captureMovesOnly);</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;      <span class="keywordflow">if</span> (movesList[0]) {</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;        <span class="keywordflow">if</span> (captureMovesOnly != tmp) {</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j = 0; j &lt; count; j++) {</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;            moveBoardList[j]-&gt;pieceBoard = 0ULL;</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;            memset(moveBoardList[j]-&gt;movesList, 0, 12 * <span class="keyword">sizeof</span>(board_t));</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;          }</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;          count = 0;</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;          <span class="comment">// only look for first capture move</span></div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;          moveBoardList[count]-&gt;pieceBoard = <a class="code" href="../../d0/d2a/structpiece.html">piece</a>;</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;          memcpy(moveBoardList[count]-&gt;movesList, movesList,</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;                 12 * <span class="keyword">sizeof</span>(board_t));</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;          <span class="keywordflow">return</span> moveBoardList;</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;        }</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;        moveBoardList[count]-&gt;pieceBoard = <a class="code" href="../../d0/d2a/structpiece.html">piece</a>;</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;        memcpy(moveBoardList[count]-&gt;movesList, movesList,</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;               12 * <span class="keyword">sizeof</span>(board_t));</div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;        count++;</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;      }</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    }</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;  }</div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;  <span class="keywordflow">return</span> moveBoardList;</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;}</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160; </div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;<span class="keywordtype">void</span> pickNextCaptureMove(board_t *movesList, <span class="keywordtype">int</span> depth, board_t move,</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;                         <span class="keywordtype">char</span> *moveString) {</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;  <span class="keywordflow">if</span> (depth &gt; 0) {</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    strcat(moveString, colon);</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;  }</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;  strcat(moveString, bitBoardToChar(move));</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;  board_t nextMove;</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;  board_t tmp;</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> d = NW; d &lt;= SE; d++) {</div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    nextMove = shift(shift(move, d), d);</div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;    <span class="keywordflow">while</span> (!(nextMove &amp; movesList[depth]) &amp;&amp; (tmp = shift(nextMove, d)))</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;      nextMove = tmp;</div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;    <span class="keywordflow">if</span> (nextMove &amp; movesList[depth]) {</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;      pickNextCaptureMove(movesList, depth + 1, nextMove, moveString);</div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;      <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    }</div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;  }</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;}</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160; </div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;<span class="keywordtype">void</span> pickFirstMove(<a class="code" href="../../dd/d9d/structMoveBoard.html">moveboard_t</a> **moveBoardList, <span class="keywordtype">char</span> *moveString) {</div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;  <span class="keywordflow">if</span> (moveBoardList[0] != NULL) {</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    board_t move;</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> d = NW; d &lt;= SE; d++) {</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;      move = shift(moveBoardList[0]-&gt;pieceBoard, d);</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;      <span class="keywordflow">if</span> (move &amp; moveBoardList[0]-&gt;movesList[0]) {</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;        <span class="comment">// normal move</span></div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;        strcat(moveString, bitBoardToChar(moveBoardList[0]-&gt;pieceBoard));</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;        strcat(moveString, colon);</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;        strcat(moveString, bitBoardToChar(move));</div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;        <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;      }</div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;    }</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    pickNextCaptureMove(moveBoardList[0]-&gt;movesList, 0,</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;                        moveBoardList[0]-&gt;pieceBoard, moveString);</div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;  }</div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;}</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160; </div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;<span class="keywordtype">void</span> print_bitboard(<span class="keywordtype">long</span> board, <span class="keywordtype">char</span> color) {</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;  <span class="keywordtype">int</span> i;</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;  <span class="keywordtype">char</span> *b = malloc(<span class="keyword">sizeof</span>(<span class="keywordtype">char</span>) * 64);</div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;  <span class="keywordflow">for</span> (i = 0; i &lt; 64; i++) {</div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    b[i] = <span class="charliteral">&#39; &#39;</span>;</div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;  }</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;  bitboardToArray(b, board, color);</div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;  print_board(b);</div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;  free(b);</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;}</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160; </div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;<span class="comment">/*</span></div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;<span class="comment">int main() {</span></div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;<span class="comment">  char pieceList[] = &quot;+ PIECESLIST 24\n&quot;</span></div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;<span class="comment">                     &quot;+ b@H8\n&quot;</span></div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;<span class="comment">                     &quot;+ b@F8\n&quot;</span></div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;<span class="comment">                     &quot;+ b@D8\n&quot;</span></div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;<span class="comment">                     &quot;+ b@B8\n&quot;</span></div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;<span class="comment">                     &quot;+ b@G7\n&quot;</span></div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;<span class="comment">                     &quot;+ b@E7\n&quot;</span></div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;<span class="comment">                     &quot;+ b@A7\n&quot;</span></div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;<span class="comment">                     &quot;+ b@H6\n&quot;</span></div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;<span class="comment">                     &quot;+ b@F6\n&quot;</span></div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;<span class="comment">                     &quot;+ b@D6\n&quot;</span></div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;<span class="comment">                     &quot;+ b@B6\n&quot;</span></div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;<span class="comment">                     &quot;+ w@E5\n&quot;</span></div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;<span class="comment">                     &quot;+ b@E5\n&quot;</span></div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;<span class="comment">                     &quot;+ w@G3\n&quot;</span></div>
-<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;<span class="comment">                     &quot;+ w@E3\n&quot;</span></div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;<span class="comment">                     &quot;+ w@C3\n&quot;</span></div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;<span class="comment">                     &quot;+ w@H2\n&quot;</span></div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;<span class="comment">                     &quot;+ w@F2\n&quot;</span></div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;<span class="comment">                     &quot;+ w@D2\n&quot;</span></div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;<span class="comment">                     &quot;+ w@B2\n&quot;</span></div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;<span class="comment">                     &quot;+ w@G1\n&quot;</span></div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;<span class="comment">                     &quot;+ w@E1\n&quot;</span></div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;<span class="comment">                     &quot;+ w@C1\n&quot;</span></div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;<span class="comment">                     &quot;+ w@A1\n&quot;</span></div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;<span class="comment">                     &quot;+ ENDPIECESLIST&quot;;</span></div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;<span class="comment">  char pieceList[] = &quot;PIECESLIST 24\n+ b@F8\n+ b@F8\n+ W@F8\n+ b@H6\n+ b@D6\n+ &quot;</span></div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;<span class="comment">                     &quot;w@D6\n+ W@D6\n+ b@E5\n+ b@E5\n+ b@E5\n+ b@C5\n+ b@C5\n+ &quot;</span></div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;<span class="comment">                     &quot;w@C5\n+ b@D4\n+ b@D4\n+ w@D4\n+ w@B4\n+ w@A3\n+ w@H2\n+ &quot;</span></div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;<span class="comment">                     &quot;b@F2\n+ w@F2\n+ w@B2\n+ w@C1\n+ w@A1\n+ ENDPIECESLIST&quot;;</span></div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;<span class="comment">  bitboard_t *currentBoard = parsFromString(pieceList);</span></div>
-<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;<span class="comment">  printBitboard(currentBoard);</span></div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;<span class="comment">  moveboard_t **moveBoardList = allPossibleMoves(currentBoard, &#39;b&#39;);</span></div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;<span class="comment">  char moveString[35] = {0};</span></div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;<span class="comment">  pickFirstMove(moveBoardList, moveString);</span></div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;<span class="comment">  printf(&quot;%s\n&quot;, moveString);</span></div>
-<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;<span class="comment">}</span></div>
-<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;<span class="comment">*/</span></div>
-<div class="ttc" id="astructMoveBoard_html"><div class="ttname"><a href="../../dd/d9d/structMoveBoard.html">MoveBoard</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/da6/bitboard_8h_source.html#l00038">bitboard.h:38</a></div></div>
-<div class="ttc" id="astructbitboard_html"><div class="ttname"><a href="../../da/dfa/structbitboard.html">bitboard</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/da6/bitboard_8h_source.html#l00030">bitboard.h:30</a></div></div>
-<div class="ttc" id="astructpiece_html"><div class="ttname"><a href="../../d0/d2a/structpiece.html">piece</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d77/towerBoard_8h_source.html#l00010">towerBoard.h:10</a></div></div>
-<div class="ttc" id="astructtower_html"><div class="ttname"><a href="../../d2/d2c/structtower.html">tower</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d77/towerBoard_8h_source.html#l00022">towerBoard.h:22</a></div></div>
+<div class="line"><a name="l00005"></a><span class="lineno"><a class="line" href="../../d9/da6/bitboard_8h.html#a19dba0051b95f6e29bab5e6579010b31">    5</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="../../d9/da6/bitboard_8h.html#a19dba0051b95f6e29bab5e6579010b31">showbits</a>(<a class="code" href="../../da/dfa/structbitboard.html">bitboard</a> *board){</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="keywordtype">int</span> i=0;</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    <span class="keywordflow">for</span> (i = (<span class="keyword">sizeof</span>(board) * 8) - 1; i &gt;= 0; i--){</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;        <span class="keywordflow">if</span>((i+1) % 8 == 0 &amp;&amp; i+1 &lt; 64) printf(<span class="stringliteral">&quot;\n&quot;</span>);</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        putchar(*board &amp; (1ULL &lt;&lt; i) ? <span class="charliteral">&#39;1&#39;</span> : <span class="charliteral">&#39;0&#39;</span>);</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    }</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    printf(<span class="stringliteral">&quot;\n&quot;</span>);</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;}</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="../../d9/da6/bitboard_8h.html#a5c092f2b1aa28199e37f446f11eb84d5">   14</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="../../d9/da6/bitboard_8h.html#a5c092f2b1aa28199e37f446f11eb84d5">_flip_bit</a>(<a class="code" href="../../da/dfa/structbitboard.html">bitboard</a> *board, <span class="keywordtype">int</span> shift){</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    *board = *board ^ (1ULL &lt;&lt; shift);</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;}</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keywordtype">bool</span> _get_bit(<a class="code" href="../../da/dfa/structbitboard.html">bitboard</a> *board, <span class="keywordtype">int</span> shift){</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keywordflow">return</span> *board &amp; (1ULL &lt;&lt; shift);</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;}</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keywordtype">int</span> coord_to_shift(<span class="keywordtype">int</span> x, <span class="keywordtype">int</span> y){</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keywordflow">if</span> (x&gt;=0&amp;&amp;x&lt;=7&amp;&amp;y&gt;=0&amp;&amp;y&lt;=7){</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="keywordflow">return</span> (MAPPING[y]*8)+MAPPING[x];</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    }</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    log_error(<span class="stringliteral">&quot;Coordinates x: %d, y: %d not in range of 0-7&quot;</span>);</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;}</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="../../d9/da6/bitboard_8h.html#a50f2ce3cc6113694df70ce5514f07b40">   30</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="../../d9/da6/bitboard_8h.html#a50f2ce3cc6113694df70ce5514f07b40">flip_bit</a>(<a class="code" href="../../da/dfa/structbitboard.html">bitboard</a> *board, <span class="keywordtype">int</span> x, <span class="keywordtype">int</span> y){</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordtype">int</span> shift = coord_to_shift(x, y);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keywordflow">if</span> (shift != -1){</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <a class="code" href="../../d9/da6/bitboard_8h.html#a5c092f2b1aa28199e37f446f11eb84d5">_flip_bit</a>(board, shift);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    }</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;}</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="../../d9/da6/bitboard_8h.html#aaa3acfb403573fe0156909606066fdea">   37</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="../../d9/da6/bitboard_8h.html#aaa3acfb403573fe0156909606066fdea">get_bit</a>(<a class="code" href="../../da/dfa/structbitboard.html">bitboard</a> *board, <span class="keywordtype">int</span> x, <span class="keywordtype">int</span> y){</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordtype">int</span> shift = coord_to_shift(x, y);</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keywordflow">if</span> (shift != -1){</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keywordflow">return</span> _get_bit(board, shift);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    }</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordflow">return</span> NULL;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;}</div>
+<div class="ttc" id="abitboard_8h_html"><div class="ttname"><a href="../../d9/da6/bitboard_8h.html">bitboard.h</a></div><div class="ttdoc">Bitboard 8x8.</div></div>
+<div class="ttc" id="abitboard_8h_html_a19dba0051b95f6e29bab5e6579010b31"><div class="ttname"><a href="../../d9/da6/bitboard_8h.html#a19dba0051b95f6e29bab5e6579010b31">showbits</a></div><div class="ttdeci">void showbits(bitboard *board)</div><div class="ttdoc">prints the given layer</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d33/bitboard_8c_source.html#l00005">bitboard.c:5</a></div></div>
+<div class="ttc" id="abitboard_8h_html_a50f2ce3cc6113694df70ce5514f07b40"><div class="ttname"><a href="../../d9/da6/bitboard_8h.html#a50f2ce3cc6113694df70ce5514f07b40">flip_bit</a></div><div class="ttdeci">void flip_bit(bitboard *board, int y, int x)</div><div class="ttdoc">flip the bit</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d33/bitboard_8c_source.html#l00030">bitboard.c:30</a></div></div>
+<div class="ttc" id="abitboard_8h_html_a5c092f2b1aa28199e37f446f11eb84d5"><div class="ttname"><a href="../../d9/da6/bitboard_8h.html#a5c092f2b1aa28199e37f446f11eb84d5">_flip_bit</a></div><div class="ttdeci">void _flip_bit(bitboard *board, int position)</div><div class="ttdoc">flips a bit</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d33/bitboard_8c_source.html#l00014">bitboard.c:14</a></div></div>
+<div class="ttc" id="abitboard_8h_html_aaa3acfb403573fe0156909606066fdea"><div class="ttname"><a href="../../d9/da6/bitboard_8h.html#aaa3acfb403573fe0156909606066fdea">get_bit</a></div><div class="ttdeci">bool get_bit(bitboard *board, int x, int y)</div><div class="ttdoc">get the bit</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d33/bitboard_8c_source.html#l00037">bitboard.c:37</a></div></div>
+<div class="ttc" id="astructbitboard_html"><div class="ttname"><a href="../../da/dfa/structbitboard.html">bitboard</a></div><div class="ttdef"><b>Definition:</b> <a href="../../db/dc8/old__bitboard_8h_source.html#l00030">old_bitboard.h:30</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

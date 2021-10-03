@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['game_13',['game',['../df/d87/structConfig.html#a33e02df7576d8c079ad6d58aae893727',1,'Config']]],
-  ['gameid_14',['gameId',['../df/d87/structConfig.html#a6713b6ca89b8664e199c88a12da92041',1,'Config']]],
-  ['gameinfo_15',['GameInfo',['../de/d31/structGameInfo.html',1,'']]],
-  ['getgameinfo_16',['getGameInfo',['../d9/d59/performConnection_8h.html#a3422bd40d37dcdb1b25b25ec3567d64f',1,'performConnection.c']]]
+  ['flip_5fbit_12',['flip_bit',['../d9/da6/bitboard_8h.html#a50f2ce3cc6113694df70ce5514f07b40',1,'bitboard.c']]],
+  ['free_5fnode_13',['free_node',['../d8/d38/queue_8h.html#a18697d5b7aebff9c8f50d47701e7702a',1,'queue.c']]],
+  ['free_5fqueue_14',['free_queue',['../d8/d38/queue_8h.html#a8af73ad0afaeb0be341d474a592ba0c4',1,'queue.c']]],
+  ['freegameinfo_15',['freeGameInfo',['../d9/d59/performConnection_8h.html#a6f72486ea2f588d520bfd79abf1c3e57',1,'performConnection.c']]]
 ];

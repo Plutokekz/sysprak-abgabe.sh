@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['main_72',['main',['../df/d09/Main_8c.html#a0ddf1224851353fc92bfbff6f499fa97',1,'Main.c']]]
+  ['get_5fbit_79',['get_bit',['../d9/da6/bitboard_8h.html#aaa3acfb403573fe0156909606066fdea',1,'bitboard.c']]],
+  ['getgameinfo_80',['getGameInfo',['../d9/d59/performConnection_8h.html#a3422bd40d37dcdb1b25b25ec3567d64f',1,'performConnection.c']]]
 ];
