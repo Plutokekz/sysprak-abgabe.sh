@@ -9,9 +9,9 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "modules/cmdPipe.h"
-#include "modules/shareMemory.h"
-#include "modules/protocolUtils.h"
+#include "modules/cmd_pipe.h"
+#include "modules/share_memory.h"
+#include "modules/protocol_utils.h"
 #include "signal.h"
 #include "modules/old_bitboard.h"
 #include "modules/log.h"

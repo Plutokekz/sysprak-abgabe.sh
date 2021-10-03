@@ -11,13 +11,13 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#include "gamePhase.h"
-#include "modules/cmdPipe.h"
-#include "modules/shareMemory.h"
+#include "game_phase.h"
+#include "modules/cmd_pipe.h"
+#include "modules/share_memory.h"
 #include "modules/utils.h"
-#include "performConnection.h"
+#include "perform_connection.h"
 #include "thinker.h"
-#include "modules/mySignal.h"
+#include "modules/my_signal.h"
 
 void child(config_t *config, int fd[2]) {
   int sock, shmID;

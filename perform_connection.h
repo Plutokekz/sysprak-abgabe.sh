@@ -15,11 +15,11 @@
 
 #include <stdbool.h>
 
-#include "infoStructs.h"
-#include "modules/shareMemory.h"
+#include "info_structs.h"
+#include "modules/share_memory.h"
 #include "modules/utils.h"
 #include "modules/log.h"
-#include "modules/protocolUtils.h"
+#include "modules/protocol_utils.h"
 
 #define GAME_ID_SIZE 13
 #define PORTNUMBER 1357
