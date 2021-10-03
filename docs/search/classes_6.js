@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['piece_59',['piece',['../d0/d2a/structpiece.html',1,'']]],
-  ['player_60',['Player',['../dc/d7b/structPlayer.html',1,'']]]
+  ['piece_56',['piece',['../d0/d2a/structpiece.html',1,'']]],
+  ['player_57',['Player',['../dc/d7b/structPlayer.html',1,'']]]
 ];

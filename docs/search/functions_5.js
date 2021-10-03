@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['get_5fbit_83',['get_bit',['../d9/da6/bitboard_8h.html#aaa3acfb403573fe0156909606066fdea',1,'bitboard.c']]],
-  ['getgameinfo_84',['getGameInfo',['../d9/d59/performConnection_8h.html#a3422bd40d37dcdb1b25b25ec3567d64f',1,'performConnection.c']]]
+  ['readconfigfile_80',['readConfigFile',['../d5/d60/utils_8h.html#abd76e57f3e101310229849bfb9e97ac3',1,'utils.c']]],
+  ['receivecmd_81',['receiveCMD',['../d8/dcf/cmd__pipe_8h.html#a9d6a5510449a8e71a1b6c6eed771de85',1,'cmd_pipe.c']]],
+  ['recvcommand_82',['recvCommand',['../da/d60/protocol__utils_8h.html#ad1420fe426c4a653b336e132c00510e7',1,'protocol_utils.c']]]
 ];

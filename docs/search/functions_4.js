@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['flip_5fbit_79',['flip_bit',['../d9/da6/bitboard_8h.html#a50f2ce3cc6113694df70ce5514f07b40',1,'bitboard.c']]],
-  ['free_5fnode_80',['free_node',['../d8/d38/queue_8h.html#a18697d5b7aebff9c8f50d47701e7702a',1,'queue.c']]],
-  ['free_5fqueue_81',['free_queue',['../d8/d38/queue_8h.html#a8af73ad0afaeb0be341d474a592ba0c4',1,'queue.c']]],
-  ['freegameinfo_82',['freeGameInfo',['../d9/d59/performConnection_8h.html#a6f72486ea2f588d520bfd79abf1c3e57',1,'performConnection.c']]]
+  ['pop_76',['pop',['../d8/d38/queue_8h.html#a19d7af5d964c4165206a5edf52f9a7eb',1,'queue.c']]],
+  ['printf_5fqueue_77',['printf_queue',['../d8/d38/queue_8h.html#a7ef181d72f1588322472dce93fc49503',1,'queue.c']]],
+  ['printfconfig_78',['printfConfig',['../d5/d60/utils_8h.html#a8864c2a1991b45606ac29a520b652724',1,'utils.c']]],
+  ['put_79',['put',['../d8/d38/queue_8h.html#a8f2120e7d481fd2241bae31888db9ca4',1,'queue.c']]]
 ];

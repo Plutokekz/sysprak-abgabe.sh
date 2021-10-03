@@ -1,4 +1,4 @@
-/** @file config.h
+/** @file utils.h
  *  @brief Function to read and pars the Config file.
  *
  *  This contains the functions for the Config

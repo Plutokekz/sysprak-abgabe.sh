@@ -1,7 +1,7 @@
 //
 // Created by Lukas on 05.01.2021.
 //
-/** @file cmdPipe.h
+/** @file cmd_pipe.h
  *  @brief transmits the moves from Thinker to Connector
  *
  *  This contains the functions to send end receive moves/commands

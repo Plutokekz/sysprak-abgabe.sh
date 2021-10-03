@@ -1,3 +1,10 @@
+/** @file protocol_utils.h
+  *
+  * protocol utilities
+  *
+  * @author Erik
+  * @bugs not known
+  */
 #ifndef PROTOCOL_UTILS_H
 #define PROTOCOL_UTILS_H
 

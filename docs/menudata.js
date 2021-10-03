@@ -35,4 +35,5 @@ var menudata={children:[
 {text:"\u202AFile List",url:"files.html"},
 {text:"\u202AGlobals",url:"globals.html",children:[
 {text:"\u202AAll",url:"globals.html"},
-{text:"\u202AFunctions",url:"globals_func.html"}]}]}]}
+{text:"\u202AFunctions",url:"globals_func.html"},
+{text:"\u202AEnumerations",url:"globals_enum.html"}]}]}]}

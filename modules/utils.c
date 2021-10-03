@@ -2,6 +2,7 @@
 // Created by Lukas on 15.12.2020.
 //
 #include "utils.h"
+#include <string.h>
 
 void printfConfig(config_t *config) {
   if (config != NULL) {
@@ -34,7 +35,17 @@ int parseAttr(char *attr, char *value, config_t *config) {
   } else if (strcmp(attr, "port") == 0) {
     config->port = atoi(value);
     free(value);
-  } else {
+  } else if (strcmp(attr, "player") == 0){
+    strcpy(config->playerId, value);
+    free(value);
+  } else if (strcmp(attr, "gameId") == 0){
+    strcpy(config->gameId, value);
+    free(value);
+  }else if (strcmp(attr, "print") == 0){
+    // TODO properly read print flag from config file
+    config->f = PRETTY;
+    free(value);
+  }else {
     log_error("Error the attribute <%s> is not available in the Config Struct and value <%s>", attr, value);
     free(attr);
     free(value);

@@ -20,8 +20,8 @@
 
 #include "modules/old_bitboard.h"
 #include "modules/log.h"
-#include "modules/cmdPipe.h"
-#include "modules/shareMemory.h"
+#include "modules/cmd_pipe.h"
+#include "modules/share_memory.h"
 
 /** @brief initialises the Thinker
   *

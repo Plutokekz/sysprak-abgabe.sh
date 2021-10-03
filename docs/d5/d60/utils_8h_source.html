@@ -71,7 +71,7 @@ $(function() {
 <div class="title">utils.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
+<a href="../../d5/d60/utils_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#ifndef BASCHNI_CONFIG_H</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#define BASCHNI_CONFIG_H</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
@@ -84,7 +84,7 @@ $(function() {
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#define DEFAULT_CONFIG_FILENAME &quot;tests/config.conf&quot;</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#define GAME_ID_SIZE 13</span></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span> P_FLAG { PRETTY, DEBUG, NONE } P_FLAG;</div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="../../d5/d60/utils_8h.html#aaceeff3e86bf47b02fd36b4b83e42546">   29</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span> <a class="code" href="../../d5/d60/utils_8h.html#aaceeff3e86bf47b02fd36b4b83e42546">P_FLAG</a> { PRETTY, DEBUG, NONE } <a class="code" href="../../d5/d60/utils_8h.html#aaceeff3e86bf47b02fd36b4b83e42546">P_FLAG</a>;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
 <div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="../../df/d87/structConfig.html">   37</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="../../df/d87/structConfig.html">Config</a> {</div>
 <div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="../../df/d87/structConfig.html#a9b99e069f6e78fcb906d5effbb600e97">   38</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="../../df/d87/structConfig.html#a9b99e069f6e78fcb906d5effbb600e97">port</a>;   </div>
@@ -92,16 +92,16 @@ $(function() {
 <div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="../../df/d87/structConfig.html#a33e02df7576d8c079ad6d58aae893727">   41</a></span>&#160;  <span class="keywordtype">char</span> *<a class="code" href="../../df/d87/structConfig.html#a33e02df7576d8c079ad6d58aae893727">game</a>; </div>
 <div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="../../df/d87/structConfig.html#a6713b6ca89b8664e199c88a12da92041">   43</a></span>&#160;  <span class="keywordtype">char</span> <a class="code" href="../../df/d87/structConfig.html#a6713b6ca89b8664e199c88a12da92041">gameId</a>[14];  </div>
 <div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="../../df/d87/structConfig.html#aab2d032056ca668d8841178630ab1bb3">   45</a></span>&#160;  <span class="keywordtype">char</span> <a class="code" href="../../df/d87/structConfig.html#aab2d032056ca668d8841178630ab1bb3">playerId</a>[2]; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  P_FLAG f;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <a class="code" href="../../d5/d60/utils_8h.html#aaceeff3e86bf47b02fd36b4b83e42546">P_FLAG</a> f;</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;} <a class="code" href="../../df/d87/structConfig.html">config_t</a>;</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keywordtype">int</span> readConfigFile(<span class="keywordtype">char</span> *filename, <a class="code" href="../../df/d87/structConfig.html">config_t</a> *config);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keywordtype">int</span> <a class="code" href="../../d5/d60/utils_8h.html#abd76e57f3e101310229849bfb9e97ac3">readConfigFile</a>(<span class="keywordtype">char</span> *filename, <a class="code" href="../../df/d87/structConfig.html">config_t</a> *config);</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="keywordtype">void</span> freeConfig(<a class="code" href="../../df/d87/structConfig.html">config_t</a> *config);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="keywordtype">void</span> <a class="code" href="../../d5/d60/utils_8h.html#aeb53f2dc42529719cd6735fa4c3300f9">freeConfig</a>(<a class="code" href="../../df/d87/structConfig.html">config_t</a> *config);</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keywordtype">void</span> printfConfig(<a class="code" href="../../df/d87/structConfig.html">config_t</a> *config);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keywordtype">void</span> <a class="code" href="../../d5/d60/utils_8h.html#a8864c2a1991b45606ac29a520b652724">printfConfig</a>(<a class="code" href="../../df/d87/structConfig.html">config_t</a> *config);</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<a class="code" href="../../df/d87/structConfig.html">config_t</a> *setOptions(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> *argv[]);</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<a class="code" href="../../df/d87/structConfig.html">config_t</a> *<a class="code" href="../../d5/d60/utils_8h.html#a211279fc831023215e4eb751df98025f">setOptions</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> *argv[]);</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// BASCHNI_CONFIG_H</span></div>
 <div class="ttc" id="astructConfig_html"><div class="ttname"><a href="../../df/d87/structConfig.html">Config</a></div><div class="ttdoc">Config struct.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d60/utils_8h_source.html#l00037">utils.h:37</a></div></div>
@@ -110,6 +110,11 @@ $(function() {
 <div class="ttc" id="astructConfig_html_a9b99e069f6e78fcb906d5effbb600e97"><div class="ttname"><a href="../../df/d87/structConfig.html#a9b99e069f6e78fcb906d5effbb600e97">Config::port</a></div><div class="ttdeci">int port</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d60/utils_8h_source.html#l00038">utils.h:38</a></div></div>
 <div class="ttc" id="astructConfig_html_a9c910909e77835144f56d1367b6912e2"><div class="ttname"><a href="../../df/d87/structConfig.html#a9c910909e77835144f56d1367b6912e2">Config::host</a></div><div class="ttdeci">char * host</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d60/utils_8h_source.html#l00039">utils.h:39</a></div></div>
 <div class="ttc" id="astructConfig_html_aab2d032056ca668d8841178630ab1bb3"><div class="ttname"><a href="../../df/d87/structConfig.html#aab2d032056ca668d8841178630ab1bb3">Config::playerId</a></div><div class="ttdeci">char playerId[2]</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d60/utils_8h_source.html#l00045">utils.h:45</a></div></div>
+<div class="ttc" id="autils_8h_html_a211279fc831023215e4eb751df98025f"><div class="ttname"><a href="../../d5/d60/utils_8h.html#a211279fc831023215e4eb751df98025f">setOptions</a></div><div class="ttdeci">config_t * setOptions(int argc, char *argv[])</div><div class="ttdoc">Parse arguments.</div><div class="ttdef"><b>Definition:</b> <a href="../../d3/d91/utils_8c_source.html#l00190">utils.c:190</a></div></div>
+<div class="ttc" id="autils_8h_html_a8864c2a1991b45606ac29a520b652724"><div class="ttname"><a href="../../d5/d60/utils_8h.html#a8864c2a1991b45606ac29a520b652724">printfConfig</a></div><div class="ttdeci">void printfConfig(config_t *config)</div><div class="ttdoc">print a config_t struct</div><div class="ttdef"><b>Definition:</b> <a href="../../d3/d91/utils_8c_source.html#l00007">utils.c:7</a></div></div>
+<div class="ttc" id="autils_8h_html_aaceeff3e86bf47b02fd36b4b83e42546"><div class="ttname"><a href="../../d5/d60/utils_8h.html#aaceeff3e86bf47b02fd36b4b83e42546">P_FLAG</a></div><div class="ttdeci">P_FLAG</div><div class="ttdoc">P_FLAG enum.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d60/utils_8h_source.html#l00029">utils.h:29</a></div></div>
+<div class="ttc" id="autils_8h_html_abd76e57f3e101310229849bfb9e97ac3"><div class="ttname"><a href="../../d5/d60/utils_8h.html#abd76e57f3e101310229849bfb9e97ac3">readConfigFile</a></div><div class="ttdeci">int readConfigFile(char *filename, config_t *config)</div><div class="ttdoc">reads the config file with the given filename.</div><div class="ttdef"><b>Definition:</b> <a href="../../d3/d91/utils_8c_source.html#l00157">utils.c:157</a></div></div>
+<div class="ttc" id="autils_8h_html_aeb53f2dc42529719cd6735fa4c3300f9"><div class="ttname"><a href="../../d5/d60/utils_8h.html#aeb53f2dc42529719cd6735fa4c3300f9">freeConfig</a></div><div class="ttdeci">void freeConfig(config_t *config)</div><div class="ttdoc">frees a config_t struct</div><div class="ttdef"><b>Definition:</b> <a href="../../d3/d91/utils_8c_source.html#l00018">utils.c:18</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

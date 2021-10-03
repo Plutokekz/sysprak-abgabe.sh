@@ -80,8 +80,8 @@ $(function() {
 <code>#include &lt;sys/types.h&gt;</code><br />
 <code>#include &quot;modules/old_bitboard.h&quot;</code><br />
 <code>#include &quot;modules/log.h&quot;</code><br />
-<code>#include &quot;<a class="el" href="../../df/d4b/cmdPipe_8h_source.html">modules/cmdPipe.h</a>&quot;</code><br />
-<code>#include &quot;modules/shareMemory.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d8/dcf/cmd__pipe_8h_source.html">modules/cmd_pipe.h</a>&quot;</code><br />
+<code>#include &quot;modules/share_memory.h&quot;</code><br />
 </div>
 <p><a href="../../db/d65/thinker_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -175,12 +175,12 @@ Functions</h2></td></tr>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordtype">char</span> moveString[35] = {0};</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    pickFirstMove(moveBoardList, moveString);</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    log_debug(<span class="stringliteral">&quot;send: %s&quot;</span>, moveString);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <a class="code" href="../../df/d4b/cmdPipe_8h.html#a273a3a8c15b3a242c7143081e1920317">sendCMD</a>(fdw, moveString);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <a class="code" href="../../d8/dcf/cmd__pipe_8h.html#a273a3a8c15b3a242c7143081e1920317">sendCMD</a>(fdw, moveString);</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  }</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;}</div>
-<div class="ttc" id="acmdPipe_8h_html_a273a3a8c15b3a242c7143081e1920317"><div class="ttname"><a href="../../df/d4b/cmdPipe_8h.html#a273a3a8c15b3a242c7143081e1920317">sendCMD</a></div><div class="ttdeci">int sendCMD(int fdw, char *cmd)</div><div class="ttdoc">send/writes the char array to the pipe</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/dba/cmdPipe_8c_source.html#l00023">cmdPipe.c:23</a></div></div>
+<div class="ttc" id="acmd__pipe_8h_html_a273a3a8c15b3a242c7143081e1920317"><div class="ttname"><a href="../../d8/dcf/cmd__pipe_8h.html#a273a3a8c15b3a242c7143081e1920317">sendCMD</a></div><div class="ttdeci">int sendCMD(int fdw, char *cmd)</div><div class="ttdoc">send/writes the char array to the pipe</div><div class="ttdef"><b>Definition:</b> <a href="../../db/dfd/cmd__pipe_8c_source.html#l00023">cmd_pipe.c:23</a></div></div>
 <div class="ttc" id="astructMoveBoard_html"><div class="ttname"><a href="../../dd/d9d/structMoveBoard.html">MoveBoard</a></div><div class="ttdef"><b>Definition:</b> <a href="../../db/dc8/old__bitboard_8h_source.html#l00038">old_bitboard.h:38</a></div></div>
-<div class="ttc" id="astructShare_html"><div class="ttname"><a href="../../db/d41/structShare.html">Share</a></div><div class="ttdoc">SHM Struct, which contains all necessary infos for thinker().</div><div class="ttdef"><b>Definition:</b> <a href="../../db/d7a/shareMemory_8h_source.html#l00046">shareMemory.h:46</a></div></div>
+<div class="ttc" id="astructShare_html"><div class="ttname"><a href="../../db/d41/structShare.html">Share</a></div><div class="ttdoc">SHM Struct, which contains all necessary infos for thinker().</div><div class="ttdef"><b>Definition:</b> <a href="../../df/d6b/share__memory_8h_source.html#l00046">share_memory.h:46</a></div></div>
 <div class="ttc" id="astructbitboard_html"><div class="ttname"><a href="../../da/dfa/structbitboard.html">bitboard</a></div><div class="ttdef"><b>Definition:</b> <a href="../../db/dc8/old__bitboard_8h_source.html#l00030">old_bitboard.h:30</a></div></div>
 </div><!-- fragment -->
 </div>

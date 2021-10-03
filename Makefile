@@ -12,47 +12,50 @@ export G
 
 
 
-sysprak-client: Main.c log.o performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o old_bitboard.o protocolUtils.o mySignal.o towerBoard.o
-	gcc $(EFLAGS) -o sysprak-client Main.c performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o old_bitboard.o protocolUtils.o mySignal.o towerBoard.o log.o
+sysprak-client: main.c log.o performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o old_bitboard.o protocolUtils.o mySignal.o towerBoard.o
+	gcc $(EFLAGS) -o sysprak-client main.c perform_connection.o utils.o share_memory.o thinker.o game_phase.o cmd_pipe.o old_bitboard.o protocol_utils.o my_signal.o tower_board.o log.o
 
 sysprak-multi-client: main_vs.c log.o performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o old_bitboard.o protocolUtils.o mySignal.o towerBoard.o
-	gcc $(EFLAGS) -o sysprak-multi-client main_vs.c performConnection.o utils.o shareMemory.o thinker.o gamePhase.o cmdPipe.o old_bitboard.o protocolUtils.o mySignal.o towerBoard.o log.o
+	gcc $(EFLAGS) -o sysprak-multi-client main_vs.c perform_connection.o utils.o share_memory.o thinker.o game_phase.o cmd_pipe.o old_bitboard.o protocol_utils.o my_signal.o tower_board.o log.o
 
-towerBoard.o: modules/towerBoard.c modules/towerBoard.h
-	gcc $(EFLAGS) -c modules/towerBoard.c
+towerBoard.o: modules/tower_board.c modules/tower_board.h
+	gcc $(EFLAGS) -c modules/tower_board.c
 
-performConnection.o: performConnection.c performConnection.h
-	gcc $(EFLAGS) -c performConnection.c
+performConnection.o: perform_connection.c perform_connection.h
+	gcc $(EFLAGS) -c perform_connection.c
 
 old_bitboard.o: modules/old_bitboard.c modules/old_bitboard.h
 	gcc $(EFLAGS) -c modules/old_bitboard.c
 
-shareMemory.o: modules/shareMemory.c modules/shareMemory.h
-	gcc $(EFLAGS) -c modules/shareMemory.c
+shareMemory.o: modules/share_memory.c modules/share_memory.h
+	gcc $(EFLAGS) -c modules/share_memory.c
 
-cmdPipe.o: modules/cmdPipe.c modules/cmdPipe.h
-	gcc $(EFLAGS) -c modules/cmdPipe.c
+cmdPipe.o: modules/cmd_pipe.c modules/cmd_pipe.h
+	gcc $(EFLAGS) -c modules/cmd_pipe.c
 
 utils.o:  modules/utils.c modules/utils.h
 	gcc $(EFLAGS) -c modules/utils.c
 
-gamePhase.o: gamePhase.c gamePhase.h
-	gcc $(EFLAGS) -c gamePhase.c
+gamePhase.o: game_phase.c game_phase.h
+	gcc $(EFLAGS) -c game_phase.c
 
 thinker.o: thinker.c thinker.h
 	gcc $(EFLAGS) -c thinker.c
 
-protocolUtils.o: modules/protocolUtils.c modules/protocolUtils.h
-	gcc $(EFLAGS) -c modules/protocolUtils.c
+protocolUtils.o: modules/protocol_utils.c modules/protocol_utils.h
+	gcc $(EFLAGS) -c modules/protocol_utils.c
 
-mySignal.o: modules/mySignal.c modules/mySignal.h
-	gcc $(EFLAGS) -c modules/mySignal.c
+mySignal.o: modules/my_signal.c modules/my_signal.h
+	gcc $(EFLAGS) -c modules/my_signal.c
 
 log.o: modules/log.h modules/log.c
 	gcc $(EFLAGS) -DLOG_USE_COLOR -c modules/log.c
 
 game_id:
 	export G="$(shell curl -s -X POST -H $(headers) -d $(json_data) $(url) |(python3 -c "import sys, json; print(json.load(sys.stdin)['id'])"))"
+
+test_connection:
+	ping -c 4 sysprak.priv.lab.nm.ifi.lmu.de
 
 play: sysprak-client
 	./sysprak-client -g $(shell curl -s -X POST -H $(headers) -d $(json_data) $(url) |(python3 -c "import sys, json; print(json.load(sys.stdin)['id'])"))

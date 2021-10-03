@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['deleteshm_10',['deleteSHM',['../da/dbc/shareMemory_8c.html#afb2e27ff9c4d7355309486fb75d85215',1,'shareMemory.c']]],
-  ['detachshm_11',['detachSHM',['../da/dbc/shareMemory_8c.html#a6a99edf44b62ddee00fe98d1abf3b008',1,'shareMemory.c']]]
+  ['game_13',['game',['../df/d87/structConfig.html#a33e02df7576d8c079ad6d58aae893727',1,'Config']]],
+  ['gameid_14',['gameId',['../df/d87/structConfig.html#a6713b6ca89b8664e199c88a12da92041',1,'Config']]],
+  ['gameinfo_15',['GameInfo',['../de/d31/structGameInfo.html',1,'']]],
+  ['get_5fbit_16',['get_bit',['../d9/da6/bitboard_8h.html#aaa3acfb403573fe0156909606066fdea',1,'bitboard.c']]]
 ];
