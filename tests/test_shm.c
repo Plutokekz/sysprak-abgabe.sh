@@ -7,6 +7,10 @@ void my_handler(int signum) {
     }
 }
 
+void handleSig1 (int sig) {
+    //think();
+    printf("Signal received");
+}
 
 int main() {
     pid_t pid;
@@ -55,15 +59,11 @@ int main() {
 
 
 
-        void handleSig1 (int sig) {
-            //think();
-            printf("Signal received");
-        }
 
-        struct sigaciton sa = { 0 };
+        struct sigaction sa = { 0 };
         sa.sa_flags = SA_RESTART;
         sa.sa_handler = &handleSig1;
-        sigaciton(SIGUSR1, &sa, NULL);
+        sigaction(SIGUSR1, &sa, NULL);
 
 
         //Test setupSHM_String
@@ -87,18 +87,17 @@ int main() {
 
 
 
-        struct Share *ptrTestGS, testGS;
-        ptrTestGS = &testGS;
-        (*ptrTestGS).gameName = "SHM Funktioniert!";
-        (*ptrTestGS).ownPlayerNumber = 42;
-        (*ptrTestGS).numberOfPlayers = 2;
-        (*ptrTestGS).players[0].number = 0;
-        (*ptrTestGS).players[0].name = "Anna";
-        (*ptrTestGS).players[0].readyFlag = 1;
-        (*ptrTestGS).players[1].number = 1;
-        (*ptrTestGS).players[1].name = "Ben";
-        (*ptrTestGS).players[1].readyFlag = 1;
-        shmID = setupSHM_GameStart(ptrTestGS);
+        struct Share ptrTestGS;
+        strcpy(ptrTestGS.gameName, "SHM Funktioniert!");
+        ptrTestGS.ownPlayerNumber = 42;
+        ptrTestGS.numberOfPlayers = 2;
+        ptrTestGS.players[0].number = 0;
+        strcpy(ptrTestGS.players[0].name, "Anna");
+        ptrTestGS.players[0].readyFlag = 1;
+        ptrTestGS.players[1].number = 1;
+        strcpy(ptrTestGS.players[1].name, "Ben");
+        ptrTestGS.players[1].readyFlag = 1;
+        shmID = setupSHM_GameStart((game_info *)&ptrTestGS);
 
         //100 ist temporär, können wir uns noch überlegen wie groß das sein muss
         char testString[100] = "setupSHM_String funktioniert :)";

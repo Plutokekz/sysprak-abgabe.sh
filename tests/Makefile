@@ -19,11 +19,11 @@ test-pipes: test_cmd_pipe.c cmd_pipe.o
 	gcc $(CFLAGS) -o pipes test_cmd_pipe.c cmd_pipe.o
 	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./pipes
 
-tests-config: test_config.c config.o
-	gcc -g -o config test_config.c config.o
+test-config: test_config.c utils.o log.o
+	gcc -g -o config test_config.c utils.o log.o
 	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./config
 
-tests-shm: test_shm.c share_memory.o
+test-shm: test_shm.c share_memory.o
 	gcc -g -o shm test_shm.c share_memory.o
 	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./shm
 
@@ -37,14 +37,14 @@ log.o: ../modules/log.h ../modules/log.c
 queue.o: ../modules/queue.h ../modules/queue.c
 	gcc $(CFLAGS) -c ../modules/queue.c
 
-cmd_pipe.o: ../module/cmd_pipe.c ../module/cmd_pipe.h
-	gcc $(CFLAGS) -c ../cmd_pipe.c
+cmd_pipe.o: ../modules/cmd_pipe.c ../modules/cmd_pipe.h
+	gcc $(CFLAGS) -c ../modules/cmd_pipe.c
 
-config.o: ../module/config.c ../module/config.h
-	gcc $(CFLAGS) -c ../config.c
+utils.o: ../modules/utils.c ../modules/utils.h
+	gcc $(CFLAGS) -c ../modules/utils.c
 
-share_memory.o: ../module/share_memory.c ../module/share_memory.h
-	gcc $(CFLAGS) -c ../share_memory.c
+share_memory.o: ../modules/share_memory.c ../modules/share_memory.h
+	gcc $(CFLAGS) -c ../modules/share_memory.c
 
 clean:
 	rm *.o queue bitboard pipes config shm
