@@ -6,8 +6,9 @@
  *  for pretty printing.
  *
  *  @author Erik Kellenter
- *  @bug recvCommand throws error when server sends 48 bytes after PLAYER
- * COMMAND.
+ *
+ * @bug recvCommand throws error when server sends 48 bytes after PLAYER COMMAND.
+ *
  */
 
 #ifndef connectionUtil

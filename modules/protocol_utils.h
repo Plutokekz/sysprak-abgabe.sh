@@ -3,7 +3,7 @@
   * protocol utilities
   *
   * @author Erik
-  * @bugs not known
+  * @bug not known
   */
 #ifndef PROTOCOL_UTILS_H
 #define PROTOCOL_UTILS_H

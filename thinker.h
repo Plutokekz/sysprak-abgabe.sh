@@ -5,7 +5,7 @@
   *
   * just the think funktion and its modules
   *
-  * @bugs not known
+  * @bug not known
   *
   */
 #ifndef BASCHNI_THINKER_H
