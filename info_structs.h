@@ -1,6 +1,15 @@
-//
-// Created by Lukas on 20.01.2021.
-//
+/** @file info_structs.h
+  *
+  * @brief Player struct and GameInfo struct
+  *
+  *
+  * @author Lukas
+  *
+  * @date 20.01.2021.
+  *
+  * @bug not known
+  *
+  */
 
 #ifndef BASCHNI_INFOSTRUCTS_H
 #define BASCHNI_INFOSTRUCTS_H
