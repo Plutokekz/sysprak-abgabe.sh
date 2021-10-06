@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['initthinker_18',['initThinker',['../db/d65/thinker_8h.html#a906f5b9a94ea70a4adadc51e5cd06811',1,'thinker.h']]]
+  ['info_5fstructs_2eh_23',['info_structs.h',['../da/d8e/info__structs_8h.html',1,'']]],
+  ['initthinker_24',['initThinker',['../db/d65/thinker_8h.html#a906f5b9a94ea70a4adadc51e5cd06811',1,'thinker.h']]]
 ];

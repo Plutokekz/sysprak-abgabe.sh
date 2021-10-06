@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['host_90',['host',['../df/d87/structConfig.html#a9c910909e77835144f56d1367b6912e2',1,'Config']]]
+  ['game_110',['game',['../df/d87/structConfig.html#a33e02df7576d8c079ad6d58aae893727',1,'Config']]],
+  ['gameid_111',['gameId',['../df/d87/structConfig.html#a6713b6ca89b8664e199c88a12da92041',1,'Config']]]
 ];

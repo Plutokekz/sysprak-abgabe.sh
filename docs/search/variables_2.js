@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['playerid_91',['playerId',['../df/d87/structConfig.html#aab2d032056ca668d8841178630ab1bb3',1,'Config']]],
-  ['port_92',['port',['../df/d87/structConfig.html#a9b99e069f6e78fcb906d5effbb600e97',1,'Config']]]
+  ['host_112',['host',['../df/d87/structConfig.html#a9c910909e77835144f56d1367b6912e2',1,'Config']]]
 ];
